@@ -1,0 +1,199 @@
+/* *{
+   border: 1px solid black; 
+} */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+.parent {
+    width: 90%;
+    height: 58.5vh;
+   
+    margin: 0 auto;
+  }
+.parent11 {
+    width: 100%;
+    height: 60.5vh;
+   
+    margin: 0 auto;
+  }
+  
+  .child {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .msg-container::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for webkit browsers (Chrome, Safari) */
+  }
+  .menu-item{
+    display: flex;
+  align-items: center;
+  font-size: 24px;
+ gap:5%;
+  padding: 6.5%;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  }
+  
+ 
+.menu-item:hover {
+  background-color: #f0f0f0; /* Light gray background on hover */
+}
+
+.menu-item:hover .icon {
+  transform: scale(1.1); /* Scale up the icon on hover */
+}
+
+.icon {
+  font-size: 24px;
+  transition: transform 0.3s ease;
+}
+  
+  .msg-container1 {
+    background-color: rgb(249, 249, 249);
+    width: 100%;
+    height: 496px;
+    overflow: auto; /* Hide scrollbars */
+ 
+  }
+  .msg-container1::-webkit-scrollbar {
+    display: none; /* Hide scrollbar for webkit browsers (Chrome, Safari) */
+  }
+
+  
+  
+  .child1 {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+
+   
+  }
+.box{
+  position: relative;
+}
+  
+  .message-right{
+    background-color: aqua;
+    border-radius: 22px;
+ 
+    bottom: 20px;
+    height: 20%;
+    padding: 2px 5px 0px 3px;
+    bottom: 50px;
+    margin: 1em;
+ 
+}
+.remoji span{
+ 
+  position: relative;
+  border: 2px solid black;
+  
+  top: -10px; 
+}
+.demoji{
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.message-left{
+    background-color:rgb(131, 255, 110);
+    border-radius: 25px;
+    padding: 0.5em 1em !important;
+    margin: 1em;
+}
+.message-text{
+    font-size: 17px;
+    padding: 10px;
+}
+.reply{
+   border-top: 1px solid black;
+}
+
+
+.emoj {
+   /* Add a smooth transition effect */
+  font-size: 25px;
+}
+
+.emoj {
+  transition: transform 0.2s ease-in-out; /* Add a smooth transition effect */
+  display: inline-block; /* Ensures inline elements can be transformed */
+}
+
+.emoj:hover {
+  transform: translateY(-2px) scale(1.1); /* Translate the emoji 2px up and scale it by 1.1x on hover */
+  animation-name: example;
+  animation-duration: 4s;
+  animation-delay: -2s;
+  animation-iteration-count: 3;
+  cursor: pointer;
+}
+
+@keyframes example {
+  0% {
+    background-color: rgb(222, 255, 11);
+    transform: translateY(-2px) scale(1); /* Initial state */
+  }
+  50% {
+    background-color: rgb(217, 255, 0); /* Midway color */
+    transform: translateY(-4px) scale(1.2); /* Scaled up midway */
+  }
+  100% {
+    background-color: rgb(211, 255, 15); /* Back to initial color */
+    transform: translateY(-2px) scale(1); /* Back to initial scale */
+  }
+}
+.logo-icon{
+    height: 40px;
+    width: 40px;
+    border-radius: 200px;
+}
+.side{
+  margin-left: 90%;
+  font-size: 20px;
+  text-decoration: none;
+}
+.div{
+  width: 75.8%;
+  height:90%;
+  border: 1px solid rgb(123, 123, 123);
+}
+.userdiv{
+  width: 34%;
+  height: 700px;
+  border: 1px solid rgb(126, 126, 126);
+}
+.userimg{
+  border-radius: 50%;
+  width: 20%;
+  height:20%;
+}
+.flexdiv{
+  display: flex;
+  width: 50%;
+  height: 50%;
+  justify-content: center;
+  align-items: center;
+  margin-top: 170px;
+
+  margin-left: 280px;
+}
+
+.search-container {
+  position: relative;
+  display: inline-block;
+}
+
+.search-input {
+  padding-right: 30px; /* Adjust this value if needed */
+}
+
+.search-icon {
+  position: absolute;
+  right: 5px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+}
