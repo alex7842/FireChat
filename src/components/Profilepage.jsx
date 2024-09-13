@@ -1,10 +1,15 @@
 import React, { useState, useRef, useEffect, useContext } from 'react';
-import { Layout, Avatar, Tooltip, Button, Typography, Row, Col, Card, Space, Divider, Empty, Input,Mentions} from 'antd';
-import { EditOutlined, UserOutlined, PlusOutlined } from '@ant-design/icons';
+import { Layout, Avatar, Tooltip, Button, Typography, Row, Col, Card, Space, 
+  Divider, Empty, Input,Mentions,Flex,Modal} from 'antd';
+  import Resizer from 'react-image-file-resizer';
+import { EditOutlined, UserOutlined, PlusOutlined,ReloadOutlined,LoadingOutlined } from '@ant-design/icons';
 import { SideBar } from './SideBar';
 import UserContext from './context/context';
 import { db } from '../config/firebase';
 import { collection,doc,onSnapshot,getDoc ,updateDoc} from 'firebase/firestore';
+import { ref,getDownloadURL,uploadBytes,getStorage } from 'firebase/storage';
+import axios from 'axios';
+import ai from '../hooks/ai';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -15,11 +20,18 @@ const ProfilePage = () => {
   console.log("user id",user.uid);
 
   const [data,setdata]=useState([]);
-
+  const { suggestions, loading, error, fetchSuggestions } = ai();
+  const[load,setload]=useState(false);
+  const[load1,setload1]=useState(false);
   const [active, setActive] = useState(false);
   const descriptionInputRef = useRef(null);
   const [description, setDescription] = useState("Tell about you...");
   const [tags, setTags] = useState(" ");
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [avatarUrl, setAvatarUrl] = useState(user.photoURL);
+ 
+  const [inputValue, setInputValue] = useState(user.displayName);
+  const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(3);
   const MOCK_DATA = {
     '@': [
        'techky', 'foodie_life', 'travel_blogger', 
@@ -44,21 +56,11 @@ const ProfilePage = () => {
     }
 
   }, [active]);
+
   useEffect(() => {
-    const fetchusername=async ()=>{
-
-      const options = {
-        method: 'POST',
-        headers: {Authorization: 'Bearer <token>', 'Content-Type': 'application/json'},
-        body: `{"model":"accounts/fireworks/models/llama-v3p1-8b-instruct","prompt":create an username for the user ${user.displayName} like if an user name is john create like j_o_h_n77 like this give me a 10 suggestion ,"images":["<string>"],"max_tokens":16,"logprobs":2,"echo":true,"temperature":1,"top_p":1,"top_k":50,"frequency_penalty":0,"presence_penalty":0,"n":1,"stop":"<string>","response_format":{"type":"json_object","schema":{}},"stream":true,"context_length_exceeded_behavior":"truncate","user":"<string>"}`
-      };
-      
-      fetch('https://api.fireworks.ai/inference/v1/completions', options)
-        .then(response => response.json())
-        .then(response => console.log("fireworks",response))
-        .catch(err => console.error(err));
-    }
-
+   
+    
+    
     const fetchUserData = async () => {
       const userDocRef = doc(db, 'users', user.uid);
       const docSnap = await getDoc(userDocRef);
@@ -69,15 +71,19 @@ const ProfilePage = () => {
       }
     };
     fetchUserData();
-    fetchusername();
+   fetchSuggestions(`Create 20 unique and creative username suggestions for the user with the name ${user.displayName}. The usernames should resemble Instagram-style usernames, incorporating a combination of underscores, numbers, or slight modifications of the display name.Return only the list of usernames, without any introductory text or extra information`);
+
   }, [user.uid]);
+  console.log(suggestions)
 
   const handleSave = async () => {
+    
     const userDocRef = doc(db, 'users', user.uid);
     await updateDoc(userDocRef, {
       description: description,
       tags: tags
     });
+   
     setActive(false);
   };
 
@@ -92,27 +98,136 @@ const ProfilePage = () => {
   const handleMentionsChange = (value) => {
     setTags(value);
   };
-
+  const handleSave1 = async () => {
+    setload1(true);
+    const userDocRef = doc(db, 'users', user.uid);
+    await updateDoc(userDocRef, {
+      photoURL: avatarUrl,
+      username: inputValue,
+     
+      
+    });
+    setload1(false);
+    // Add logic to save the updated profile information
+    setIsModalVisible(false);
+  };
+  const handleImageUpload = async (e) => {
+    setload(true);
+   
+    const file = e.target.files[0];
+    const resizedImage = await new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        300, 
+        300, 
+        'JPEG',
+        100,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        'file'
+      );
+    });
+    const storage = getStorage();
+    const storageRef = ref(storage, `profileImages/${user.uid}`);
+    await uploadBytes(storageRef, resizedImage);
+    const downloadURL = await getDownloadURL(storageRef);
+    setAvatarUrl(downloadURL);
+    setload(false);
+    console.log("Image uploaded, URL:", downloadURL);
+  };
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value);
+  };
+  const cycleNextSuggestion = () => {
+    setCurrentSuggestionIndex((prevIndex) => (prevIndex + 1) % suggestions.length);
+    setInputValue(suggestions[currentSuggestionIndex].replace(/^\d+\.?\s*/, '')
+  );
+  };
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
       <SideBar />
+      <Modal
+  title="Edit Profile"
+  open={isModalVisible}
+  onCancel={() => setIsModalVisible(false)}
+  footer={[
+    <Button key="save" type="primary" onClick={handleSave1}>
+      {!load1 ? 'Save' : 'Saving...'} 
+    </Button>,
+  ]}
+>
+  <Space direction="vertical" align="center" style={{width: '100%'}}>
+    <div style={{ position: 'relative' }}>
+    <Avatar size={100} src={avatarUrl} />
+
+     { !load ?<EditOutlined 
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          border:'1px solid #d9d9d9',
+          right: 0,
+          backgroundColor: 'white',
+          borderRadius: '50%',
+          padding: '5px',
+          cursor: 'pointer'
+        }}
+        onClick={() => document.getElementById('imageUpload').click()}
+      />:<LoadingOutlined 
+      style={{
+        position: 'absolute',
+        bottom: 0,
+        border:'1px solid #d9d9d9',
+        right: 0,
+        backgroundColor: 'white',
+        borderRadius: '50%',
+        padding: '5px',
+        cursor: 'pointer'
+      }}/>
+}
+    </div>
+    <input
+      type="file"
+      accept='image/*'
+      id="imageUpload"
+      hidden
+      onChange={handleImageUpload}
+    />
+<Input
+    value={inputValue}
+    onChange={handleInputChange}
+   
+    suffix={
+      <ReloadOutlined
+        onClick={cycleNextSuggestion}
+        style={{ cursor: 'pointer' }}
+      />
+    }
+  />
+  </Space>
+</Modal>
+
       <Content style={{ margin: "3%", marginLeft: "5%" }}>
         <Row gutter={[16, 24]}>
           {/* Profile Info Section */}
           <Col xs={24} sm={8}>
-            <Space direction="vertical" align="center">
-              <Avatar size={148} src={user.photoURL}  />
-              <Title level={3}>{user.displayName}</Title>
-              <Text>0 posts</Text>
-              <Text>0 followers</Text>
-              <Text>0 following</Text>
-              <Tooltip title="Follow">
-                <Button shape="round" icon={<UserOutlined />} type="default">
-                  Follow
-                </Button>
-              </Tooltip>
-            </Space>
-          </Col>
+  <Space direction="vertical" align="center" style={{width: '100%'}}>
+    <Avatar size={148} src={user.photoURL}  />
+    <Flex justify='space-between' align='center' style={{width: '100%'}}>
+      <Title level={3}>{user.displayName}</Title>
+      <EditOutlined onClick={() => setIsModalVisible(true)} shape="round" style={{marginLeft:'14px',cursor:'pointer'}}/>
+    </Flex>
+    <Text>0 posts</Text>
+    <Text>0 followers</Text>
+    <Text>0 following</Text>
+    <Tooltip title="Follow">
+      <Button shape="round" icon={<UserOutlined />} type="default">
+        Follow
+      </Button>
+    </Tooltip>
+  </Space>
+</Col>
 
           {/* Profile Bio and Actions */}
           <Col xs={24} sm={16}>
