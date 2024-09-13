@@ -142,7 +142,7 @@ user.email===email ?(
    {contextHolder}
     <Flex vertical>
     <Flex>
-    <img src={logo} className='logo-icon'/>
+    <img src={user.displayURL} className='logo-icon'/>
       
       {text.startsWith("https://firebasestorage.googleapis.com") ?(
         <div className='w-90'>
