@@ -3,7 +3,7 @@ import {db } from '../config/firebase'
 import { getDocs, collection,query,where } from 'firebase/firestore';
 import { Flex } from 'antd';
 import { LoadingOutlined,  SearchOutlined} from '@ant-design/icons';
-import { Spin,Input } from 'antd';
+import { Spin,Input,Image } from 'antd';
 import UserContext from './context/context';
 import { useChat } from './context/ChatContext';
 import GroupContext from './context/GroupContext';
@@ -102,12 +102,12 @@ export const UserList = () => {
 {users.map(user1 => {
   const isActive = user.lastactive && 
     (new Date().getTime() - user.lastactive.toDate().getTime()) < 300000; // 5 minutes in milliseconds
-  console.log(isActive?"true":"false")
+
   return (
     <Flex key={user1.id} gap={1} align="center" justify="space-between" onClick={() => handleid(user1.uid, user1.displayName, user1.photoURL, user1.email)}>
       <Flex align="center" gap={7}>
         <div style={{ position: 'relative' }}>
-          <img className='userimg' src={user1.photoURL} alt={user1.displayName} />
+          <Image className='userimg' src={user1.photoURL} alt={user1.displayName} />
           {isActive && (
             <span
               style={{
