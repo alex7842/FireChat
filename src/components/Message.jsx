@@ -4,7 +4,7 @@ import  { useChat } from './context/ChatContext';
 import { db } from '../config/firebase';
 import { collection,doc, deleteDoc,query,where,getDocs } from 'firebase/firestore';
 import {ShareAltOutlined,DeleteOutlined,InfoCircleOutlined ,RollbackOutlined } from '@ant-design/icons'
-import {  Flex, Popover,message } from 'antd';
+import {  Flex, Popover,message,Image } from 'antd';
 import GroupContext from './context/GroupContext';
 
 export const Message = ({msglen,id1,text,logo,email,day,time,date,handleReply,name}) => {
@@ -142,15 +142,18 @@ user.email===email ?(
    {contextHolder}
     <Flex vertical>
     <Flex>
-    <img src={user.displayURL} className='logo-icon'/>
-      
+ 
       {text.startsWith("https://firebasestorage.googleapis.com") ?(
         <div className='w-90'>
        
-          <img src={text} alt="uploaded" className='uploaded-image'/>
+          <Image src={text} alt="uploaded" className='uploaded-image'/>
         </div>
       ) : (
+        <>
+           <img src={user.photoURL} className='logo-icon'/>
+      
         <span className='message-text'>{text}</span>
+        </>
       )}
      
     </Flex>
@@ -177,15 +180,18 @@ user.email===email ?(
   {contextHolder}
    <Flex vertical>
    <Flex>
-   <img src={logo} className='logo-icon'/>
-     
+  
      {text.startsWith("https://firebasestorage.googleapis.com") ?(
        <div className='w-90'>
       
-         <img src={text} alt="uploaded" className='uploaded-image'/>
+         <Image src={text} alt="uploaded" className='uploaded-image'/>
        </div>
      ) : (
-       <span className='message-text'>{text}</span>
+      <>
+      <img src={logo} className='logo-icon'/>
+ 
+   <span className='message-text'>{text}</span>
+   </>
      )}
     
    </Flex>

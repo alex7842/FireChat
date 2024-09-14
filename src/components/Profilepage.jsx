@@ -8,14 +8,14 @@ import UserContext from './context/context';
 import { db } from '../config/firebase';
 import { collection,doc,onSnapshot,getDoc ,updateDoc} from 'firebase/firestore';
 import { ref,getDownloadURL,uploadBytes,getStorage } from 'firebase/storage';
-import axios from 'axios';
+
 import ai from '../hooks/ai';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const ProfilePage = () => {
-  const {user}=useContext(UserContext);
+  const {user,setupdateuser}=useContext(UserContext);
 
   console.log("user id",user.uid);
 
@@ -45,6 +45,7 @@ const ProfilePage = () => {
       'sustainability', 'minimalism', 'digitalnomad', 'beachlife', 'urbanexplorer'
     ],
   };
+  console.log(user.photoURL,"userphotp");
   
   const [prefix, setPrefix] = useState('@');
   const onSearch = (_, newPrefix) => {
@@ -66,12 +67,14 @@ const ProfilePage = () => {
       const docSnap = await getDoc(userDocRef);
       if (docSnap.exists()) {
         const userData = docSnap.data();
+        setdata(userData);
         setDescription(userData.description || "Tell about you...");
         setTags(userData.tags || "#");
       }
     };
     fetchUserData();
-   fetchSuggestions(`Create 20 unique and creative username suggestions for the user with the name ${user.displayName}. The usernames should resemble Instagram-style usernames, incorporating a combination of underscores, numbers, or slight modifications of the display name.Return only the list of usernames, without any introductory text or extra information`);
+   fetchSuggestions(`Generate 20 unique and creative username suggestions for the display name "${user.displayName}". The usernames should follow Instagram-style formats, using underscores, numbers, or slight modifications of the display name. Only return the list of usernames—no additional information, steps, or explanations.
+`);
 
   }, [user.uid]);
   console.log(suggestions)
@@ -104,9 +107,10 @@ const ProfilePage = () => {
     await updateDoc(userDocRef, {
       photoURL: avatarUrl,
       username: inputValue,
-     
       
     });
+  
+  setupdateuser(i=>(i+1));
     setload1(false);
     // Add logic to save the updated profile information
     setIsModalVisible(false);
@@ -142,8 +146,9 @@ const ProfilePage = () => {
   };
   const cycleNextSuggestion = () => {
     setCurrentSuggestionIndex((prevIndex) => (prevIndex + 1) % suggestions.length);
-    setInputValue(suggestions[currentSuggestionIndex].replace(/^\d+\.?\s*/, '')
-  );
+    setInputValue(suggestions[currentSuggestionIndex].replace(/^\s*\d*\.\s*/, ''));
+
+  
   };
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
@@ -215,7 +220,7 @@ const ProfilePage = () => {
   <Space direction="vertical" align="center" style={{width: '100%'}}>
     <Avatar size={148} src={user.photoURL}  />
     <Flex justify='space-between' align='center' style={{width: '100%'}}>
-      <Title level={3}>{user.displayName}</Title>
+      <Title level={3}>{!user.username?user.displayName:user.username }</Title>
       <EditOutlined onClick={() => setIsModalVisible(true)} shape="round" style={{marginLeft:'14px',cursor:'pointer'}}/>
     </Flex>
     <Text>0 posts</Text>

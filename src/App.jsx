@@ -2,6 +2,7 @@ import { useState,useContext } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { signInWithPopup } from 'firebase/auth'
 import {auth,provider } from './config/firebase'
+import { Timestamp } from 'firebase/firestore';
 import { addDoc, collection,query, where, getDocs, setDoc,doc} from 'firebase/firestore';
 import { Link,useNavigate } from "react-router-dom";
 import { Home } from './components/Home';
@@ -24,12 +25,12 @@ function App() {
         email: result.user.email,
         displayName: result.user.displayName.toUpperCase(),
         photoURL: result.user.photoURL,
-      
+        lastactive: Timestamp.fromDate(date),
         date
       };
       setuser(userData);
       
-      console.log('user set to local stirage form app:', userData);
+     
       console.log(userData); // Set the correct user object
       
       navigate('/Home');

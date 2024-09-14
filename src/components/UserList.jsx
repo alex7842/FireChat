@@ -11,7 +11,8 @@ export const UserList = () => {
 
   const { user } = useContext(UserContext);
   const {users,setUsers}=useContext(GroupContext)
- 
+  console.log("user lastactive",user.lastactive)
+
   const { createPersonalChat } = useChat();
   
   const inp=useRef();
@@ -76,7 +77,7 @@ export const UserList = () => {
       setUsers([]);
     }
   };
-
+ 
   return (
     <div>
       <br></br>
@@ -98,12 +99,40 @@ export const UserList = () => {
           <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}/>
       ) : users.length > 0 ? (
         <ul>
-          {users.map(user1 => (
-            <Flex key={user1.id} gap={7} onClick={()=>handleid(user1.uid,user1.displayName,user1.photoURL,user1.email)}>
-              <img className='userimg' src={user1.photoURL}  alt={user1.displayName} />
-              <p>{user1.displayName.charAt(0).toUpperCase()+user1.displayName.slice(1)}</p>
-            </Flex>
-          ))}
+{users.map(user1 => {
+  const isActive = user.lastactive && 
+    (new Date().getTime() - user.lastactive.toDate().getTime()) < 300000; // 5 minutes in milliseconds
+  console.log(isActive?"true":"false")
+  return (
+    <Flex key={user1.id} gap={1} align="center" justify="space-between" onClick={() => handleid(user1.uid, user1.displayName, user1.photoURL, user1.email)}>
+      <Flex align="center" gap={7}>
+        <div style={{ position: 'relative' }}>
+          <img className='userimg' src={user1.photoURL} alt={user1.displayName} />
+          {isActive && (
+            <span
+              style={{
+                position: 'absolute',
+                bottom: 2,
+                right: 2,
+                width: '8px',
+                height: '8px',
+                backgroundColor: '#44b700',
+                borderRadius: '50%',
+                boxShadow: '0 0 0 2px #fff',
+              }}
+            />
+          )}
+        </div>
+        <p>{user1.displayName.charAt(0).toUpperCase() + user1.displayName.slice(1)}</p>
+      </Flex>
+      {isActive && (
+        <span style={{ fontSize: '0.8em', color: '#44b700' }}>Active</span>
+      )}
+    </Flex>
+  );
+})}
+
+
         </ul>
       ) : (
         <p></p>

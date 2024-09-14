@@ -176,7 +176,7 @@ const handlesubmit = async (s) => {
   
     if (group==='allowchat'){
       await addDoc(messageref, {
-        text ,
+        text:ur ,
         email: email,
         logo: photoURL,
         name: displayName,
@@ -193,7 +193,7 @@ const handlesubmit = async (s) => {
     
       
       await addDoc(groupChatsRef, {
-        text,
+        text:ur,
         email: email,
         logo: photoURL,
         name: displayName,
