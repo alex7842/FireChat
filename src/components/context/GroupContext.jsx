@@ -8,17 +8,19 @@ const GroupContext = createContext();
 export const GroupProvider = ({ children }) => {
   const [group, setgroup] = useState('message');
   const {user}=useContext(UserContext);
+ 
   const [users, setUsers] = useState([]);
   const [isgroup,setisgroup]=useState(false);
   const [groupid,setgroupid]=useState("")
   const [groupname,setgroupname]=useState("")
   const [grouplogo,setgrouplogo]=useState("")
+  const[test,settest]=useState(0);
   const [groupdescription,setgroupdescription]=useState("")
   const [admin,setadmin]=useState("")
   const [isopen,setisopen]=useState(false)
  const [draw,setdraw]=useState(false)
   return (
-    <GroupContext.Provider value={{ group,setgroup,users,setUsers,setisgroup,isgroup,groupid,setgroupid,setgroupname,setgrouplogo,setadmin,setgroupdescription,groupname,grouplogo,groupdescription,admin,setisopen,setdraw,draw }}>
+    <GroupContext.Provider value={{ group,setgroup,users,setUsers,setisgroup,isgroup,groupid,setgroupid,setgroupname,setgrouplogo,setadmin,setgroupdescription,groupname,grouplogo,groupdescription,admin,setisopen,setdraw,draw,test,settest}}>
       {children}
     </GroupContext.Provider>
   );

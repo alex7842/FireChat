@@ -23,8 +23,7 @@ export const UserProvider = ({ children }) => {
           const userData = docSnap.data();
           const updatedUser = { ...userData };
           setuser('');
-          updatedUser.lastactive=Timestamp.fromDate(date);
-          console.log("from usercontext",updatedUser.photoURL);
+        
           setuser(updatedUser);
           localStorage.setItem('user', JSON.stringify(updatedUser));
           console.log('User data fetched and saved to localStorage:', updatedUser);

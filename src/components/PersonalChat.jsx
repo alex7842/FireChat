@@ -10,7 +10,7 @@ import { Message } from './Message';
 import emailjs from '@emailjs/browser';
 
 import EmojiPicker from 'emoji-picker-react';
-import { QuerySnapshot, addDoc, collection, onSnapshot,doc } from 'firebase/firestore';
+import { QuerySnapshot, addDoc, collection, onSnapshot,doc,updateDoc,getDocs } from 'firebase/firestore';
 import {db} from '../config/firebase'
 import UserContext from './context/context';
 import  { useChat } from './context/ChatContext';
@@ -24,13 +24,14 @@ import { ShowGroup } from './ShowGroup';
 export const PersonalChat= () => {
     const { user } = useContext(UserContext);
     const [load,setload]=useState(false)
+    const [allUsers, setAllUsers] = useState([]);
     const {personalChats,cname,cimg,cemail}=useChat()
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [messages,setmessages]=useState([]);
   const {email,photoURL,displayName,}=user
-  const [text ,settext]=useState('');
+  const [text,settext]=useState('');
   const [del,setdel]=useState(false);
-  const {group,users,setisgroup,groupid,groupname,grouplogo,groupdescription,setdraw,draw}=useContext(GroupContext)
+  const {group,users,setisgroup,groupid,groupname,grouplogo,groupdescription,setdraw,draw,settest,test}=useContext(GroupContext)
   const messageref=collection(db,"messages")
   const [messageApi, contextHolder] = message.useMessage();
   const usergroup = collection(db,"Groupusers");
@@ -68,6 +69,7 @@ const formItemLayout = {
     },
   },
 };
+
 useEffect(() => {
   let unsub;
 
@@ -119,8 +121,34 @@ useEffect(() => {
     }
   };
 }, [chats,group,groupid]);
+useEffect(() => {
+  const up = async () => {
+    if (user && user.uid) {
+      const userRef = doc(db, 'users', user.uid);
+      console.log("typing update");
+      try {
+        await updateDoc(userRef, {
+          typing: text.trim().length > 0
+        });
+     
+        // Fetch all users
+        const usersCollection = collection(db, 'users');
+        const usersSnapshot = await getDocs(usersCollection);
+        const usersData = usersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setAllUsers(usersData);
+        // console.log('All users fetched and stored in state',allUsers);
+      } catch (error) {
+        console.error('Error updating typing or fetching users:', error);
+      }
+    }
+  };
 
-
+  up();
+  settest(test+1);
+}, [text, user]);
 const sendEmail = (e) => {
   console.log(cemail)
   const emailData = {
@@ -551,15 +579,30 @@ console.log("Error",e)
           { group !== 'allowchat' && group!=='group'?
            <Flex  id='new'align="center" style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }} onClick={showprofile}  gap={4}>
            <img src={cimg}  style={{ borderRadius: '50%', width: '5%', height: '5%' }} alt="Chat Avatar" />
+           <Flex vertical>
            <Typography.Text style={{ fontSize: 34 }}>{cname}</Typography.Text>
-          
+           {allUsers.map((i) => 
+    i.typing && i.uid!=user.uid  && (
+      <p key={user.uid}>Typing...</p>
+    )
+  )}
+  
+          </Flex>
          </Flex>:group==='group'?
 
          <Flex  onClick={calldrawer} align="center" justify='space-between' style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }} gap={4}>
           <Flex align='center' >
           <img   src={grouplogo} style={{ borderRadius: '50%', width: '5%', height: '5%' }} alt="Chat Avatar" />
        
+           <Flex vertical>
           <Typography.Text style={{ fontSize: 34 }}>{groupname}</Typography.Text>
+          
+          {allUsers.map((i) => 
+    i.typing && i.uid!=user.uid  && (
+      <p key={user.uid}>{i.displayName} is Typing...</p>
+    )
+  )}
+          </Flex>
            </Flex>
            <Button>Leave Group</Button>
            {contextHolder}
@@ -569,11 +612,20 @@ console.log("Error",e)
           <Flex align='center' justify='center'>
           
          <Group/>
-          <Typography.Text style={{ fontSize: 28 }}>Community Chat</Typography.Text>
+         <Flex vertical>
+           <Typography.Text style={{ fontSize: 28 }}>Community Chat</Typography.Text>
+           {allUsers.map((i) => 
+    i.typing && i.uid!=user.uid  && (
+      <p key={user.uid}>{i.displayName} is Typing...</p>
+    )
+  )}
+          </Flex>
+         
            </Flex>
            {contextHolder}
            <Flex><Button onClick={Creategroup}>Create Group</Button></Flex>
          </Flex>
+        
 }
    
         <div className="child">
@@ -611,7 +663,7 @@ console.log("Error",e)
   
           <div id="child1" className="child1">
             <Input.Search
-              placeholder="input search text"
+              placeholder="Type here"
               enterButton="Send"
               style={{ border: '1px solid black' }}
               size="large"

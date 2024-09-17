@@ -30,7 +30,7 @@ const ProfilePage = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(user.photoURL);
  
-  const [inputValue, setInputValue] = useState(user.displayName);
+  const [inputValue, setInputValue] = useState(user.username);
   const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(3);
   const MOCK_DATA = {
     '@': [

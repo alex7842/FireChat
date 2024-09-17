@@ -10,9 +10,8 @@ import GroupContext from './context/GroupContext';
 export const UserList = () => {
 
   const { user } = useContext(UserContext);
-  const {users,setUsers}=useContext(GroupContext)
-  console.log("user lastactive",user.lastactive)
-
+  const {users,setUsers,text}=useContext(GroupContext)
+ 
   const { createPersonalChat } = useChat();
   
   const inp=useRef();
@@ -48,7 +47,7 @@ export const UserList = () => {
   useEffect(() => {
 
     fetchUsers();
-  }, []);
+  }, [text]);
 
   useEffect(() => {
     if(!users.length){
@@ -77,7 +76,24 @@ export const UserList = () => {
       setUsers([]);
     }
   };
- 
+  const isActive = (user1) => {
+    if (!user1.lastactive) return false;
+    
+    const now = new Date();
+    const lastActiveDate = user1.lastactive.toDate();
+    
+    // Check if last active was today
+    const isToday = lastActiveDate.toDateString() === now.toDateString();
+    
+    // Check if last active was within the last 2 minutes
+    const twoMinutesAgo = now.getTime() - 200000;
+    
+    const isWithinTwoMinutes = lastActiveDate.getTime() > twoMinutesAgo;
+  
+    // User is active if they were active today AND within the last 2 minutes
+    return isToday && isWithinTwoMinutes;
+  };
+  
   return (
     <div>
       <br></br>
@@ -100,15 +116,14 @@ export const UserList = () => {
       ) : users.length > 0 ? (
         <ul>
 {users.map(user1 => {
-  const isActive = user.lastactive && 
-    (new Date().getTime() - user.lastactive.toDate().getTime()) < 300000; // 5 minutes in milliseconds
-
+  const userIsActive = isActive(user1);
+  
   return (
     <Flex key={user1.id} gap={1} align="center" justify="space-between" onClick={() => handleid(user1.uid, user1.displayName, user1.photoURL, user1.email)}>
       <Flex align="center" gap={7}>
         <div style={{ position: 'relative' }}>
-          <Image className='userimg' src={user1.photoURL} alt={user1.displayName} />
-          {isActive && (
+          <img className='userimg' src={user1.photoURL} alt={user1.displayName} />
+          {userIsActive && (
             <span
               style={{
                 position: 'absolute',
@@ -125,7 +140,7 @@ export const UserList = () => {
         </div>
         <p>{user1.displayName.charAt(0).toUpperCase() + user1.displayName.slice(1)}</p>
       </Flex>
-      {isActive && (
+      {userIsActive && (
         <span style={{ fontSize: '0.8em', color: '#44b700' }}>Active</span>
       )}
     </Flex>

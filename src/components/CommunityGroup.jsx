@@ -20,7 +20,7 @@ export const CommunityGroup = () => {
         .map(doc => ({ id: doc.id, ...doc.data() }))
       
     setgrpmessage(usersList);
-    console.log(grpmessage)
+    console.log("grpeasge",grpmessage)
     } catch (error) {
       console.error("Error fetching users: ", error);
     }
