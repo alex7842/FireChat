@@ -319,7 +319,7 @@ const handleEmojiClick = (emojiData, event) => {
       }
     }
   };
-  //handle file change
+  
   const handleFileChange = (info) => {
     const file = info.file.originFileObj;
     if (file) {
