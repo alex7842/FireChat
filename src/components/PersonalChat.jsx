@@ -532,7 +532,7 @@ console.log("Error",e)
   };
   const handleChange = (e) => {
     settext(e.target.value);
-    // Trigger suggestion fetch here
+  
   };
 
   const handleSearch = (value) => {
