@@ -15,7 +15,7 @@ import {db} from '../config/firebase'
 import UserContext from './context/context';
 import  { useChat } from './context/ChatContext';
 import { WelcomeTemplate } from './WelcomeTemplate';
-
+import { ImagePlay,SmilePlus } from 'lucide-react';
 import GroupContext  from './context/GroupContext';
 import { Group } from './Group';
 import { Profilecard } from './Profilecard';
@@ -358,7 +358,7 @@ const handleEmojiClick = (emojiData, event) => {
 
 const suffix = (
     <>
-    <FileImageOutlined onClick={showModal2} style={{fontSize: 18, color: '#1677ff'}} />
+    <ImagePlay onClick={showModal2} style={{fontSize: 18, color: '#1677ff',cursor:"pointer"}} />
     <Modal
   title="Select and Send Image"
   open={isModalVisible}
@@ -408,10 +408,11 @@ const suffix = (
       open={popoverVisible}
       onOpenChange={handlePopoverOpen}
     > 
-      <SmileOutlined
+      <SmilePlus 
           style={{
             fontSize: 18,
             color: '#1677ff',
+            cursor:"pointer"
           }}
         />
     </Popover>
@@ -496,40 +497,7 @@ console.log("Error",e)
       form.resetFields();
     };
 
-    const send = async () => {
-      console.log('Send function called');
-    
-
-      const options = {
-          method: 'POST',
-          headers: {
-              'Authorization': 'Bearer yxVDsSDoTt96h0xNCo3OYY9Cga7CGYRaMaF5rOE7BoxEu3Pk',
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-              model: "accounts/fireworks/models/llama-v3p1-405b-instruct",
-              prompt:text + " [COMPLETE WITH 2-3 WORDS]",
-              max_tokens: 5,
-              temperature: 0.5,
-              top_p: 1,
-              top_k: 50,
-              frequency_penalty: 0,
-              presence_penalty: 0,
-              stream: false
-          })
-      };
-
-      try {
-          const response = await fetch('https://api.fireworks.ai/inference/v1/completions', options);
-          const data = await response.json();
-          const suggestion = data.choices[0].text.trim();
-          console.log(data);
-          settext((prevText) => prevText + data.choices[0].text);
-      } catch (err) {
-          console.error(err);
-         
-      }
-  };
+  
   const handleChange = (e) => {
     settext(e.target.value);
   
