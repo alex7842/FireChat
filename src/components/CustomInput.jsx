@@ -38,4 +38,3 @@ export const CustomInput = ({ value, onChange, onSearch, suggestion, onKeyDown,s
     </div>
   );
 }
-//custom input
