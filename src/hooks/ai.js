@@ -52,3 +52,4 @@ const ai = () => {
 };
 
 export default ai;
+//adding new ai model 
