@@ -5,7 +5,7 @@ const ai = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchSuggestions = async (query) => {
+  const fetchSuggestions = async (query,temp,maxtokens) => {
     setLoading(true);
     setError(null);
     try {
@@ -16,16 +16,16 @@ const ai = () => {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          model: "accounts/fireworks/models/llama-v3p1-8b-instruct",
+          model: "accounts/fireworks/models/llama-v3p1-405b-instruct",
           prompt: query,
-          max_tokens: 100,
-          temperature: 1,
+          max_tokens: maxtokens,
+          temperature: temp,
           top_p: 1,
           top_k: 50,
           frequency_penalty: 0,
           presence_penalty: 0,
           n: 1,
-          stop: null,
+          stop:["\n"],
           stream: false,
           context_length_exceeded_behavior: "truncate",
         })
@@ -48,7 +48,7 @@ const ai = () => {
     }
   };
 
-  return { suggestions, loading, error, fetchSuggestions };
+  return { suggestions, loading, error, fetchSuggestions,setSuggestions };
 };
 
 export default ai;

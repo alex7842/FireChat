@@ -5,7 +5,7 @@ import { Button, Popover,Modal,Form,Input,Select,message,Upload,Progress,Image,E
 
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 
-
+import { CustomInput } from './CustomInput';
 import { Message } from './Message';
 import emailjs from '@emailjs/browser';
 
@@ -21,6 +21,7 @@ import { Group } from './Group';
 import { Profilecard } from './Profilecard';
 import GroupDetails from './GroupDetails';
 import { ShowGroup } from './ShowGroup';
+import ai from '../hooks/ai';
 export const PersonalChat= () => {
     const { user } = useContext(UserContext);
     const [load,setload]=useState(false)
@@ -41,6 +42,7 @@ const [selectedFile, setSelectedFile] = useState(null);
 const [imagePreview, setImagePreview] = useState(null);
 const[load1,setload1]=useState(false);
 
+const { suggestions, loading, error, fetchSuggestions,setSuggestions } = ai();
  const chats = useMemo(() => {
   if (personalChats) {
     setload(true)
@@ -122,6 +124,18 @@ useEffect(() => {
   };
 }, [chats,group,groupid]);
 useEffect(() => {
+  const auto=()=>{
+    const timer = setTimeout(() => {
+      if (text) {
+        fetchSuggestions(`Complete the following text with 4-5 additional words:
+"${text}"
+Completion:`,0.5,10);
+      } else {
+        setSuggestions('');
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }
   const up = async () => {
     if (user && user.uid) {
       const userRef = doc(db, 'users', user.uid);
@@ -145,10 +159,20 @@ useEffect(() => {
       }
     }
   };
-
+ 
+  auto();
   up();
   settest(test+1);
-}, [text, user]);
+}, [text]);
+const handleKeyDown = (e) => {
+  if (e.key === 'Tab' && suggestions) {
+    e.preventDefault();
+    const suggestionsString = suggestions.join(' ').replace(/"/g, '');
+    const newWords = suggestionsString.slice(text.length).trim();
+    settext(text + newWords);
+    setSuggestions('');
+  }
+};
 const sendEmail = (e) => {
   console.log(cemail)
   const emailData = {
@@ -302,7 +326,7 @@ const handleEmojiClick = (emojiData, event) => {
         // Upload file
         const snapshot = await uploadBytes(storageRef, selectedFile);
         
-        // Get download URL
+       
         const url = await getDownloadURL(snapshot.ref);
         
         // Set the URL in state
@@ -471,6 +495,50 @@ console.log("Error",e)
       
       form.resetFields();
     };
+
+    const send = async () => {
+      console.log('Send function called');
+    
+
+      const options = {
+          method: 'POST',
+          headers: {
+              'Authorization': 'Bearer yxVDsSDoTt96h0xNCo3OYY9Cga7CGYRaMaF5rOE7BoxEu3Pk',
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+              model: "accounts/fireworks/models/llama-v3p1-405b-instruct",
+              prompt:text + " [COMPLETE WITH 2-3 WORDS]",
+              max_tokens: 5,
+              temperature: 0.5,
+              top_p: 1,
+              top_k: 50,
+              frequency_penalty: 0,
+              presence_penalty: 0,
+              stream: false
+          })
+      };
+
+      try {
+          const response = await fetch('https://api.fireworks.ai/inference/v1/completions', options);
+          const data = await response.json();
+          const suggestion = data.choices[0].text.trim();
+          console.log(data);
+          settext((prevText) => prevText + data.choices[0].text);
+      } catch (err) {
+          console.error(err);
+         
+      }
+  };
+  const handleChange = (e) => {
+    settext(e.target.value);
+    // Trigger suggestion fetch here
+  };
+
+  const handleSearch = (value) => {
+    settext('');
+    handlesubmit("");
+  };
    return (
     <div style={{ border: 'none' }}>
       {(group !== 'allowchat' && !personalChats && group!=='group' ) && <WelcomeTemplate />}
@@ -662,8 +730,7 @@ console.log("Error",e)
            
           </div>
   
-          <div id="child1" className="child1">
-            <Input.Search
+            {/* <Input.Search
               placeholder="Type here"
               enterButton="Send"
               style={{ border: '1px solid black' }}
@@ -671,11 +738,22 @@ console.log("Error",e)
               suffix={suffix}
               value={text}
               onChange={(e) => settext(e.target.value)}
+              onKeyDown={handleKeyDown}
+              addonAfter={text}
               onSearch={(value) => {
                 settext('');
                 handlesubmit("");
               }}
-            />
+            /> */}
+          <div id="child1" className="child1" >
+             <CustomInput
+      value={text}
+      suffix={suffix}
+      onChange={handleChange}
+      onSearch={handleSearch}
+      suggestion={suggestions}
+      onKeyDown={handleKeyDown}
+    />
           </div>
         </div>
     </div>

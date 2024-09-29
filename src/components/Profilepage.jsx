@@ -74,9 +74,10 @@ const ProfilePage = () => {
     };
     fetchUserData();
    fetchSuggestions(`Generate 20 unique and creative username suggestions for the display name "${user.displayName}". The usernames should follow Instagram-style formats, using underscores, numbers, or slight modifications of the display name. Only return the list of usernames—no additional information, steps, or explanations.
-`);
+`,1,90);
 
   }, [user.uid]);
+  
   console.log(suggestions)
 
   const handleSave = async () => {
@@ -145,11 +146,16 @@ const ProfilePage = () => {
     setInputValue(e.target.value);
   };
   const cycleNextSuggestion = () => {
-    setCurrentSuggestionIndex((prevIndex) => (prevIndex + 1) % suggestions.length);
-    setInputValue(suggestions[currentSuggestionIndex].replace(/^\s*\d*\.\s*/, ''));
+    if (suggestions && suggestions.length > 0) {
+      const nextIndex = (currentSuggestionIndex + 1) % suggestions.length;
+      const nextSuggestion = suggestions[nextIndex];
+      
+      setCurrentSuggestionIndex(nextIndex);
+      setInputValue(nextSuggestion.replace(/^\s*\d*\.\s*/, ""));
 
-  
+    }
   };
+  
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
       <SideBar />

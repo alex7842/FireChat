@@ -54,22 +54,23 @@ function App() {
     <div>
       {user? (
         <>
-          <div>Hello please login to your google account</div>
-          <div className='p-5 text-center'>
-            <div>
+        <Home/>
+           {/* <div>Hello please login to your google account</div>
+        <div className='p-5 text-center'>
+             <div> */}
               {/* <img 
-                src="https://cdn.pixabay.com/photo/2023/08/21/03/34/droplets-8203505_1280.jpg" 
-                alt="logo" 
-                width={400} 
-                height={400} 
-                className='pr-2' 
-                style={{borderRadius: 200}}
-              /> */}
-            </div>
-            <div className='btn btn-primary' style={{marginTop: "50px"}} onClick={signin}>
-              Login
-            </div>
-          </div>
+          //       src="https://cdn.pixabay.com/photo/2023/08/21/03/34/droplets-8203505_1280.jpg" 
+          //       alt="logo" 
+          //       width={400} 
+          //       height={400} 
+          //       className='pr-2' 
+          //       style={{borderRadius: 200}}
+          //     /> */}
+            {/* </div>
+           <div className='btn btn-primary' style={{marginTop: "50px"}} onClick={signin}>
+           Login
+         </div>
+           </div> */}
         </>
       ) :  <>
       <div>Hello is this your first time here sign up</div>
