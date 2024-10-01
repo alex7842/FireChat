@@ -15,6 +15,7 @@ const { suggestions, loading, error, fetchSuggestions,setSuggestions,streamRephr
    },[text])
 
    const rephrase=()=>{
+    //ai acalling
    streamRephrase(`Repharse this words in more meaningful\n ${text}`,0.5,6);
    console.log(suggestions)
    }
