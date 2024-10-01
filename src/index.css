@@ -197,3 +197,20 @@
   transform: translateY(-50%);
   cursor: pointer;
 }
+
+.floating-button {
+  background-color: #1677ff;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 16px;
+  margin: 5px;
+  cursor: pointer;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}

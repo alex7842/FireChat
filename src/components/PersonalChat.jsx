@@ -15,13 +15,14 @@ import {db} from '../config/firebase'
 import UserContext from './context/context';
 import  { useChat } from './context/ChatContext';
 import { WelcomeTemplate } from './WelcomeTemplate';
-import { ImagePlay,SmilePlus } from 'lucide-react';
+import { ImagePlay,SmilePlus,WandSparkles } from 'lucide-react';
 import GroupContext  from './context/GroupContext';
 import { Group } from './Group';
 import { Profilecard } from './Profilecard';
 import GroupDetails from './GroupDetails';
 import { ShowGroup } from './ShowGroup';
 import ai from '../hooks/ai';
+import { Ai } from './Ai';
 export const PersonalChat= () => {
     const { user } = useContext(UserContext);
     const [load,setload]=useState(false)
@@ -46,7 +47,8 @@ const { suggestions, loading, error, fetchSuggestions,setSuggestions } = ai();
  const chats = useMemo(() => {
   if (personalChats) {
     setload(true)
-    const userDocRef = doc(db, "chatusers", personalChats);
+  
+    const userDocRef = doc(db, "chatusers",personalChats );
     const chatRoomSubColRef = collection(userDocRef, "chatroom");
    
     return chatRoomSubColRef;
@@ -126,13 +128,13 @@ useEffect(() => {
 useEffect(() => {
   const auto=()=>{
     const timer = setTimeout(() => {
-      if (text) {
-        fetchSuggestions(`Complete the following text with 4-5 additional words:
-"${text}"
-Completion:`,0.5,10);
-      } else {
-        setSuggestions('');
-      }
+//       if (text) {
+//       fetchSuggestions(`Complete the following text with 4-5 additional words:
+// "${text}"
+// Completion:`,0.5,10);
+//       } else {
+//         setSuggestions('');
+//       }
     }, 300);
     return () => clearTimeout(timer);
   }
@@ -354,10 +356,11 @@ const handleEmojiClick = (emojiData, event) => {
       setImagePreview(imageUrl);
     }
   };
-
-
+ 
 const suffix = (
     <>
+    <Ai text={text}/>
+    
     <ImagePlay onClick={showModal2} style={{fontSize: 18, color: '#1677ff',cursor:"pointer"}} />
     <Modal
   title="Select and Send Image"
