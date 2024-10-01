@@ -13,9 +13,9 @@ const { suggestions, loading, error, fetchSuggestions,setSuggestions,streamRephr
    useEffect(()=>{
    setInputText(text)
    },[text])
-
+//ai
    const rephrase=()=>{
-    //ai acalling
+ 
    streamRephrase(`Repharse this words in more meaningful\n ${text}`,0.5,6);
    console.log(suggestions)
    }
