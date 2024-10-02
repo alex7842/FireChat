@@ -11,7 +11,7 @@ export const Message = ({msglen,id1,text,logo,email,day,time,date,handleReply,na
   const {UserId}=useChat()
   // console.log(text)
   const {group}=useContext(GroupContext)
-  
+  //messgae fir git
 
  
   
