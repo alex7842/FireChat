@@ -22,7 +22,7 @@ export const ChatProvider = ({ children }) => {
     if (cimg) localStorage.setItem('cimg', cimg);
     if (page) localStorage.setItem('page', page);
     if (cemail) localStorage.setItem('cemail', cemail);
-  }, [personalChats, cname, UserId, cimg, page, cemail]);
+  }, [personalChats]);
 
   const createPersonalChat = async (joinedid, name, img, email) => {
     const userId = joinedid.split("").sort().join("");

@@ -361,7 +361,7 @@ const handleEmojiClick = (emojiData, event) => {
  
 const suffix = (
     <>
-    <Ai text={text}/>
+    <Ai text={text} settext={settext} />
     
     <ImagePlay onClick={showModal2} style={{fontSize: 18, color: '#1677ff',cursor:"pointer"}} />
     <Modal

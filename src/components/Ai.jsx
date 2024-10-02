@@ -4,9 +4,12 @@ import { WandSparkles } from 'lucide-react'
 import { SendOutlined } from "@ant-design/icons"
 import ai from '../hooks/ai'
 
-export const Ai = ({ text }) => {
+export const Ai = ({ text ,settext}) => {
   const [inputText, setInputText] = useState(text);
-  const [isWriting, setIsWriting] = useState(false);
+
+  const [rephraseLoading, setRephraseLoading] = useState(false);
+const [grammarLoading, setGrammarLoading] = useState(false);
+
   const { suggestions, loading, error, fetchSuggestions, setSuggestions} = ai();
 
   useEffect(() => {
@@ -25,17 +28,21 @@ export const Ai = ({ text }) => {
 
   const rephrase = () => {
     setSuggestions([]);
+    setRephraseLoading(true);
    // setIsWriting(true);
-    fetchSuggestions(`Rephrase the following text. Provide only the rephrased output without any additional comments or text:\n\n${inputText}`, 0.6, 40,"llama-v3p1-405b-instruct","chat");
+    fetchSuggestions(`Rephrase the following text. Provide only the rephrased output without any additional comments or text:\n\n${inputText}`, 0.6, 40,"llama-v3p1-405b-instruct","chat")
+    .finally(() => setRephraseLoading(false));
+  
  
   }
   
 
   const grammer = () => {
     setSuggestions([]);
-    setIsWriting(true);
-    fetchSuggestions(`Correct any grammar mistakes in the following text. Provide only the corrected version without any additional comments or explanations:\n\n${inputText}`, 0.6, 40, "llama-v3p1-405b-instruct", "chat");
-    setIsWriting(false);
+    setGrammarLoading(true);
+    fetchSuggestions(`Correct any grammar mistakes in the following text. Provide only the corrected version without any additional comments or explanations:\n\n${inputText}`, 0.6, 40, "llama-v3p1-405b-instruct", "chat")
+    .finally(() => setGrammarLoading(false));
+   
   }
   
 //loading error
@@ -51,11 +58,17 @@ export const Ai = ({ text }) => {
           style={{ marginTop: 10, marginBottom: 10 }}
         />
         <Space>
-          <Button type="primary" icon={<SendOutlined />}>
+          <Button onClick={() => settext(String(inputText))}
+          type="primary" icon={<SendOutlined />}>
             Insert
           </Button>
-          <Button onClick={rephrase} >{loading?"Analyzing...":"Rephrase"}</Button>
-          <Button onClick={grammer} >{loading?"Analyzing...":"Grammer"}</Button>
+          <Button onClick={rephrase} disabled={rephraseLoading || grammarLoading}>
+  {rephraseLoading ? "Analyzing..." : "Rephrase"}
+</Button>
+<Button onClick={grammer} disabled={rephraseLoading || grammarLoading}>
+  {grammarLoading ? "Analyzing..." : "Grammar"}
+</Button>
+
         </Space>
       </div>
     );

@@ -23,6 +23,8 @@ export const SideBar = () => {
         break;
         case 2:
          navigate('/Home')
+         localStorage.removeItem("chatrommid")
+         localStorage.removeItem("personalChats")
          break
         case 3:
          navigate('/ProfilePage')
