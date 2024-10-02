@@ -73,8 +73,7 @@ const ProfilePage = () => {
       }
     };
     fetchUserData();
-   fetchSuggestions(`Generate 20 unique and creative username suggestions for the display name "${user.displayName}". The usernames should follow Instagram-style formats, using underscores, numbers, or slight modifications of the display name. Only return the list of usernames—no additional information, steps, or explanations.
-`,1,90);
+   fetchSuggestions(`Generate 15 unique and creative username suggestions for the display name ${user.displayName}. The usernames should follow Instagram-style formats, using underscores, numbers, or slight modifications of the display name. Return each username on a new line without any additional information apart from usernames strictly`,0.1,16384,"llama-v3p1-405b-instruct","completion");
 
   }, [user.uid]);
   
@@ -146,9 +145,10 @@ const ProfilePage = () => {
     setInputValue(e.target.value);
   };
   const cycleNextSuggestion = () => {
-    if (suggestions && suggestions.length > 0) {
-      const nextIndex = (currentSuggestionIndex + 1) % suggestions.length;
-      const nextSuggestion = suggestions[nextIndex];
+    const sd=suggestions.slice(1,suggestions.length-2)
+    if (sd && sd.length > 0) {
+      const nextIndex = (currentSuggestionIndex + 1) % sd.length;
+      const nextSuggestion = sd[nextIndex];
       
       setCurrentSuggestionIndex(nextIndex);
       setInputValue(nextSuggestion.replace(/^\s*\d*\.\s*/, ""));

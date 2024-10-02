@@ -131,7 +131,7 @@ useEffect(() => {
 //       if (text) {
 //       fetchSuggestions(`Complete the following text with 4-5 additional words:
 // "${text}"
-// Completion:`,0.5,10);
+// Completion:`,0.5,10,"llama-v3p1-405b-instruct","completion");
 //       } else {
 //         setSuggestions('');
 //       }
@@ -167,14 +167,16 @@ useEffect(() => {
   settest(test+1);
 }, [text]);
 const handleKeyDown = (e) => {
-  if (e.key === 'Tab' && suggestions) {
+  if (e.key === 'Tab' && suggestions.length > 0) {
     e.preventDefault();
-    const suggestionsString = suggestions.join(' ').replace(/"/g, '');
+    const suggestionsString = suggestions[0].replace(/"/g, "");
+
     const newWords = suggestionsString.slice(text.length).trim();
     settext(text + newWords);
-    setSuggestions('');
+    setSuggestions([]);
   }
 };
+
 const sendEmail = (e) => {
   console.log(cemail)
   const emailData = {
