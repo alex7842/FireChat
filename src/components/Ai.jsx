@@ -38,7 +38,7 @@ export const Ai = ({ text }) => {
     setIsWriting(false);
   }
   
-
+//loading error
   const content = () => {
     return (
       <div style={{ width: 300 }}>
