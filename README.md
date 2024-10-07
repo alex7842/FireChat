@@ -30,6 +30,5 @@ FirChat AI uses the OpenAI API to deliver AI-powered chat assistance. The API in
 - **Chat Summarization**: Condensed summaries of long conversations for easy understanding.
 - **Emotion Detection**: AI identifies the emotional tone of messages to offer suitable responses.
 
-> **Note:** Make sure to set up your OpenAI API key in the environment configuration.
 
 For any questions or support, please contact [alex1958229@example.com].
