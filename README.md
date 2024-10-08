@@ -2,6 +2,7 @@
 # **FirChat AI**
 
 FirChat AI is a powerful real-time chat application that allows users to connect with their friends and communities through group chat, personal chat, and community chat. Integrated with AI, FirChat enhances the user experience by providing smart recommendations, chat assistance, and more. Built with React and Firebase, it is designed to be fast, scalable, and secure.
+video call coming soon
 
 ## **Features**
 
