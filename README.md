@@ -19,7 +19,7 @@ FirChat AI is a powerful real-time chat application that allows users to connect
 ## **Tech Stack**
 
 - **Frontend:** React.js, AntDesign,Tailwind Css
-- **Backend:** Firebase Realtime Database, Firebase Authentication
+- **Backend:** Firebase Realtime Database, Firebase Authentication ,ZegoCloud
 - **AI Integration:** OpenAI API for AI-powered features
 - **Hosting:** Firebase Hosting
 
