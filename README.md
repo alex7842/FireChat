@@ -14,7 +14,7 @@ FirChat AI is a powerful real-time chat application that allows users to connect
 - **Secure Authentication:** User authentication using Firebase Authentication to ensure privacy and security.
 - **Media Sharing:** Share images, videos, and files within your chats seamlessly.
 - **Responsive Design:** Optimized for both mobile and desktop use.
-- **Firebase Integration:** Real-time database for fast message updates and secure file storage.
+
 
 ## **Tech Stack**
 
