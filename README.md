@@ -9,6 +9,7 @@ FirChat AI is a powerful real-time chat application that allows users to connect
 - **Personal Chat:** Engage in one-on-one conversations with your friends privately.
 - **Group Chat:** Create or join groups and stay connected with multiple friends simultaneously.
 - **Community Chat:** Join and participate in community chats based on interests, topics, or regions.
+- **Video Call:** - Make video call with your friends and families
 - **AI Assistance:** Get smart suggestions, automatic replies, and personalized chat recommendations through AI.
 - **Real-Time Messaging:** Instant messaging with real-time updates and notifications.
 - **Secure Authentication:** User authentication using Firebase Authentication to ensure privacy and security.
