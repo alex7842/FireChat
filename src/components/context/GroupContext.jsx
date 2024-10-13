@@ -15,12 +15,13 @@ export const GroupProvider = ({ children }) => {
   const [groupname,setgroupname]=useState("")
   const [grouplogo,setgrouplogo]=useState("")
   const[test,settest]=useState(0);
+  const [videocall,setvideocall]=useState(false);
   const [groupdescription,setgroupdescription]=useState("")
   const [admin,setadmin]=useState("")
   const [isopen,setisopen]=useState(false)
  const [draw,setdraw]=useState(false)
   return (
-    <GroupContext.Provider value={{ group,setgroup,users,setUsers,setisgroup,isgroup,groupid,setgroupid,setgroupname,setgrouplogo,setadmin,setgroupdescription,groupname,grouplogo,groupdescription,admin,setisopen,setdraw,draw,test,settest}}>
+    <GroupContext.Provider value={{ group,setgroup,users,setUsers,setisgroup,isgroup,groupid,setgroupid,setgroupname,setgrouplogo,setadmin,setgroupdescription,groupname,grouplogo,groupdescription,admin,setisopen,setdraw,draw,test,settest,videocall,setvideocall}}>
       {children}
     </GroupContext.Provider>
   );

@@ -15,7 +15,7 @@ import {db} from '../config/firebase'
 import UserContext from './context/context';
 import  { useChat } from './context/ChatContext';
 import { WelcomeTemplate } from './WelcomeTemplate';
-import { ImagePlay,SmilePlus,WandSparkles } from 'lucide-react';
+import { ImagePlay,SmilePlus,Video,WandSparkles } from 'lucide-react';
 import GroupContext  from './context/GroupContext';
 import { Group } from './Group';
 import { Profilecard } from './Profilecard';
@@ -23,6 +23,7 @@ import GroupDetails from './GroupDetails';
 import { ShowGroup } from './ShowGroup';
 import ai from '../hooks/ai';
 import { Ai } from './Ai';
+import { Videocall } from './Videocall';
 export const PersonalChat= () => {
     const { user } = useContext(UserContext);
     const [load,setload]=useState(false)
@@ -30,10 +31,11 @@ export const PersonalChat= () => {
     const {personalChats,cname,cimg,cemail}=useChat()
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [messages,setmessages]=useState([]);
+  
   const {email,photoURL,displayName,}=user
   const [text,settext]=useState('');
   const [del,setdel]=useState(false);
-  const {group,users,setisgroup,groupid,groupname,grouplogo,groupdescription,setdraw,draw,settest,test}=useContext(GroupContext)
+  const {group,users,setisgroup,groupid,groupname,grouplogo,groupdescription,setdraw,draw,settest,test,videocall,setvideocall}=useContext(GroupContext)
   const messageref=collection(db,"messages")
   const [messageApi, contextHolder] = message.useMessage();
   const usergroup = collection(db,"Groupusers");
@@ -79,7 +81,6 @@ useEffect(() => {
 
     if(group==='allowchat'){
     
-  
     unsub = onSnapshot(messageref, (QuerySnapshot) => {
       const newMessages = QuerySnapshot.docs.map((doc) => doc.data()).sort((a, b) => a.date - b.date);
       setReplyTo(false)
@@ -512,6 +513,10 @@ console.log("Error",e)
     settext('');
     handlesubmit("");
   };
+  // if(videocall){
+  //   return <Videocall/>
+  // }
+ 
    return (
     <div style={{ border: 'none' }}>
       {(group !== 'allowchat' && !personalChats && group!=='group' ) && <WelcomeTemplate />}
@@ -630,6 +635,7 @@ console.log("Error",e)
   )}
   
           </Flex>
+          <div className="ml-9 " onClick={()=>setvideocall(true)}><Video/>Video Call</div>
          </Flex>:group==='group'?
 
          <Flex  onClick={calldrawer} align="center" justify='space-between' style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }} gap={4}>

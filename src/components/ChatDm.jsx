@@ -22,13 +22,14 @@ import GroupContext from './context/GroupContext';
 // import { Group } from './Group';
 import { CommunityGroup } from './CommunityGroup';
 import { SideBar } from './SideBar';
+import { Videocall } from './Videocall';
 
 const ChatDm = () => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(true);
   const { user,setuser } = useContext(UserContext);
   const [open, setOpen] = useState(false);
-
+  const {videocall} =useContext(GroupContext);
   const [messageApi, contextHolder] = message.useMessage();
   const [activetab,setactivetab]=useState('msg')
   const {setgroup}=useContext(GroupContext)
@@ -98,7 +99,9 @@ const ChatDm = () => {
     }
 
   }
-  
+  if(videocall){
+    return <Videocall/>
+  }
 
 
   // const handleMenuItemClick = (key) => {
