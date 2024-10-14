@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AgoraRTC from 'agora-rtc-sdk-ng';
 import { VideoPlayer } from './VideoPlayer';
+import { Mic, MicOff } from 'lucide-react';
 
 const APP_ID = '0446deea5d93437eae96def92c58c87e';
 const TOKEN =
@@ -43,13 +44,16 @@ const createAgoraClient = ({
       null
     );
 
-    client.on('user-published', (user, mediaType) => {
-      client.subscribe(user, mediaType).then(() => {
-        if (mediaType === 'video') {
-          onVideoTrack(user);
-        }
-      });
+    client.on('user-published', async (user, mediaType) => {
+      await client.subscribe(user, mediaType);
+      if (mediaType === 'video') {
+        onVideoTrack(user);
+      }
+      if (mediaType === 'audio') {
+        user.audioTrack.play();
+      }
     });
+    
 
     client.on('user-left', (user) => {
       onUserDisconnected(user);
@@ -86,11 +90,17 @@ const createAgoraClient = ({
 export const VideoRoom = () => {
   const [users, setUsers] = useState([]);
   const [uid, setUid] = useState(null);
+  const [audioTracks, setAudioTracks] = useState({});
+
 
   useEffect(() => {
     const onVideoTrack = (user) => {
       setUsers((previousUsers) => [...previousUsers, user]);
+      if (user.audioTrack) {
+        setAudioTracks((prev) => ({ ...prev, [user.uid]: user.audioTrack }));
+      }
     };
+    
 
     const onUserDisconnected = (user) => {
       setUsers((previousUsers) =>
@@ -114,13 +124,21 @@ export const VideoRoom = () => {
           videoTrack: tracks[1],
         },
       ]);
+      setAudioTracks((prev) => ({ ...prev, [uid]: tracks[0] }));
     };
+    
 
     const cleanup = async () => {
       await disconnect();
       setUid(null);
       setUsers([]);
+      Object.values(audioTracks).forEach((track) => {
+        track.stop();
+        track.close();
+      });
+      setAudioTracks({});
     };
+    
 
     // setup();
     agoraCommandQueue = agoraCommandQueue.then(setup);
@@ -138,6 +156,8 @@ export const VideoRoom = () => {
         style={{
           display: 'flex',
           justifyContent: 'center',
+          flexDirection: 'column',
+          alignItems: 'center',
         }}
       >
         <div
@@ -150,7 +170,18 @@ export const VideoRoom = () => {
             <VideoPlayer key={user.uid} user={user} />
           ))}
         </div>
+        <div>
+          {Object.entries(audioTracks).map(([uid, track]) => (
+            <div key={uid}>
+              <span>User {uid} Audio: </span>
+              <button onClick={() => track.setEnabled(!track.enabled)}>
+                {track.enabled ? <Mic/>  : <MicOff/>}
+              </button>
+            </div>
+          ))}
+        </div>
       </div>
     </>
   );
+  
 };
