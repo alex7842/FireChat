@@ -1,6 +1,9 @@
-import React from 'react'
-import { Layout,Menu,Divider,Typography, } from 'antd'
+import React,{useContext,useState}from 'react'
+import { Layout,Menu,Divider,Typography,Modal } from 'antd'
 import { useNavigate } from 'react-router-dom';
+import GroupContext from './context/GroupContext';
+import UserContext from './context/context';
+import { auth } from '../config/firebase';
 import {
     HomeOutlined,
     SearchOutlined,
@@ -15,6 +18,10 @@ import {
 
 export const SideBar = () => {
     const { Header, Content, Sider } = Layout;
+    const { user,setuser } = useContext(UserContext);
+    const {setgroup}=useContext(GroupContext)
+    const [open, setOpen] = useState(false);
+
     const navigate=useNavigate()
     const handleclick=(e)=>{
       switch(e){
@@ -29,10 +36,50 @@ export const SideBar = () => {
         case 3:
          navigate('/ProfilePage')
          break
+       
       }
     }
+    const showModal = () => {
+      setOpen(true);
+      console.log("modal")
+    };
+    const handleOk = () => {
+      setOpen(false);
+      signOut()
+    };
+    const handleCancel = () => {
+      setOpen(false);
+    };
+    const signOut = () => {
+      console.log('logging out')
+    
+      auth.signOut().then(() => {
+        setuser(null);
+        setgroup('message')
+        localStorage.removeItem('user');
+        navigate('/')
+        
+      }).catch(error => {
+        console.error("Error during sign-out:", error);
+      });
+    };
   return (
     <>
+      <Modal
+        open={open}
+        title="Are you Sure want to Logout ?"
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={(_, { OkBtn, CancelBtn }) => (
+          <>
+           
+            <CancelBtn />
+            <OkBtn />
+          </>
+        )}
+      >
+     
+      </Modal>
    
     <Sider width={220} className="site-layout-background">
     <Menu
@@ -104,12 +151,12 @@ export const SideBar = () => {
         Profile
       </div>
       <div className='menu-item'
-        key="More"
+        key="Logout" onClick={()=>setOpen(true)}
    
         
       >
-        <MoreOutlined style={{fontSize:'24px'}}/>
-        More
+        <MoreOutlined style={{fontSize:'24px'}} />
+       Logout
       </div>
     </div>
   </Menu>

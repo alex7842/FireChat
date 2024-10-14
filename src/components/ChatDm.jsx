@@ -64,19 +64,19 @@ const ChatDm = () => {
     });
   };
 
-  const signOut = () => {
-    console.log('logging out')
+  // const signOut = () => {
+  //   console.log('logging out')
   
-    auth.signOut().then(() => {
-      setuser(null);
-      setgroup('message')
-      localStorage.removeItem('user');
-      navigate('/')
+  //   auth.signOut().then(() => {
+  //     setuser(null);
+  //     setgroup('message')
+  //     localStorage.removeItem('user');
+  //     navigate('/')
       
-    }).catch(error => {
-      console.error("Error during sign-out:", error);
-    });
-  };
+  //   }).catch(error => {
+  //     console.error("Error during sign-out:", error);
+  //   });
+  // };
   const showModal = () => {
     setOpen(true);
     console.log("modal")
