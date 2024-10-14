@@ -167,19 +167,10 @@ export const VideoRoom = () => {
           }}
         >
           {users.map((user) => (
-            <VideoPlayer key={user.uid} user={user} />
+            <VideoPlayer audiotracks={audioTracks} key={user.uid} user={user} />
           ))}
         </div>
-        <div>
-          {Object.entries(audioTracks).map(([uid, track]) => (
-            <div key={uid}>
-              <span>User {uid} Audio: </span>
-              <button onClick={() => track.setEnabled(!track.enabled)}>
-                {track.enabled ? <Mic/>  : <MicOff/>}
-              </button>
-            </div>
-          ))}
-        </div>
+       
       </div>
     </>
   );

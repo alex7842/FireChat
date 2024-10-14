@@ -26,7 +26,7 @@ export const UserProvider = ({ children }) => {
         
           setuser(updatedUser);
           localStorage.setItem('user', JSON.stringify(updatedUser));
-          console.log('User data fetched and saved to localStorage:', updatedUser);
+          //console.log('User data fetched and saved to localStorage:', updatedUser);
         }
       }
     };
