@@ -94,13 +94,14 @@ export const VideoRoom = () => {
   const toggleAudio = (userId) => {
     setAudioTracks((prev) => {
       const track = prev[userId];
-      if (track) {
+      if (track && typeof track.setEnabled === 'function') {
         track.setEnabled(!track.enabled);
         return { ...prev, [userId]: track };
       }
       return prev;
     });
   };
+  
 
   useEffect(() => {
     const onVideoTrack = (user) => {

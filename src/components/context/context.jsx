@@ -32,7 +32,7 @@ export const UserProvider = ({ children }) => {
     };
 
     fetchUserData();
-  }, [updateuser]);
+  }, [updateuser,user]);
 
   return (
     <UserContext.Provider value={{ user, setuser, setupdateuser }}>

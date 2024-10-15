@@ -25,7 +25,7 @@ export const VideoPlayer = ({ user, audioTrack, toggleAudio }) => {
         onClick={toggleAudio}
         style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'none', border: 'none', cursor: 'pointer' }}
       >
-        {audioTrack && audioTrack.enabled ? <MicOff color="white" /> : <Mic color="white" />}
+        {audioTrack && audioTrack.enabled ? <Mic color="white" /> : <MicOff color="white" />}
       </button>
     </div>
   );
