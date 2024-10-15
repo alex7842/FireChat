@@ -1,35 +1,32 @@
-import React, {
-    useEffect,
-   
-    useRef,
-  } from 'react';
-  import { Mic,MicOff } from 'lucide-react';
-  
-export const VideoPlayer = ({ user,audiotracks }) => {
-    const ref = useRef();
-  
-    useEffect(() => {
+import React, { useRef, useEffect } from 'react';
+import { Mic, MicOff } from 'lucide-react';
+
+export const VideoPlayer = ({ user, audioTrack, toggleAudio }) => {
+  const ref = useRef();
+
+  useEffect(() => {
+    if (user.videoTrack) {
       user.videoTrack.play(ref.current);
-    }, []);
-  
-    return (
-      <div>
-        Uid: {user.uid}
-        <div
-          ref={ref}
-          style={{ width: '200px', height: '200px' }}
-        ></div>
-         <div>
-          {Object.entries(audiotracks).map(([uid, track]) => (
-            <div key={uid}>
-              <span>User {uid} Audio: </span>
-              <button onClick={() => track.setEnabled(!track.enabled)}>
-                {track.enabled ? <Mic/>  : <MicOff/>}
-              </button>
-            </div>
-          ))}
-        </div>
+    }
+    return () => {
+      if (user.videoTrack) {
+        user.videoTrack.stop();
+      }
+    };
+  }, [user.videoTrack]);
+
+  return (
+    <div style={{ position: 'relative', width: '200px', height: '150px' }}>
+      <div ref={ref} style={{ width: '100%', height: '100%' }}></div>
+      <div style={{ position: 'absolute', bottom: '10px', left: '10px', color: 'white' }}>
+        User {user.uid}
       </div>
-    );
-  };
-  
+      <button
+        onClick={toggleAudio}
+        style={{ position: 'absolute', bottom: '10px', right: '10px', background: 'none', border: 'none', cursor: 'pointer' }}
+      >
+        {audioTrack && audioTrack.enabled ? <MicOff color="white" /> : <Mic color="white" />}
+      </button>
+    </div>
+  );
+};

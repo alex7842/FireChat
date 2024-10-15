@@ -5,7 +5,7 @@ import { Mic, MicOff } from 'lucide-react';
 
 const APP_ID = '0446deea5d93437eae96def92c58c87e';
 const TOKEN =
-  '007eJxTYChvXqmRNdlu/ql+NdfTr64tXBRjwFBVpdmkncwaY13HoKHAYGBiYpaSmppommJpbGJsnpqYagnkp1kaJZtaJFuYp7qF8KY3BDIy+KvYMjMyQCCIz8KQmJNawcAAAIkpG8U=';
+  '007eJxTYFBv43xb3n3r+fOZ5ZGT1k4umJ8/V2OJU+utS+LvJ2dEa/1TYDAwMTFLSU1NNE2xNDYxNk9NTLUE8tMsjZJNLZItzFMnruVLbwhkZBD3iGZghEIQn4UhMSe1goEBANoxIKU=';
 const CHANNEL = 'alex';
 
 AgoraRTC.setLogLevel(4);
@@ -91,7 +91,16 @@ export const VideoRoom = () => {
   const [users, setUsers] = useState([]);
   const [uid, setUid] = useState(null);
   const [audioTracks, setAudioTracks] = useState({});
-
+  const toggleAudio = (userId) => {
+    setAudioTracks((prev) => {
+      const track = prev[userId];
+      if (track) {
+        track.setEnabled(!track.enabled);
+        return { ...prev, [userId]: track };
+      }
+      return prev;
+    });
+  };
 
   useEffect(() => {
     const onVideoTrack = (user) => {
@@ -150,29 +159,30 @@ export const VideoRoom = () => {
   }, []);
 
   return (
-    <>
-      {uid}
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        alignItems: 'center',
+      }}
+    >
       <div
         style={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column',
-          alignItems: 'center',
+          display: 'grid',
+          gridTemplateColumns: 'repeat(2, 200px)',
+          gap: '10px',
         }}
       >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(2, 200px)',
-          }}
-        >
-          {users.map((user) => (
-            <VideoPlayer audiotracks={audioTracks} key={user.uid} user={user} />
-          ))}
-        </div>
-       
+        {users.map((user) => (
+          <VideoPlayer
+            key={user.uid}
+            user={user}
+            audioTrack={audioTracks[user.uid]}
+            toggleAudio={() => toggleAudio(user.uid)}
+          />
+        ))}
       </div>
-    </>
+    </div>
   );
-  
 };
