@@ -4,33 +4,39 @@ import { Layout, Avatar, Tooltip, Button, Typography, Row, Col, Card, Space,
   import Resizer from 'react-image-file-resizer';
 import { EditOutlined, UserOutlined, PlusOutlined,ReloadOutlined,LoadingOutlined } from '@ant-design/icons';
 import { SideBar } from './SideBar';
+import { useParams,useNavigate } from 'react-router-dom';
+
 import UserContext from './context/context';
 import { db } from '../config/firebase';
 import { collection,doc,onSnapshot,getDoc ,updateDoc} from 'firebase/firestore';
 import { ref,getDownloadURL,uploadBytes,getStorage } from 'firebase/storage';
-
+import { Follow } from './Follow';
 import ai from '../hooks/ai';
+import ChatContext from './context/ChatContext';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
 const ProfilePage = () => {
-  const {user,setupdateuser}=useContext(UserContext);
-
-  console.log("user id",user.uid);
-
-  const [data,setdata]=useState([]);
+  const {setupdateuser,user}=useContext(UserContext);
+  const {setPersonalChats, cname, cimg, cemail,setcname,setcemail,setcimg,setUserId}=useContext(ChatContext)
+  const [userstate, setdata] = useState(null); // Initialize as null
+  const descriptionInputRef = useRef(null);
+  const [description, setDescription] = useState("Tell about you...");
+  const { uid } = useParams();
+  const [isLoading, setIsLoading] = useState(true);
+    const [isowner,setisowner]=useState(true);
   const { suggestions, loading, error, fetchSuggestions } = ai();
   const[load,setload]=useState(false);
   const[load1,setload1]=useState(false);
   const [active, setActive] = useState(false);
-  const descriptionInputRef = useRef(null);
-  const [description, setDescription] = useState("Tell about you...");
+ const navigate=useNavigate();
   const [tags, setTags] = useState(" ");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [avatarUrl, setAvatarUrl] = useState(user.photoURL);
- 
-  const [inputValue, setInputValue] = useState(user.username);
+  
+  const [inputValue, setInputValue] = useState();
+  const [avatarUrl, setAvatarUrl] = useState();
+  
   const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(3);
   const MOCK_DATA = {
     '@': [
@@ -45,8 +51,49 @@ const ProfilePage = () => {
       'sustainability', 'minimalism', 'digitalnomad', 'beachlife', 'urbanexplorer'
     ],
   };
-  console.log(user.photoURL,"userphotp");
+  console.log("uid from params",uid);
   
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setIsLoading(true);
+        const userDocRef = doc(db, 'users', uid);
+        const docSnap = await getDoc(userDocRef);
+        
+        if (docSnap.exists()) {
+          const userData = docSnap.data();
+          setdata(userData);
+          setAvatarUrl(userData.photoURL);
+          setInputValue(userData.displayName);
+          setDescription(userData.description || "Tell about you...");
+          setTags(userData.tags || "#");
+          
+          // Move fetchSuggestions here, after we have the userstate data
+          if (userData.displayName && uid==user.uid ) {
+            fetchSuggestions(
+              `Generate 15 unique and creative username suggestions for the display name ${userData.displayName}. The usernames should follow Instagram-style formats, using underscores, numbers, or slight modifications of the display name. Return each username on a new line without any additional information apart from usernames strictly`,
+              0.1,
+              16384,
+              "llama-v3p1-405b-instruct",
+              "completion"
+            );
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching userstate data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    if (uid) {
+      setisowner((uid===user.uid));
+      fetchUserData();
+    }
+  }, [uid]);
+ 
+  console.log(userstate?.photoURL|| "","userphotp");
+ 
   const [prefix, setPrefix] = useState('@');
   const onSearch = (_, newPrefix) => {
     setPrefix(newPrefix);
@@ -58,30 +105,13 @@ const ProfilePage = () => {
 
   }, [active]);
 
-  useEffect(() => {
-   
-    
-    
-    const fetchUserData = async () => {
-      const userDocRef = doc(db, 'users', user.uid);
-      const docSnap = await getDoc(userDocRef);
-      if (docSnap.exists()) {
-        const userData = docSnap.data();
-        setdata(userData);
-        setDescription(userData.description || "Tell about you...");
-        setTags(userData.tags || "#");
-      }
-    };
-    fetchUserData();
-   fetchSuggestions(`Generate 15 unique and creative username suggestions for the display name ${user.displayName}. The usernames should follow Instagram-style formats, using underscores, numbers, or slight modifications of the display name. Return each username on a new line without any additional information apart from usernames strictly`,0.1,16384,"llama-v3p1-405b-instruct","completion");
-
-  }, [user.uid]);
+ 
   
   console.log(suggestions)
 
   const handleSave = async () => {
     
-    const userDocRef = doc(db, 'users', user.uid);
+    const userDocRef = doc(db, 'users', userstate.uid);
     await updateDoc(userDocRef, {
       description: description,
       tags: tags
@@ -103,11 +133,12 @@ const ProfilePage = () => {
   };
   const handleSave1 = async () => {
     setload1(true);
-    const userDocRef = doc(db, 'users', user.uid);
+    const userDocRef = doc(db, 'users', userstate.uid);
     await updateDoc(userDocRef, {
       photoURL: avatarUrl,
       username: inputValue,
       
+
     });
   
   setupdateuser(i=>(i+1));
@@ -134,7 +165,7 @@ const ProfilePage = () => {
       );
     });
     const storage = getStorage();
-    const storageRef = ref(storage, `profileImages/${user.uid}`);
+    const storageRef = ref(storage, `profileImages/${userstate.uid}`);
     await uploadBytes(storageRef, resizedImage);
     const downloadURL = await getDownloadURL(storageRef);
     setAvatarUrl(downloadURL);
@@ -155,7 +186,36 @@ const ProfilePage = () => {
 
     }
   };
-  
+
+  const Navigatedm=()=>{
+    if(!isowner){
+      const userId = (user.uid+uid).split("").sort().join("");
+      console.log("sorted user",userId);
+      setUserId(userId);
+      setPersonalChats(userId);
+      setcname(userstate.displayName);
+      setcemail(userstate.email);
+      setcimg(userstate.photoURL);
+
+      
+navigate('/ChatDm')
+    }
+    else{
+      console.log("upload you post here");
+      alert("upload you post here");
+    }
+  }
+  if (isLoading || !userstate) {
+    return (
+      <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
+        <SideBar />
+        <Content style={{ margin: "3%", marginLeft: "5%" }}>
+          <div>Loading...</div>
+        </Content>
+      </Layout>
+    );
+  }
+ 
   return (
     <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
       <SideBar />
@@ -224,10 +284,10 @@ const ProfilePage = () => {
           {/* Profile Info Section */}
           <Col xs={24} sm={8}>
   <Space direction="vertical" align="center" style={{width: '100%'}}>
-    <Avatar size={148} src={user.photoURL}  />
+    <Avatar size={148} src={avatarUrl}  />
     <Flex justify='space-between' align='center' style={{width: '100%'}}>
-      <Title level={3}>{!user.username?user.displayName:user.username }</Title>
-      <EditOutlined onClick={() => setIsModalVisible(true)} shape="round" style={{marginLeft:'14px',cursor:'pointer'}}/>
+      <Title level={3}>{!userstate.username?userstate.displayName:userstate.username }</Title>
+    {isowner?  <EditOutlined onClick={() => setIsModalVisible(true)} shape="round" style={{marginLeft:'14px',cursor:'pointer'}}/>:<></>}
     </Flex>
     <Text>0 posts</Text>
     <Text>0 followers</Text>
@@ -244,16 +304,16 @@ const ProfilePage = () => {
           <Col xs={24} sm={16}>
             <Card
               actions={[
-                <button
+                isowner?<button
                 onClick={() => active ? handleSave() : setActive(true)}
                 className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out shadow-md flex items-center space-x-2'
               >
                 <EditOutlined />
-                <span>{active ? 'Save' : 'Edit'}</span>
-              </button>,
+             <span>{active ? 'Save' : 'Edit'}</span>
+              </button>:<Follow/>,
               
-              <button className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out shadow-md ml-3'>
-                Upload Posts
+              <button className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out shadow-md ml-3' onClick={Navigatedm}>
+               {isowner?<p>Upload Posts</p>:<p>Message</p>}
               </button>
               
               
@@ -263,7 +323,7 @@ const ProfilePage = () => {
                 title=""
                 description={
                   <>
-                  <Title level={4} style={inputStyle}>{user.displayName.toUpperCase()}</Title>
+                  <Title level={4} style={inputStyle}>{userstate.displayName.toUpperCase()}</Title>
                   <Input
                     ref={descriptionInputRef}
                     readOnly={!active}

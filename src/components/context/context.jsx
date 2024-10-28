@@ -22,11 +22,13 @@ export const UserProvider = ({ children }) => {
         if (docSnap.exists()) {
           const userData = docSnap.data();
           const updatedUser = { ...userData };
-          setuser('');
-        
+         
           setuser(updatedUser);
           localStorage.setItem('user', JSON.stringify(updatedUser));
           //console.log('User data fetched and saved to localStorage:', updatedUser);
+        }
+        else if (!user) {
+          localStorage.removeItem('user');
         }
       }
     };

@@ -5,13 +5,14 @@ import ChatContext from './context/ChatContext';
 import { useNavigate } from 'react-router-dom';
 
 export const Profilecard = () => {
-    const {cimg,cname,setpage}=useContext(ChatContext)
+    const {cimg,cname,setpage,targetuserid}=useContext(ChatContext)
    const navigate=useNavigate();
+   console.log(targetuserid);
    const handleclick=(e)=>{
     switch(e){
       case 1:
-      setpage('1')
-      // navigate('/ProfilePage');
+    
+       navigate(`/Profilepage/${targetuserid}`);
       break;
     }
    }

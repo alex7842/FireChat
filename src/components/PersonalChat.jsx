@@ -31,7 +31,7 @@ export const PersonalChat= () => {
     const {personalChats,cname,cimg,cemail}=useChat()
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [messages,setmessages]=useState([]);
-  
+ 
   const {email,photoURL,displayName,}=user
   const [text,settext]=useState('');
   const [del,setdel]=useState(false);
@@ -57,24 +57,6 @@ const { suggestions, loading, error, fetchSuggestions,setSuggestions } = ai();
   }
   return null;
 }, [personalChats,group]);
-const formItemLayout = {
-  labelCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 6,
-    },
-  },
-  wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 14,
-    },
-  },
-};
 
 useEffect(() => {
   let unsub;
@@ -109,9 +91,11 @@ useEffect(() => {
   
   else{
     if (chats) {
+      //console.log("database dm reference",chats);
     unsub = onSnapshot(chats, (QuerySnapshot) => {
       const newMessages = QuerySnapshot.docs.map((doc) => doc.data()).sort((a, b) => a.date - b.date);
       setReplyTo(false)
+     // console.log("newMessages",newMessages);
       setmessages(newMessages);
       
       setload(false)
@@ -432,12 +416,9 @@ const suffix = (
    }, [messages,replyTo,personalChats, group]);
    
    
-   const [isModalOpen, setIsModalOpen] = useState(false);
    const [isModalOpen1, setIsModalOpen1] = useState(false);
    const [isModalOpen2, setIsModalOpen2] = useState(false);
-  const showModal = () => {
-    setIsModalOpen(true);
-  };
+
 
   const showgroup=()=>{
     setIsModalOpen2(true);
@@ -452,13 +433,7 @@ const suffix = (
   const handleCancel2 = () => {
     setIsModalOpen2(false);
   };
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
-    const Creategroup=()=>{
-      // messageApi.info('Hello, Ant Design!');
-      showModal();
-    }
+ 
     const showprofile=()=>{
       showModal1();
     }
@@ -468,40 +443,8 @@ const suffix = (
      
     }
   
-    const [selectedItems, setSelectedItems] = useState([]);
-    const filteredOptions = users.filter((o) => o.uid!==user.uid && !selectedItems.includes(o));
-    const [form] = Form.useForm();
+  
 
-    const onFinish = async (values) => {
-      setIsModalOpen(false);
-   
-      try{
-      await addDoc(usergroup, {  
-       groupname: values['GroupName'],
-        logo: 'https://th.bing.com/th/id/OIP.lTpUAgvvRRvPlwWWts2UNwHaHa?pid=ImgDet&w=178&h=178&c=7&dpr=1.5',
-        members: [...values['Members'], user.displayName],
-       description:values['Description'] || '',
-       admin:user.displayName,
-        day,
-        time,
-        date
-      });
-      setisgroup(true);
-      
-
-    }
-    catch(e){
-      messageApi.error('Error Creating Group');
-console.log("Error",e)
-    }
-    finally{
-      messageApi.success('Group Created Successfully');
-    }
-    
-      console.log('Received values of form:',[...values['Members'], user.displayName]);
-      
-      form.resetFields();
-    };
 
   
   const handleChange = (e) => {
@@ -523,89 +466,7 @@ console.log("Error",e)
   
       {(group === 'allowchat' || personalChats || group==='group') && (
         <div>
-          <Modal title="Basic Modal" open={isModalOpen}  footer={[
         
-        ]} onCancel={handleCancel}>
-          <Form
-    {...formItemLayout}
-    form={form}
-    variant="filled"
-    style={{
-      maxWidth: 600,
-    }}
-    onFinish={onFinish}
-  >
-    <Form.Item
-
-      label="Group Name"
-      name="GroupName"
-      rules={[
-        {
-          required: true,
-          message: 'Please input!',
-        },
-      ]}
-    >
-      <Input />
-    </Form.Item>
-
-   
-
-    <Form.Item
-      label="Description"
-      name="Description"
-      rules={[
-        {
-         
-          message: 'Please input!',
-        },
-      ]}
-    >
-      <Input.TextArea />
-    </Form.Item>
-
-    
-
-    <Form.Item
-      label="Select Members"
-      name="Members"
-      rules={[
-        {
-          required: true,
-          message: 'Please input!',
-        },
-      ]}
-    >
-     <Select
-      mode="multiple"
-      placeholder="Select Members"
-      value={selectedItems}
-      onChange={setSelectedItems}
-      style={{
-        width: '100%',
-      }}
-      options={filteredOptions.map((item) => ({
-        value: item.displayName,
-        label: ( <div style={{ display: 'flex', alignItems: 'center' }}>
-        <img src={item.photoURL} alt="Avatar" style={{ width: '24px', height: '24px', borderRadius: '50%', marginRight: '8px' }} />
-        {item.displayName}
-      </div>),
-      }))}
-    />
-    </Form.Item>
-
-    <Form.Item
-      wrapperCol={{
-        offset: 6,
-        span: 16,
-      }}
-    >
-      <Button type="primary" htmlType="submit">
-        Submit
-      </Button>
-    </Form.Item>
-  </Form>
-      </Modal>
 
        
       <Modal title="Profile" open={isModalOpen1}  footer={[
@@ -621,18 +482,20 @@ console.log("Error",e)
         </Modal>
       
         
-      {draw && <GroupDetails />}
+      {draw && <GroupDetails   />}
 
           { group !== 'allowchat' && group!=='group'?
            <Flex  id='new'align="center" style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }} onClick={showprofile}  gap={4}>
            <img src={cimg}  style={{ borderRadius: '50%', width: '5%', height: '5%' }} alt="Chat Avatar" />
            <Flex vertical>
            <Typography.Text style={{ fontSize: 34 }}>{cname}</Typography.Text>
+          
            {allUsers.map((i) => 
     i.typing && i.uid!=user.uid  && (
       <p key={user.uid}>Typing...</p>
     )
   )}
+
   
           </Flex>
           <div className="ml-9 " onClick={()=>setvideocall(true)}><Video/>Video Call</div>
@@ -656,8 +519,8 @@ console.log("Error",e)
            {contextHolder}
            
          </Flex>:
-         <Flex onClick={showgroup} align="center" justify='space-between' style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }}  gap={4}>
-          <Flex align='center' justify='center'>
+         <Flex align="center" justify='space-between' style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }}  gap={4}>
+          <Flex onClick={showgroup}  align='center' justify='center'>
           
          <Group/>
          <Flex vertical>
@@ -671,7 +534,7 @@ console.log("Error",e)
          
            </Flex>
            {contextHolder}
-           <Flex><Button onClick={Creategroup}>Create Group</Button></Flex>
+         
          </Flex>
         
 }

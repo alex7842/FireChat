@@ -12,6 +12,8 @@ export const ChatProvider = ({ children }) => {
   const [cimg, setcimg] = useState(() => localStorage.getItem('cimg') || '');
   const [page, setpage] = useState(() => localStorage.getItem('page') || '0');
   const [cemail, setcemail] = useState(() => localStorage.getItem('cemail') || '');
+  const[fetchgroup,setfetchgroup]=useState(0);
+  const [targetuserid,settargetuserid]=useState(() => localStorage.getItem('targeteduserid') || '');
 
   const { user } = useContext(UserContext);
 
@@ -22,6 +24,7 @@ export const ChatProvider = ({ children }) => {
     if (cimg) localStorage.setItem('cimg', cimg);
     if (page) localStorage.setItem('page', page);
     if (cemail) localStorage.setItem('cemail', cemail);
+    if(targetuserid) localStorage.setItem('targeteduserid', targetuserid);
   }, [personalChats]);
 
   const createPersonalChat = async (joinedid, name, img, email) => {
@@ -50,7 +53,7 @@ export const ChatProvider = ({ children }) => {
   };
 
   return (
-    <ChatContext.Provider value={{ personalChats, setPersonalChats, createPersonalChat, cname, cimg, cemail, UserId, page, setpage }}>
+    <ChatContext.Provider value={{ personalChats, setPersonalChats, createPersonalChat, cname, cimg, cemail, UserId, page, setpage,fetchgroup,setfetchgroup,targetuserid,settargetuserid ,setcname,setcemail,setcimg,setUserId}}>
       {children}
     </ChatContext.Provider>
   );

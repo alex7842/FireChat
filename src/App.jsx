@@ -29,7 +29,7 @@ function App() {
         date
       };
       setuser(userData);
-      
+      localStorage.setItem("isloggedin", "true");
      
       console.log(userData); // Set the correct user object
       
@@ -52,7 +52,7 @@ function App() {
   };
   return (
     <div>
-      {user? (
+      {(user &&  localStorage.getItem("isloggedin")==="true") ?(
         <>
         <Home/>
            {/* <div>Hello please login to your google account</div>

@@ -22,6 +22,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path='ChatDm' element={<ChatDm/>}/>
             <Route path='/App' element={<App />} />    
             <Route path='/ProfilePage' element={<ProfilePage />} />
+            <Route path="/Profilepage/:uid" element={<ProfilePage />} />
+
           </Routes>
         </BrowserRouter>
       </ChatProvider>

@@ -5,11 +5,12 @@ import { Flex } from 'antd';
 import { LoadingOutlined,  SearchOutlined} from '@ant-design/icons';
 import { Spin,Input,Image } from 'antd';
 import UserContext from './context/context';
-import { useChat } from './context/ChatContext';
+import ChatContext, { useChat } from './context/ChatContext';
 import GroupContext from './context/GroupContext';
 export const UserList = () => {
 
-  const { user } = useContext(UserContext);
+  const { user} = useContext(UserContext);
+  const{targetuserid,settargetuserid}=useContext(ChatContext)
   const {users,setUsers,text}=useContext(GroupContext)
  
   const { createPersonalChat } = useChat();
@@ -25,6 +26,7 @@ export const UserList = () => {
 
 
     function handleid(id,name,img,email){
+      settargetuserid(id);
     createPersonalChat(id+user.uid,name,img,email)
 
     }

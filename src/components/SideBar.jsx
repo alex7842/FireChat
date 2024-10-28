@@ -18,7 +18,7 @@ import {
 
 export const SideBar = () => {
     const { Header, Content, Sider } = Layout;
-    const { user,setuser } = useContext(UserContext);
+    const { user,setuser,setupdateuser } = useContext(UserContext);
     const {setgroup}=useContext(GroupContext)
     const [open, setOpen] = useState(false);
 
@@ -34,7 +34,7 @@ export const SideBar = () => {
          localStorage.removeItem("personalChats")
          break
         case 3:
-         navigate('/ProfilePage')
+         navigate(`/ProfilePage/${user.uid}`)
          break
        
       }
@@ -54,10 +54,19 @@ export const SideBar = () => {
       console.log('logging out')
     
       auth.signOut().then(() => {
-        setuser(null);
+     
         setgroup('message')
         localStorage.removeItem('user');
-        navigate('/')
+        localStorage.setItem("isloggedin", "false");
+
+        setuser(null);
+        navigate('/');
+     //   setupdateuser(prev => prev + 1); // Trigger the useEffect
+        // setTimeout(() => {
+        //   navigate('/');
+        // }, 100);
+        
+
         
       }).catch(error => {
         console.error("Error during sign-out:", error);

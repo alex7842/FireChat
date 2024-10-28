@@ -10,11 +10,24 @@ import {
   LogoutOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
+import { message } from 'antd';
+import { db } from '../config/firebase';
+import { deleteDoc,doc } from 'firebase/firestore';
 import GroupContext from './context/GroupContext';
+import ChatContext from './context/ChatContext';
 const { Title, Paragraph, Text } = Typography;
 
 const GroupDetails = () => {
-  const {draw,setdraw}=useContext(GroupContext)
+  const [groupdet,setgroupdet]=useState();
+  const {fetchgroup,setfetchgroup}=useContext(ChatContext);
+  const {draw,setdraw,groupdetails,setgroupdetails,selectedgroupid,setselectedgroupid,setgroup,setisgroup}=useContext(GroupContext);
+  useEffect(() => {
+    if (groupdetails && selectedgroupid) {
+      setgroupdet(groupdetails.filter(group => group.id === selectedgroupid)[0])
+    }
+  }, [selectedgroupid, groupdetails])
+  
+  //console.log("groupdetails",groupdet);
  const [visible,setVisible]=useState(false);
   const [currentMenu, setCurrentMenu] = useState('overview');
    useEffect(()=>{
@@ -33,20 +46,35 @@ const GroupDetails = () => {
     { key: 'links', icon: <LinkOutlined />, label: 'Links' },
     { key: 'encryption', icon: <LockOutlined />, label: 'Encryption' },
   ];
-
-  const renderContent = () => {
+  const leave = async () => {
+    try {
+      await deleteDoc(doc(db, "Groupusers", selectedgroupid));
+      message.success('Successfully left the group');
+      setdraw(false);
+      setVisible(false);
+      setgroup('message');
+      setfetchgroup((i)=>i+1);
+      setisgroup(true);
+      //setgroupdetails(groupdetails.filter(group => group.id !== selectedgroupid));
+    } catch (error) {
+      console.log("Error leaving group:", error);
+    }
+  };
+  const renderContent = (groupdet) => {
+    //console.log("groupdetails from render ",groupdet);
     switch (currentMenu) {
       case 'overview':
         return (
           <>
-            <Title level={4}>2022 - 2026 Batch - III Year</Title>
-            <Paragraph>Created: 09/08/2023 14:29</Paragraph>
-            <Paragraph>Description</Paragraph>
+            <Title level={4}>{groupdet?.groupname?.toUpperCase()}</Title>
+            <Paragraph>{`Created: ${groupdet?.day || 'Date'} ${groupdet?.time || 'Time'}`}</Paragraph>
+
+            <Paragraph>{`Description ${groupdet?.description ||"description"}`}</Paragraph>
             <Paragraph>Disappearing messages: Off</Paragraph>
             <Paragraph>Mute notifications</Paragraph>
             <Paragraph>Notification tone</Paragraph>
             <Divider />
-            <Button type="primary" icon={<LogoutOutlined />}>
+            <Button type="primary"  onClick={leave} icon={<LogoutOutlined />}>
               Exit group
             </Button>
             <Button type="danger" icon={<WarningOutlined />}>
@@ -98,7 +126,7 @@ const GroupDetails = () => {
           onClick={({ key }) => setCurrentMenu(key)}
           items={menuItems}
         />
-        <div style={{ padding: '16px' }}>{renderContent()}</div>
+        <div style={{ padding: '16px' }}>{renderContent(groupdet)}</div>
       </Drawer>
     </>
   );

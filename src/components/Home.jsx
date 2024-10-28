@@ -8,6 +8,7 @@ import HomeIntro from './HomeIntro';
 
 import { db } from '../config/firebase';
 import GroupContext from './context/GroupContext';
+import App from '../App';
 
 export const Home = () => {
   const { user } = useContext(UserContext);
@@ -52,7 +53,7 @@ export const Home = () => {
   return (
     <>
     {
-user ?
+ (user) ?
 <>
    <HomeIntro/>
    </>
