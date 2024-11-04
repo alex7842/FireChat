@@ -1,4 +1,4 @@
-import { useState,useContext } from 'react'
+import { useState,useContext, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { signInWithPopup } from 'firebase/auth'
 import {auth,provider } from './config/firebase'
@@ -8,9 +8,11 @@ import { Link,useNavigate } from "react-router-dom";
 import { Home } from './components/Home';
 import {db} from './config/firebase'
 import UserContext from './components/context/context';
+import ChatContext from './components/context/ChatContext';
 
 function App() {
   const { user, setuser } = useContext(UserContext);
+  const {homereload,sethomereload}=useContext(ChatContext);
   const date = new Date();
   const messageref=collection(db,"users")
   const navigate = useNavigate();
@@ -30,7 +32,9 @@ function App() {
       };
       setuser(userData);
       localStorage.setItem("isloggedin", "true");
-     
+      localStorage.removeItem('cachedPosts');
+  // Reset counter to 0 instead of incrementing
+  sethomereload(0);
       console.log(userData); // Set the correct user object
       
       navigate('/Home');
@@ -50,6 +54,7 @@ function App() {
       console.error("Error during sign-in:", error);
     }
   };
+ 
   return (
     <div>
       {(user &&  localStorage.getItem("isloggedin")==="true") ?(

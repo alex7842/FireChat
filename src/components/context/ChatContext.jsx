@@ -13,6 +13,7 @@ export const ChatProvider = ({ children }) => {
   const [page, setpage] = useState(() => localStorage.getItem('page') || '0');
   const [cemail, setcemail] = useState(() => localStorage.getItem('cemail') || '');
   const[fetchgroup,setfetchgroup]=useState(0);
+  const [homereload,sethomereload]=useState(0);
   const [targetuserid,settargetuserid]=useState(() => localStorage.getItem('targeteduserid') || '');
 
   const { user } = useContext(UserContext);
@@ -53,7 +54,7 @@ export const ChatProvider = ({ children }) => {
   };
 
   return (
-    <ChatContext.Provider value={{ personalChats, setPersonalChats, createPersonalChat, cname, cimg, cemail, UserId, page, setpage,fetchgroup,setfetchgroup,targetuserid,settargetuserid ,setcname,setcemail,setcimg,setUserId}}>
+    <ChatContext.Provider value={{ personalChats, setPersonalChats, createPersonalChat, cname, cimg, cemail, UserId, page, setpage,fetchgroup,setfetchgroup,targetuserid,settargetuserid ,setcname,setcemail,setcimg,setUserId,homereload,sethomereload}}>
       {children}
     </ChatContext.Provider>
   );

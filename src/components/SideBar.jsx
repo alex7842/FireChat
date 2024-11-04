@@ -36,6 +36,9 @@ export const SideBar = () => {
         case 3:
          navigate(`/ProfilePage/${user.uid}`)
          break
+         case 4:
+          navigate(`/Notifications`)
+          break
        
       }
     }
@@ -58,6 +61,7 @@ export const SideBar = () => {
         setgroup('message')
         localStorage.removeItem('user');
         localStorage.setItem("isloggedin", "false");
+        localStorage.removeItem('cachedPosts')
 
         setuser(null);
         navigate('/');
@@ -143,7 +147,7 @@ export const SideBar = () => {
         <MessageOutlined  style={{fontSize:'24px'}} />
         Message
       </div>
-      <div className='menu-item'
+      <div className='menu-item' onClick={()=>handleclick(4)}
         key="notifications"
 
       

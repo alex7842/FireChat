@@ -9,9 +9,11 @@ import HomeIntro from './HomeIntro';
 import { db } from '../config/firebase';
 import GroupContext from './context/GroupContext';
 import App from '../App';
+import ChatContext from './context/ChatContext';
 
 export const Home = () => {
   const { user } = useContext(UserContext);
+  const {sethomereload}=useContext(ChatContext);
  const{test}=useContext(GroupContext)
     console.log("from home",user);
     const date = new Date();
@@ -30,7 +32,11 @@ export const Home = () => {
         }
       }
     };
-  
+    useEffect(()=>{
+      localStorage.removeItem('cachedPosts');
+      // Reset counter to 0 instead of incrementing
+      sethomereload(0);
+    },[])
     useEffect(() => {
       if (user) {
         updateLastActive();

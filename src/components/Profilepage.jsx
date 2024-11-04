@@ -2,17 +2,20 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Layout, Avatar, Tooltip, Button, Typography, Row, Col, Card, Space, 
   Divider, Empty, Input,Mentions,Flex,Modal} from 'antd';
   import Resizer from 'react-image-file-resizer';
-import { EditOutlined, UserOutlined, PlusOutlined,ReloadOutlined,LoadingOutlined } from '@ant-design/icons';
+import { EditOutlined, UserOutlined, PlusOutlined,ReloadOutlined,LoadingOutlined, SettingOutlined } from '@ant-design/icons';
 import { SideBar } from './SideBar';
 import { useParams,useNavigate } from 'react-router-dom';
 
 import UserContext from './context/context';
 import { db } from '../config/firebase';
-import { collection,doc,onSnapshot,getDoc ,updateDoc} from 'firebase/firestore';
+import { collection,doc,onSnapshot,getDoc ,updateDoc,getDocs,query,where} from 'firebase/firestore';
 import { ref,getDownloadURL,uploadBytes,getStorage } from 'firebase/storage';
 import { Follow } from './Follow';
 import ai from '../hooks/ai';
 import ChatContext from './context/ChatContext';
+import { UploadPosts } from './UploadPosts';
+import { ShowPost } from './ShowPost';
+import { ProfileSettings } from './ProfileSettings';
 
 const { Content } = Layout;
 const { Title, Text } = Typography;
@@ -24,6 +27,7 @@ const ProfilePage = () => {
   const descriptionInputRef = useRef(null);
   const [description, setDescription] = useState("Tell about you...");
   const { uid } = useParams();
+  const [Posttotal, setPosttotal] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
     const [isowner,setisowner]=useState(true);
   const { suggestions, loading, error, fetchSuggestions } = ai();
@@ -31,12 +35,13 @@ const ProfilePage = () => {
   const[load1,setload1]=useState(false);
   const [active, setActive] = useState(false);
  const navigate=useNavigate();
+ const [highlights, setHighlights] = useState([]);
   const [tags, setTags] = useState(" ");
   const [isModalVisible, setIsModalVisible] = useState(false);
-  
+  const [FriendsCount,setFriendsCount]=useState(0);
   const [inputValue, setInputValue] = useState();
   const [avatarUrl, setAvatarUrl] = useState();
-  
+  const [trigger,settrigger]=useState(0);
   const [currentSuggestionIndex, setCurrentSuggestionIndex] = useState(3);
   const MOCK_DATA = {
     '@': [
@@ -85,12 +90,44 @@ const ProfilePage = () => {
         setIsLoading(false);
       }
     };
-  
+    const getposts=async ()=>{
+      const postsRef = collection(db, "users", uid, "posts");
+      const q = query(postsRef);
+      const querySnapshot = await getDocs(q);
+      const totalPosts = querySnapshot.size;
+      console.log(totalPosts,"totapost");
+    setPosttotal(totalPosts);
+    }
+   
+
+    const getTotalFriends = async () => {
+      const notificationRef = collection(db, "users", uid, "notifications");
+      const q = query(
+          notificationRef,
+          where("status", "==", "accepted")
+      );
+        const querySnapshot = await getDocs(q);
+        const totalFriends = querySnapshot.size;
+        setFriendsCount(totalFriends); // Assuming you have a state variable for this
+    };
+    const fetchHighlights = async () => {
+      const highlightsRef = collection(db, "users", uid, "highlights");
+      const querySnapshot = await getDocs(highlightsRef);
+      const highlightsData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setHighlights(highlightsData);
+    };
     if (uid) {
       setisowner((uid===user.uid));
       fetchUserData();
+      getTotalFriends();
+      getposts();
+      fetchHighlights();
+
     }
-  }, [uid]);
+  }, [uid,trigger]);
  
   console.log(userstate?.photoURL|| "","userphotp");
  
@@ -188,7 +225,7 @@ const ProfilePage = () => {
   };
 
   const Navigatedm=()=>{
-    if(!isowner){
+   
       const userId = (user.uid+uid).split("").sort().join("");
       console.log("sorted user",userId);
       setUserId(userId);
@@ -199,11 +236,7 @@ const ProfilePage = () => {
 
       
 navigate('/ChatDm')
-    }
-    else{
-      console.log("upload you post here");
-      alert("upload you post here");
-    }
+ 
   }
   if (isLoading || !userstate) {
     return (
@@ -289,14 +322,14 @@ navigate('/ChatDm')
       <Title level={3}>{!userstate.username?userstate.displayName:userstate.username }</Title>
     {isowner?  <EditOutlined onClick={() => setIsModalVisible(true)} shape="round" style={{marginLeft:'14px',cursor:'pointer'}}/>:<></>}
     </Flex>
-    <Text>0 posts</Text>
-    <Text>0 followers</Text>
-    <Text>0 following</Text>
-    <Tooltip title="Follow">
+    <Text>{Posttotal} posts</Text>
+    <Text>{FriendsCount} friends</Text>
+    
+    {/* <Tooltip title="Follow">
       <Button shape="round" icon={<UserOutlined />} type="default">
         Follow
       </Button>
-    </Tooltip>
+    </Tooltip> */}
   </Space>
 </Col>
 
@@ -310,12 +343,13 @@ navigate('/ChatDm')
               >
                 <EditOutlined />
              <span>{active ? 'Save' : 'Edit'}</span>
-              </button>:<Follow/>,
-              
-              <button className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out shadow-md ml-3' onClick={Navigatedm}>
-               {isowner?<p>Upload Posts</p>:<p>Message</p>}
-              </button>
-              
+              </button>:<Follow uid1={userstate.uid} username1={userstate.displayName} userurl1={userstate.photoURL} />,
+                isowner?
+             <UploadPosts  trigger={trigger} settrigger={settrigger} Uid={uid}/>
+             : <button className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out shadow-md ml-3' onClick={Navigatedm}>
+               Message
+             </button>
+                
               
               ]}
             >
@@ -323,6 +357,7 @@ navigate('/ChatDm')
                 title=""
                 description={
                   <>
+                  <ProfileSettings/>
                   <Title level={4} style={inputStyle}>{userstate.displayName.toUpperCase()}</Title>
                   <Input
                     ref={descriptionInputRef}
@@ -367,20 +402,29 @@ navigate('/ChatDm')
             <Space direction="vertical" size="large" style={{ marginTop: '24px', width: '100%' }}>
               <Title level={4}>Highlights</Title>
               <Row gutter={[16, 16]}>
-                <Col>
-                  <Avatar shape="square" size={64} icon={<PlusOutlined />} />
-                  <Text className='p-2'>New</Text>
-                </Col>
+              {highlights.map((highlight) => (
+      <Flex key={highlight.id} vertical align='center' justify='center'>
+        
+        <Avatar 
+          shape="square" 
+          size={64} 
+          src={highlight.mediaUrl} 
+        />
+          <Text className='p-2'>{highlight.title}</Text>
+      
+      </Flex>
+    ))}
               </Row>
             </Space>
           </Col>
           <Divider />
-          <div className='flex align-center justify-center ml-0'>
+          <div className='ml-0'>
             <Typography.Title level={3}>Posts</Typography.Title>
-            <div className='flex justify-center align-center'>
-              <Empty />
-            </div>
+           
           </div>
+          <div className='mt-5 flex justify-center align-center'>
+              <ShowPost settrigger={settrigger} trigger={trigger}uid={uid}/>
+            </div>
         </Row>
       </Content>
     </Layout>
