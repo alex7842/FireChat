@@ -83,6 +83,9 @@ useEffect(() => {
         
         allPosts = [...allPosts, ...userPosts];
       }
+
+      
+
       const newsResponse = await fetch('https://newsapi.org/v2/everything?' + 
   'q=technology OR artificial intelligence OR science' + 
   '&language=en' +
