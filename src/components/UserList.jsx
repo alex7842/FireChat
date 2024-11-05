@@ -11,12 +11,12 @@ export const UserList = () => {
 
   const { user} = useContext(UserContext);
   const{targetuserid,settargetuserid}=useContext(ChatContext)
-  const {users,setUsers,text}=useContext(GroupContext)
+  const {users,setUsers,text,loading, setLoading}=useContext(GroupContext)
  
   const { createPersonalChat } = useChat();
   
   const inp=useRef();
-    const [loading, setLoading] = useState(false);
+    
   
     const [value,setvalue] = useState('');
   

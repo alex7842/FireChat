@@ -1,5 +1,5 @@
 import React,{useEffect} from 'react'
-import { doc,updateDoc,Timestamp } from 'firebase/firestore';
+import { doc,updateDoc,Timestamp,getDocs,collection } from 'firebase/firestore';
 import { useContext } from 'react';
 import UserContext from './context/context';
 
@@ -14,8 +14,10 @@ import ChatContext from './context/ChatContext';
 export const Home = () => {
   const { user,globaltrigger,setglobaltrigger } = useContext(UserContext);
   const {sethomereload,homereload}=useContext(ChatContext);
-
- const{test}=useContext(GroupContext)
+  
+  const messageref=collection(db,"users")
+   
+ const{test,users,loading, setLoading,setUsers}=useContext(GroupContext)
     console.log("from home",user);
     const date = new Date();
     const updateLastActive = async () => {
@@ -33,10 +35,27 @@ export const Home = () => {
         }
       }
     };
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const querySnapshot = await getDocs(messageref);
+        const usersList = querySnapshot.docs
+          .map(doc => ({ id: doc.id, ...doc.data() }))
+          .filter(user1 => user1.uid !== user.uid);
+        setUsers(usersList);
+      } catch (error) {
+        console.error("Error fetching users: ", error);
+      }
+      finally{
+        setLoading(false);
+      }
+    };
+
     useEffect(()=>{
       localStorage.removeItem('cachedPosts');
       // Reset counter to 0 instead of incrementing
       sethomereload(0);
+      fetchUsers();
     },[])
     // useEffect(() => {
     //   if (user) {

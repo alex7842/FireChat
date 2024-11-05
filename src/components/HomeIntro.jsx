@@ -29,7 +29,9 @@ const HomeIntro = () => {
   const {homereload}=useContext(ChatContext);
   const [newsLikes, setNewsLikes] = useState({});
   const [newsComments, setNewsComments] = useState({});
+console.log("users",users);
 
+ 
 useEffect(() => {
   const fetchNewsLikes = async (postId) => {
     const globalPostRef = doc(db, "globalPosts", postId);
@@ -55,22 +57,31 @@ useEffect(() => {
     }
   });
 }, [postData]);
+const getLastThreeDays = () => {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - 3);
+  
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
+  };
+  
+  return `${formatDate(start)},${formatDate(end)}`;
+};
+
 useEffect(() => {
   const fetchData = async () => {
+    
     const storedPosts = localStorage.getItem('cachedPosts');
     const notInterestedPosts = JSON.parse(localStorage.getItem('notInterestedPosts') || '[]');
-
+    
     if (storedPosts && homereload === 0) {
       const filteredPosts = JSON.parse(storedPosts).filter(
         post => !notInterestedPosts.includes(post.id)
       );
 
       setpostData(filteredPosts);
-      const filteredUsers = users
-    .filter(u => u.id !== user.uid)
-    .slice(0, 3);
-
-  setsuggestedUsers(filteredUsers);
+     
       return;
     }
 
@@ -97,31 +108,30 @@ useEffect(() => {
       const timestampB = b.timestamp?.toDate?.() || new Date(b.timestamp);
       return timestampB - timestampA;
     });
-
+  console.log("db post",allPosts)
     // Set database posts immediately
     setpostData(allPosts);
-
+   
     // Fetch news in parallel
-    fetch('https://newsapi.org/v2/everything?' +
-      'q=technology OR artificial intelligence OR science' +
-      '&language=en' +
-      '&pageSize=60' +
-      '&sortBy=publishedAt' +
-      '&apiKey=4b088fd990774c72a1ffbf23ca491daf')
+   
+    fetch('http://api.mediastack.com/v1/news?access_key=2dc29d2040ff3a4c80cbbf3082d7b0f9&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
+
       .then(response => response.json())
       .then(newsData => {
-        const newsAsPosts = newsData.articles.map((article) => ({
-          id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
-          author: article.source.name,
-          caption: article.content,
-          mediaUrl: article.urlToImage,
-          sourceName: article.source.name,
+        console.log(newsData,"news data");  
+        const newsAsPosts = newsData.data.map((article) => ({
+          id: `news-${encodeURIComponent(article.published_at)}-${encodeURIComponent(article.title)}`,
+          author: article.author || article.source,
+          caption: article.description,
+          mediaUrl: article.image || `https://source.unsplash.com/800x400/?${encodeURIComponent(article.title)}`,
+          sourceName: article.source,
           title: article.title,
-          publishedAt: article.publishedAt,
-          timestamp: new Date(article.publishedAt),
+          publishedAt: article.published_at,
+          timestamp: new Date(article.published_at),
           isNews: true
         }));
-
+        
+  console.log(newsAsPosts,"news posts");
         const combinedPosts = [...allPosts, ...newsAsPosts].filter(
           post => !notInterestedPosts.includes(post.id)
         );
@@ -133,15 +143,11 @@ useEffect(() => {
 
   fetchData();
 
-  const filteredUsers = users
-    .filter(u => u.id !== user.uid)
-    .slice(0, 3);
-
-  setsuggestedUsers(filteredUsers);
+  
 }, [homereload]);
 
   
-
+console.log("suggestedUsers",suggestedUsers);
       
       
       const storiesData = [
@@ -363,6 +369,22 @@ useEffect(() => {
         message.error('Failed to add comment');
       }
     };
+    
+
+// Add this helper function
+const isValidImageUrl = (url) => {
+  if (!url) return false;
+  // Check if it's an unsplash fallback URL
+  if (url.includes('source.unsplash.com')) return false;
+  // Check for common image extensions and valid URL patterns
+  return (
+    url.match(/\.(jpeg|jpg|gif|png|webp)$/i) ||
+    url.includes('images') ||
+    url.includes('media') ||
+    url.includes('photos')
+  );
+};
+
     const formatRelativeDate = (timestamp) => {
       let date;
       if (timestamp?.toDate) {
@@ -604,7 +626,8 @@ useEffect(() => {
       itemLayout="horizontal"
       dataSource={postData}
       renderItem={item => {
-        if (item.isNews && (!item.mediaUrl || !item.author)) return null;
+        if (item.isNews && (!isValidImageUrl(item.mediaUrl) || !item.author)) return null;
+
 
         return (
           <div className="grid lg:grid-cols-1 sm:grid-cols-1 gap-4 p-4 bg-white relative">
@@ -782,7 +805,7 @@ useEffect(() => {
                   <Card title="Suggested for you">
                     <List
                       itemLayout="horizontal"
-                      dataSource={suggestedUsers}
+                      dataSource={users.slice(0,3)}
                       renderItem={user => (
                         <List.Item>
                           <List.Item.Meta
