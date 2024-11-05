@@ -11,7 +11,7 @@ export const UserProvider = ({ children }) => {
     const savedUser = localStorage.getItem('user');
     return savedUser ? JSON.parse(savedUser) : null;
   });
-
+  const[globaltrigger,setglobaltrigger]=useState(0);
   const [updateuser, setupdateuser] = useState(0);
 
   useEffect(() => {
@@ -37,7 +37,7 @@ export const UserProvider = ({ children }) => {
   }, [updateuser,user]);
 
   return (
-    <UserContext.Provider value={{ user, setuser, setupdateuser }}>
+    <UserContext.Provider value={{ user, setuser, setupdateuser,globaltrigger,setglobaltrigger }}>
       {children}
     </UserContext.Provider>
   );

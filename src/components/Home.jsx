@@ -12,8 +12,9 @@ import App from '../App';
 import ChatContext from './context/ChatContext';
 
 export const Home = () => {
-  const { user } = useContext(UserContext);
-  const {sethomereload}=useContext(ChatContext);
+  const { user,globaltrigger,setglobaltrigger } = useContext(UserContext);
+  const {sethomereload,homereload}=useContext(ChatContext);
+
  const{test}=useContext(GroupContext)
     console.log("from home",user);
     const date = new Date();
@@ -37,25 +38,44 @@ export const Home = () => {
       // Reset counter to 0 instead of incrementing
       sethomereload(0);
     },[])
+    // useEffect(() => {
+    //   if (user) {
+    //     updateLastActive();
+    //     let lastUpdate = Date.now();
+    
+    //     const handleVisibilityChange = () => {
+    //       const currentTime = Date.now();
+    //       // Check if 3 minutes (180000ms) have passed since last update
+    //       if (!document.hidden && currentTime - lastUpdate >= 180000) {
+    //         updateLastActive();
+    //         console.log('Last active in home');
+    //         lastUpdate = currentTime;
+    //       }
+    //     };
+    
+    //     document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    //     return () => {
+    //       document.removeEventListener('visibilitychange', handleVisibilityChange);
+    //     };
+    //   }
+    // }, [user, test]);
+    
     useEffect(() => {
       if (user) {
-        updateLastActive();
-        const interval = setInterval(updateLastActive, 200000); // Update every minute
-  
-        const handleVisibilityChange = () => {
-          if (document.hidden) {
-            updateLastActive();
-          }
-        };
-  
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-  
-        return () => {
-          clearInterval(interval);
-          document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
+        let lastUpdate = localStorage.getItem('lastActiveUpdate') || 0;
+        const currentTime = Date.now();
+        const THREE_MINUTES = 1 * 60 * 1000;
+      
+        if (currentTime - lastUpdate >= THREE_MINUTES) {
+          console.log("lastupdate",lastUpdate,currentTime)
+          updateLastActive();
+          localStorage.setItem('lastActiveUpdate', currentTime);
+        }
       }
-    }, [user,test]);
+    }, [user, test, globaltrigger]);
+    
+    
   return (
     <>
     {

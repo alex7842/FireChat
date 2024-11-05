@@ -14,15 +14,18 @@ const { Header, Content, Sider } = Layout;
 import UserContext from './context/context';
 import ChatContext from './context/ChatContext';
 import { Follow } from './Follow';
+import GroupContext from './context/GroupContext';
 
 const HomeIntro = () => {
   const [postData,setpostData]=useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [suggestedUsers,setsuggestedUsers]=useState([]);
   const [likedPosts, setLikedPosts] = useState({});
   const [isHeartAnimating, setIsHeartAnimating] = useState(false);
   const [newComment, setNewComment] = useState('');
   const { user } = useContext(UserContext);
+  const{users}=useContext(GroupContext);
   const {homereload}=useContext(ChatContext);
   const [newsLikes, setNewsLikes] = useState({});
   const [newsComments, setNewsComments] = useState({});
@@ -52,79 +55,94 @@ useEffect(() => {
     }
   });
 }, [postData]);
-  useEffect(() => {
-    const fetchPosts = async () => {
-      const storedPosts = localStorage.getItem('cachedPosts');
-      const notInterestedPosts = JSON.parse(localStorage.getItem('notInterestedPosts') || '[]');
+useEffect(() => {
+  const fetchData = async () => {
+    const storedPosts = localStorage.getItem('cachedPosts');
+    const notInterestedPosts = JSON.parse(localStorage.getItem('notInterestedPosts') || '[]');
+
+    if (storedPosts && homereload === 0) {
+      const filteredPosts = JSON.parse(storedPosts).filter(
+        post => !notInterestedPosts.includes(post.id)
+      );
+
+      setpostData(filteredPosts);
+      const filteredUsers = users
+    .filter(u => u.id !== user.uid)
+    .slice(0, 3);
+
+  setsuggestedUsers(filteredUsers);
+      return;
+    }
+
+    // Fetch database posts
+    const postref = collection(db, "users");
+    const usersSnapshot = await getDocs(postref);
+    let allPosts = [];
+
+    for (const userDoc of usersSnapshot.docs) {
+      const postsRef = collection(db, "users", userDoc.id, "posts");
+      const postsSnapshot = await getDocs(postsRef);
       
-      // Use stored posts if available and it's the initial load (homereload === 0)
-      if (storedPosts && homereload === 0) {
-        const filteredPosts = JSON.parse(storedPosts).filter(
+      const userPosts = postsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        author: userDoc.id,
+        ...doc.data()
+      }));
+      
+      allPosts = [...allPosts, ...userPosts];
+    }
+
+    allPosts.sort((a, b) => {
+      const timestampA = a.timestamp?.toDate?.() || new Date(a.timestamp);
+      const timestampB = b.timestamp?.toDate?.() || new Date(b.timestamp);
+      return timestampB - timestampA;
+    });
+
+    // Set database posts immediately
+    setpostData(allPosts);
+
+    // Fetch news in parallel
+    fetch('https://newsapi.org/v2/everything?' +
+      'q=technology OR artificial intelligence OR science' +
+      '&language=en' +
+      '&pageSize=60' +
+      '&sortBy=publishedAt' +
+      '&apiKey=4b088fd990774c72a1ffbf23ca491daf')
+      .then(response => response.json())
+      .then(newsData => {
+        const newsAsPosts = newsData.articles.map((article) => ({
+          id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
+          author: article.source.name,
+          caption: article.content,
+          mediaUrl: article.urlToImage,
+          sourceName: article.source.name,
+          title: article.title,
+          publishedAt: article.publishedAt,
+          timestamp: new Date(article.publishedAt),
+          isNews: true
+        }));
+
+        const combinedPosts = [...allPosts, ...newsAsPosts].filter(
           post => !notInterestedPosts.includes(post.id)
         );
-        setpostData(filteredPosts);
-        return;
-      }
+
+        localStorage.setItem('cachedPosts', JSON.stringify(combinedPosts));
+        setpostData(combinedPosts);
+      });
+  };
+
+  fetchData();
+
+  const filteredUsers = users
+    .filter(u => u.id !== user.uid)
+    .slice(0, 3);
+
+  setsuggestedUsers(filteredUsers);
+}, [homereload]);
+
   
-      const postref = collection(db, "users");
-      const usersSnapshot = await getDocs(postref);
-      
-      let allPosts = [];
-      
-      for (const userDoc of usersSnapshot.docs) {
-        const postsRef = collection(db, "users", userDoc.id, "posts");
-        const postsSnapshot = await getDocs(postsRef);
-        
-        const userPosts = postsSnapshot.docs.map(doc => ({
-          id: doc.id,
-          author: userDoc.id,
-          ...doc.data()
-        }));
-        
-        allPosts = [...allPosts, ...userPosts];
-      }
 
       
-
-      const newsResponse = await fetch('https://newsapi.org/v2/everything?' + 
-  'q=technology OR artificial intelligence OR science' + 
-  '&language=en' +
-  '&pageSize=80' +
-  '&sortBy=publishedAt' +
-  '&apiKey=a18930ae7b8d4d0eb8b7e73b8ae72cb6');
-    const newsData = await newsResponse.json();
-  console.log(newsData);
-    // Format news articles to match post structure
-    const newsAsPosts = newsData.articles.map((article) => ({
-      id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
-      author: article.source.name,
-      caption: article.content,
-      mediaUrl: article.urlToImage,
-      sourceName: article.source.name,
-      title: article.title,
-      publishedAt: article.publishedAt,
-      timestamp: new Date(article.publishedAt),
-      isNews: true
-    }));
-    
-    console.log(newsAsPosts);
-    const combinedPosts = [...allPosts, ...newsAsPosts].filter(
-      post => !notInterestedPosts.includes(post.id)
-    );
-    
-      localStorage.setItem('cachedPosts', JSON.stringify(combinedPosts));
-      setpostData(combinedPosts);
-    };
-  
-    fetchPosts();
-  }, [homereload]);
-  
-  
-      const suggestedUsers = [
-        { id: 1, name: 'haicle0605', avatar: 'https://via.placeholder.com/150' },
-        { id: 2, name: '_._.agnes._._', avatar: 'https://via.placeholder.com/150' },
-        // Add more suggested users as needed
-      ];
       
       const storiesData = [
         { id: 1, user: 'user1', avatar: 'https://via.placeholder.com/150' },
@@ -768,10 +786,10 @@ useEffect(() => {
                       renderItem={user => (
                         <List.Item>
                           <List.Item.Meta
-                            avatar={<Avatar src={user.avatar} />}
-                            title={user.name}
+                            avatar={<Avatar src={user.photoURL} />}
+                            title={user.displayName}
                           />
-                          <div>Follow</div>
+                          <div><Follow uid1={user.uid} username1={user.displayName} userurl1={user.photoURL}/></div>
                         </List.Item>
                       )}
                     />

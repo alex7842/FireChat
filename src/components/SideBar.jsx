@@ -18,14 +18,17 @@ import {
 
 export const SideBar = () => {
     const { Header, Content, Sider } = Layout;
-    const { user,setuser,setupdateuser } = useContext(UserContext);
+    const { user,setuser,setupdateuser,globaltrigger,setglobaltrigger } = useContext(UserContext);
     const {setgroup}=useContext(GroupContext)
     const [open, setOpen] = useState(false);
 
     const navigate=useNavigate()
     const handleclick=(e)=>{
+      setglobaltrigger(prev => prev + 1);
       switch(e){
+       
         case 1:
+          
         navigate('/ChatDm')
         break;
         case 2:
