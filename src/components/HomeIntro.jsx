@@ -114,7 +114,7 @@ useEffect(() => {
    
     // Fetch news in parallel
    
-    fetch('http://api.mediastack.com/v1/news?access_key=2dc29d2040ff3a4c80cbbf3082d7b0f9&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
+    fetch('https://api.mediastack.com/v1/news?access_key=2dc29d2040ff3a4c80cbbf3082d7b0f9&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
 
       .then(response => response.json())
       .then(newsData => {
