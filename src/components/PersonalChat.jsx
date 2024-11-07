@@ -263,11 +263,23 @@ if (chats) {
       newMessages: arrayUnion(user.uid), // Add sender's ID to array
       hasnewmessage: true
     });
+    sendnotify(ur);
+  
    
   }
 }
   settext('');
 };
+const sendnotify= async(ur)=>{
+  console.log("called");
+  const recipientDoc = await getDoc(doc(db, "users", targetuserid));
+  const recipientFcmToken = recipientDoc.data().fcmToken;
+  console.log("recipientFcmToken",recipientFcmToken);
+  // Send notification
+  if (recipientFcmToken) {
+    await sendNotification(recipientFcmToken, `New message from ${user.displayName}: ${ur}`);
+  }
+}
 
 
  const scrollToBottom = () => {

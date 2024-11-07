@@ -6,7 +6,7 @@ import { HeartFilled, HeartOutlined, ShareAltOutlined, CommentOutlined, DeleteOu
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { Modal, Button, Input, message, Popconfirm } from 'antd';
 import { SideBar } from './SideBar';
-import { collection,getDocs,query,doc,getDoc,setDoc,deleteDoc,Timestamp,updateDoc,increment,arrayUnion} from 'firebase/firestore';
+import { collection,getDocs,query,doc,getDoc,setDoc,deleteDoc,Timestamp,updateDoc,increment,arrayUnion,addDoc} from 'firebase/firestore';
 import { db,messaging } from '../config/firebase';
 import { Report } from './Report';
 import { ShowPost } from './ShowPost';
@@ -35,17 +35,25 @@ const HomeIntro = () => {
   const [newsComments, setNewsComments] = useState({});
 //console.log("users",users);
 
-useEffect(()=>{
-  const notify= async ()=>{
-    console.log("registered");
-    await registerForPushNotifications(user.uid);
-  }
-  const unsubscribe = onMessage(messaging, (payload) => {
-    console.log('Message received in foreground:', payload);
-    // You can show a notification here using browser notification API
-    new Notification(payload.notification.title, {
-      body: payload.notification.body
+useEffect(() => {
+  const notificationsRef = collection(db, 'users', user.uid, 'notifications');
+  
+  const handleNotification = async (payload) => {
+    console.log('Message received:', payload);
+    
+    // Store notification in Firestore
+    await addDoc(notificationsRef, {
+      title: payload.notification.title,
+      body: payload.notification.body,
+      timestamp: new Date(),
+      read: false,
+      type: payload.data?.type || 'message',
+      senderId: payload.data?.senderId,
+      senderName: payload.data?.senderName,
+      senderPhoto: payload.data?.senderPhoto
     });
+
+    // Show toast notification
     message.info({
       content: (
         <div>
@@ -55,16 +63,29 @@ useEffect(()=>{
       ),
       duration: 3,
       className: 'custom-toast',
-      style: {
-        marginTop: '20px'
-      }
+      style: { marginTop: '20px' }
     });
-    
+  };
+
+  // Register for notifications only once
+  const setupNotifications = async () => {
+    const token = await registerForPushNotifications(user.uid);
+    if (token) {
+      const unsubscribe = onMessage(messaging, handleNotification);
+      return unsubscribe;
+    }
+  };
+
+  let unsubscribe;
+  setupNotifications().then(unsub => {
+    unsubscribe = unsub;
   });
 
-  notify();
-  return () => unsubscribe();
-},[])
+  return () => {
+    if (unsubscribe) unsubscribe();
+  };
+}, [user.uid]);
+
 
 
 
@@ -205,16 +226,16 @@ useEffect(() => {
         { id: 2, user: 'user2', avatar: 'https://via.placeholder.com/150' },
         // Add more stories as needed
       ];
-      const sendnotify= async(targetid)=>{
-        console.log("called");
-        const recipientDoc = await getDoc(doc(db, "users", targetid));
-        const recipientFcmToken = recipientDoc.data().fcmToken;
-        console.log("recipientFcmToken",recipientFcmToken);
-        // Send notification
-        if (recipientFcmToken) {
-          await sendNotification(recipientFcmToken, `New message from ${user.displayName}: ${"hello plaese notify"}`);
-        }
-      }
+      // const sendnotify= async(targetid)=>{
+      //   console.log("called");
+      //   const recipientDoc = await getDoc(doc(db, "users", targetid));
+      //   const recipientFcmToken = recipientDoc.data().fcmToken;
+      //   console.log("recipientFcmToken",recipientFcmToken);
+      //   // Send notification
+      //   if (recipientFcmToken) {
+      //     await sendNotification(recipientFcmToken, `New message from ${user.displayName}: ${"hello plaese notify"}`);
+      //   }
+      // }
 
     const navigate=useNavigate()
 
@@ -862,7 +883,8 @@ const isValidImageUrl = (url) => {
                       itemLayout="horizontal"
                       dataSource={users.slice(0,3)}
                       renderItem={user => (
-                        <List.Item onClick={()=>sendnotify(user.uid)}>
+                        //onClick={()=>sendnotify(user.uid)}
+                        <List.Item >
                           <List.Item.Meta
                             avatar={<Avatar src={user.photoURL} />}
                             title={user.displayName}

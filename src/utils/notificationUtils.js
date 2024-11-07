@@ -7,10 +7,13 @@ export const sendNotification = async (recipientFcmToken, message) => {
       },
       body: JSON.stringify({
         token: recipientFcmToken,
-        title: 'New Message da',
+        title: 'New Message from firechat',
         message: message
       })
     });
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
     const data = await response.json();
     return data;
   } catch (error) {
