@@ -7,7 +7,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { Modal, Button, Input, message, Popconfirm } from 'antd';
 import { SideBar } from './SideBar';
 import { collection,getDocs,query,doc,getDoc,setDoc,deleteDoc,Timestamp,updateDoc,increment,arrayUnion} from 'firebase/firestore';
-import { db } from '../config/firebase';
+import { db,messaging } from '../config/firebase';
 import { Report } from './Report';
 import { ShowPost } from './ShowPost';
 const { Header, Content, Sider } = Layout;
@@ -15,7 +15,11 @@ import UserContext from './context/context';
 import ChatContext from './context/ChatContext';
 import { Follow } from './Follow';
 import GroupContext from './context/GroupContext';
+import { onMessage } from 'firebase/messaging';
 
+
+import { registerForPushNotifications } from '../utils/fcmUtils';
+import { sendNotification } from '../utils/notificationUtils';
 const HomeIntro = () => {
   const [postData,setpostData]=useState([]);
   const [selectedPost, setSelectedPost] = useState(null);
@@ -29,7 +33,45 @@ const HomeIntro = () => {
   const {homereload}=useContext(ChatContext);
   const [newsLikes, setNewsLikes] = useState({});
   const [newsComments, setNewsComments] = useState({});
-console.log("users",users);
+//console.log("users",users);
+
+useEffect(()=>{
+  const notify= async ()=>{
+    console.log("registered");
+    await registerForPushNotifications(user.uid);
+  }
+  const unsubscribe = onMessage(messaging, (payload) => {
+    console.log('Message received in foreground:', payload);
+    // You can show a notification here using browser notification API
+    new Notification(payload.notification.title, {
+      body: payload.notification.body
+    });
+    message.info({
+      content: (
+        <div>
+          <h4>{payload.notification.title}</h4>
+          <p>{payload.notification.body}</p>
+        </div>
+      ),
+      duration: 3,
+      className: 'custom-toast',
+      style: {
+        marginTop: '20px'
+      }
+    });
+    
+  });
+
+  notify();
+  return () => unsubscribe();
+},[])
+
+
+
+// Add this near your other useEffect hooks
+// useEffect(() => {
+  
+// }, []);
 
  
 useEffect(() => {
@@ -114,7 +156,7 @@ useEffect(() => {
    
     // Fetch news in parallel
    
-    fetch('https://api.mediastack.com/v1/news?access_key=2dc29d2040ff3a4c80cbbf3082d7b0f9&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
+    fetch('https://api.mediastack.com/v1/news?access_key=83f26e0b599a2f52b3c245fa871da266&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
 
       .then(response => response.json())
       .then(newsData => {
@@ -130,6 +172,7 @@ useEffect(() => {
           timestamp: new Date(article.published_at),
           isNews: true
         }));
+    //const newsAsPosts="";
         
   console.log(newsAsPosts,"news posts");
         const combinedPosts = [...allPosts, ...newsAsPosts].filter(
@@ -142,12 +185,13 @@ useEffect(() => {
   };
 
   fetchData();
+  
 
   
 }, [homereload]);
 
   
-console.log("suggestedUsers",suggestedUsers);
+//console.log("suggestedUsers",suggestedUsers);
       
       
       const storiesData = [
@@ -161,6 +205,16 @@ console.log("suggestedUsers",suggestedUsers);
         { id: 2, user: 'user2', avatar: 'https://via.placeholder.com/150' },
         // Add more stories as needed
       ];
+      const sendnotify= async(targetid)=>{
+        console.log("called");
+        const recipientDoc = await getDoc(doc(db, "users", targetid));
+        const recipientFcmToken = recipientDoc.data().fcmToken;
+        console.log("recipientFcmToken",recipientFcmToken);
+        // Send notification
+        if (recipientFcmToken) {
+          await sendNotification(recipientFcmToken, `New message from ${user.displayName}: ${"hello plaese notify"}`);
+        }
+      }
 
     const navigate=useNavigate()
 
@@ -168,7 +222,7 @@ console.log("suggestedUsers",suggestedUsers);
     const handleLike = async (post) => {
       // Create a likes subcollection for each post to track user likes
       const postLikesRef = collection(db, "users", post.uid, "posts", post.id, "likes");
-      const userLikeRef = doc(postLikesRef, user.uid);
+      const userLikeRef = doc(postLikesRef, post.uid);
       
       try {
         const userLikeDoc = await getDoc(userLikeRef);
@@ -283,6 +337,7 @@ console.log("suggestedUsers",suggestedUsers);
         }
       } catch (error) {
         // Revert all local changes
+        console.log(error,"news like");
         setLikedPosts(prev => ({
           ...prev,
           [item.id]: isCurrentlyLiked
@@ -337,7 +392,7 @@ console.log("suggestedUsers",suggestedUsers);
     const handleComment = async (postId) => {
       if (!newComment.trim()) return;
   
-      const postRef = doc(db, "users", user.uid, "posts", postId);
+      const postRef = doc(db, "users", selectedPost.uid, "posts", postId);
       const comment = {
         text: newComment,
         userId: user.uid,
@@ -802,12 +857,12 @@ const isValidImageUrl = (url) => {
                 </Col>
                
                 <Col span={8}>
-                  <Card title="Suggested for you">
+                  <Card title={`Suggested for you (${user.displayName})`}>
                     <List
                       itemLayout="horizontal"
                       dataSource={users.slice(0,3)}
                       renderItem={user => (
-                        <List.Item>
+                        <List.Item onClick={()=>sendnotify(user.uid)}>
                           <List.Item.Meta
                             avatar={<Avatar src={user.photoURL} />}
                             title={user.displayName}

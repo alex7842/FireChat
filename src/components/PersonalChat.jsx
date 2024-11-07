@@ -10,10 +10,10 @@ import { Message } from './Message';
 import emailjs from '@emailjs/browser';
 
 import EmojiPicker from 'emoji-picker-react';
-import { QuerySnapshot, addDoc, collection, onSnapshot,doc,updateDoc,getDocs } from 'firebase/firestore';
+import { QuerySnapshot, addDoc, collection, onSnapshot,doc,updateDoc,getDocs,arrayUnion,getDoc } from 'firebase/firestore';
 import {db} from '../config/firebase'
 import UserContext from './context/context';
-import  { useChat } from './context/ChatContext';
+import  ChatContext, { useChat } from './context/ChatContext';
 import { WelcomeTemplate } from './WelcomeTemplate';
 import { ImagePlay,SmilePlus,Video,WandSparkles } from 'lucide-react';
 import GroupContext  from './context/GroupContext';
@@ -23,9 +23,11 @@ import GroupDetails from './GroupDetails';
 import { ShowGroup } from './ShowGroup';
 import ai from '../hooks/ai';
 import { Ai } from './Ai';
+import { sendNotification } from '../utils/notificationUtils';
 import { Videocall } from './Videocall';
 export const PersonalChat= () => {
     const { user } = useContext(UserContext);
+    const {targetuserid} =useContext(ChatContext);
     const [load,setload]=useState(false)
     const [allUsers, setAllUsers] = useState([]);
     const {personalChats,cname,cimg,cemail}=useChat()
@@ -112,16 +114,16 @@ useEffect(() => {
 }, [chats,group,groupid]);
 useEffect(() => {
   const auto=()=>{
-    const timer = setTimeout(() => {
-      if (text) {
-      fetchSuggestions(`Complete the following text with 4-5 additional words:
-"${text}"
-Completion:`,0.5,10,"llama-v3p1-405b-instruct","completion");
-      } else {
-        setSuggestions('');
-      }
-    }, 300);
-    return () => clearTimeout(timer);
+//     const timer = setTimeout(() => {
+//       if (text) {
+//       fetchSuggestions(`Complete the following text with 4-5 additional words:
+// "${text}"
+// Completion:`,0.5,10,"llama-v3p1-405b-instruct","completion");
+//       } else {
+//         setSuggestions('');
+//       }
+//     }, 300);
+//     return () => clearTimeout(timer);
   }
   const up = async () => {
     if (user && user.uid) {
@@ -185,9 +187,7 @@ const sendEmail = (e) => {
     );
 };
 const date = new Date();
-// console.log(date); // Output the current date and time
 
-// Format the date as a string in 'YYYY-MM-DD' format
 const dateString = date.toISOString().split('T')[0];
 
 // Format the time in 12-hour format with 'HH:MM AM/PM'
@@ -212,6 +212,9 @@ const time = timeString; // 'HH:MM AM/PM'
 const handlesubmit = async (s) => {
   const ur=s?s:text;
   console.log("passed valuer",ur);
+  const hasnewmsgref = doc(db, "users", targetuserid);
+
+ 
  // sendEmail()
   
   
@@ -232,7 +235,6 @@ const handlesubmit = async (s) => {
       const groupDoc = doc(usergroup, groupid);
       const groupChatsRef = collection(groupDoc, "groupchats");
     
-      
       await addDoc(groupChatsRef, {
         text:ur,
         email: email,
@@ -242,6 +244,7 @@ const handlesubmit = async (s) => {
         time,
         date
       });
+    
     }
     }
     else{
@@ -254,6 +257,11 @@ if (chats) {
       day,
       time,
       date
+    });
+  
+    await updateDoc(hasnewmsgref, {
+      newMessages: arrayUnion(user.uid), // Add sender's ID to array
+      hasnewmessage: true
     });
    
   }

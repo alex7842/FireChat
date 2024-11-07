@@ -1,9 +1,9 @@
 import React, { useEffect, useState,useContext, useRef } from 'react'
 import {db } from '../config/firebase'
-import { getDocs, collection,query,where } from 'firebase/firestore';
+import { getDocs, collection,query,where,doc,getDoc,arrayRemove,updateDoc } from 'firebase/firestore';
 import { Flex } from 'antd';
-import { LoadingOutlined,  SearchOutlined} from '@ant-design/icons';
-import { Spin,Input,Image } from 'antd';
+import { LoadingOutlined,  SearchOutlined,MessageOutlined} from '@ant-design/icons';
+import { Spin,Input,Image,Badge } from 'antd';
 import UserContext from './context/context';
 import ChatContext, { useChat } from './context/ChatContext';
 import GroupContext from './context/GroupContext';
@@ -11,8 +11,9 @@ export const UserList = () => {
 
   const { user} = useContext(UserContext);
   const{targetuserid,settargetuserid}=useContext(ChatContext)
-  const {users,setUsers,text,loading, setLoading}=useContext(GroupContext)
- 
+  const {users,setUsers,loading, setLoading}=useContext(GroupContext)
+  const [usersWithNewMsg, setUsersWithNewMsg] = useState({});
+
   const { createPersonalChat } = useChat();
   
   const inp=useRef();
@@ -23,11 +24,20 @@ export const UserList = () => {
     const messageref=collection(db,"users")
    
     
+   
+  
 
-
-    function handleid(id,name,img,email){
+    async function handleid(id,name,img,email){
+     
       settargetuserid(id);
     createPersonalChat(id+user.uid,name,img,email)
+    const currentUserRef = doc(db, "users", user.uid);
+    console.log("oppositr user id",id);
+    // Remove clicked user's ID from newMessages array using arrayRemove
+    await updateDoc(currentUserRef, {
+        newMessages: arrayRemove(id)
+    });
+   
 
     }
     const fetchUsers = async () => {
@@ -36,26 +46,29 @@ export const UserList = () => {
         const querySnapshot = await getDocs(messageref);
         const usersList = querySnapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter(user1 => user1.uid !== user.uid);
+          .filter(user1 => user1.uid !== user.uid)
+          .sort((a, b) => {
+            // Handle cases where lastactive might be undefined
+            if (!a.lastactive) return 1;
+            if (!b.lastactive) return -1;
+            // Sort in descending order (most recent first)
+            return b.lastactive.toDate() - a.lastactive.toDate();
+          });
         setUsers(usersList);
       } catch (error) {
         console.error("Error fetching users: ", error);
-      }
-      finally{
+      } finally {
         setLoading(false);
       }
     };
+    
 
   useEffect(() => {
 
-    fetchUsers();
-  }, [text]);
+   fetchUsers();
+  }, []);
 
-  useEffect(() => {
-    if(!users.length){
-      fetchUsers();
-    }
-  })
+
 
 
 
@@ -82,6 +95,7 @@ export const UserList = () => {
     if (!user1.lastactive) return false;
     
     const now = new Date();
+    
     const lastActiveDate = user1.lastactive.toDate();
     
     // Check if last active was today
@@ -97,62 +111,66 @@ export const UserList = () => {
   };
   
   return (
-    <div>
-      <br></br>
-   <div className="search-container">
-    <input
-      type="search"
-      ref={inp}
-      id="input"
-      className="search-input"
-      onChange={()=>handlevalue(document.getElementById('input').value)}
-    />
-    <span class="search-icon" onClick={()=>inp.current.focus()}>
-      <SearchOutlined/>
-    </span>
-  </div>
-  <br></br>
+    <div className="users-container p-4">
+      <div className="search-container mb-4">
+        <input
+          type="search"
+          ref={inp}
+          id="input"
+          className="search-input w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-400"
+          onChange={() => handlevalue(document.getElementById('input').value)}
+          placeholder="Search users..."
+        />
+        <span className="search-icon" onClick={() => inp.current.focus()}>
+          <SearchOutlined />
+        </span>
+      </div>
   
       {loading ? (
-          <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />}/>
+        <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
       ) : users.length > 0 ? (
-        <ul>
-{users.map(user1 => {
-  const userIsActive = isActive(user1);
+        <ul className="space-y-3">
+          {users.map(user1 => {
+            const userIsActive = isActive(user1);
+            const hasNewMessage = user?.newMessages?.includes(user1.uid);
   
-  return (
-    <Flex key={user1.id} gap={1} align="center" justify="space-between" onClick={() => handleid(user1.uid, user1.displayName, user1.photoURL, user1.email)}>
-      <Flex align="center" gap={7}>
-        <div style={{ position: 'relative' }}>
-          <img className='userimg' src={user1.photoURL} alt={user1.displayName} />
-          {userIsActive && (
-            <span
-              style={{
-                position: 'absolute',
-                bottom: 2,
-                right: 2,
-                width: '8px',
-                height: '8px',
-                backgroundColor: '#44b700',
-                borderRadius: '50%',
-                boxShadow: '0 0 0 2px #fff',
-              }}
-            />
-          )}
-        </div>
-        <p>{user1.displayName.charAt(0).toUpperCase() + user1.displayName.slice(1)}</p>
-      </Flex>
-      {userIsActive && (
-        <span style={{ fontSize: '0.8em', color: '#44b700' }}>Active</span>
-      )}
-    </Flex>
-  );
-})}
-
-
+            return (
+              <li 
+                key={user1.id} 
+                className="user-item p-3 rounded-lg hover:bg-gray-50 transition-all cursor-pointer shadow-md"
+                onClick={() => handleid(user1.uid, user1.displayName, user1.photoURL, user1.email)}
+              >
+                <Flex align="center" justify="space-between">
+                  <Flex align="center" gap={12}>
+                    <div className="relative">
+                      <img 
+                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-200" 
+                        src={user1.photoURL} 
+                        alt={user1.displayName} 
+                      />
+                      {userIsActive && (
+                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-gray-800">
+                        {user1.displayName.charAt(0).toUpperCase() + user1.displayName.slice(1)}
+                      </p>
+                      {userIsActive && (
+                        <span className="text-sm text-green-600">Active now</span>
+                      )}
+                    </div>
+                  </Flex>
+                  {hasNewMessage && (
+                    <Badge count={<MessageOutlined style={{ color: '#1890ff' }} />} />
+                  )}
+                </Flex>
+              </li>
+            );
+          })}
         </ul>
       ) : (
-        <p></p>
+        <p className="text-center text-gray-500">No users found</p>
       )}
     </div>
   );

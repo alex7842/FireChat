@@ -18,7 +18,7 @@ export const Home = () => {
   const messageref=collection(db,"users")
    
  const{test,users,loading, setLoading,setUsers}=useContext(GroupContext)
-    console.log("from home",user);
+   // console.log("from home",user);
     const date = new Date();
     const updateLastActive = async () => {
       if (user && user.uid) {

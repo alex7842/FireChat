@@ -9,6 +9,7 @@ import { Home } from './components/Home';
 import {db} from './config/firebase'
 import UserContext from './components/context/context';
 import ChatContext from './components/context/ChatContext';
+import { registerForPushNotifications } from './utils/fcmUtils';
 
 function App() {
   const { user, setuser } = useContext(UserContext);
@@ -36,7 +37,8 @@ function App() {
   // Reset counter to 0 instead of incrementing
   sethomereload(0);
       console.log(userData); // Set the correct user object
-      
+      // await registerForPushNotifications(userData.uid);
+     
       navigate('/Home');
       const userQuery = query(messageref, where("uid", "==", result.user.uid));
       const querySnapshot = await getDocs(userQuery);
