@@ -5,7 +5,7 @@ import { Mic, MicOff } from 'lucide-react';
 
 const APP_ID = '0446deea5d93437eae96def92c58c87e';
 const TOKEN =
-  '007eJxTYFBv43xb3n3r+fOZ5ZGT1k4umJ8/V2OJU+utS+LvJ2dEa/1TYDAwMTFLSU1NNE2xNDYxNk9NTLUE8tMsjZJNLZItzFMnruVLbwhkZBD3iGZghEIQn4UhMSe1goEBANoxIKU=';
+  '007eJxTYHggG/t13oqav4L7ayNWfHpUrmIvL7gr76xU8zeVXT6uy/0UGAxMTMxSUlMTTVMsjU2MzVMTUy2B/DRLo2RTi2QL89RXunrpDYGMDJOkQ1kYGSAQxGdhSMxJrWBgAACLfh+p';
 const CHANNEL = 'alex';
 
 AgoraRTC.setLogLevel(4);
