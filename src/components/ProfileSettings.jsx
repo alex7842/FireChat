@@ -67,14 +67,12 @@ const handleDeleteAccount = async () => {
             <Panel header={<Space><SecurityScanOutlined /> Security</Space>} key="2">
               <Space direction="vertical" className="w-full">
                 <Button type="text" block className="text-left">
-                  <Space><KeyOutlined /> Change Password</Space>
+                  <Space><KeyOutlined />End to End Encrypted</Space>
                 </Button>
                 <Button type="text" block className="text-left">
                   <Space><SafetyCertificateOutlined /> Two-Factor Authentication</Space>
                 </Button>
-                <Button type="text" block className="text-left">
-                  <Space><EyeOutlined /> Login Activity</Space>
-                </Button>
+               
               </Space>
             </Panel>
 
@@ -113,20 +111,15 @@ const handleDeleteAccount = async () => {
             </Panel>
           </Collapse>
 
-          <Divider className="my-4" />
+          <Divider className="my-2" />
 
           <Space direction="vertical" className="w-full">
-            <Button type="text" danger block className="text-left">
-              <Space><TeamOutlined /> Block Users</Space>
-            </Button>
-            <Button type="text" block className="text-left">
-              <Space><PictureOutlined /> Archived Posts</Space>
-            </Button>
+           
             <Button
               danger
               type="primary"
               icon={<DeleteOutlined />}
-              className="w-full mt-4"
+              className="w-full mb-3"
               onClick={handleDeleteAccount}
             >
               Delete Account

@@ -20,7 +20,7 @@ export const Signin = () => {
     const navigate = useNavigate();
 
     const handleclick=()=>{
-       navigate("/Home")
+       navigate("/")
     }
   return (
     <>

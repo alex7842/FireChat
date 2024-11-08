@@ -1,4 +1,4 @@
-export const sendNotification = async (recipientFcmToken, message) => {
+export const sendNotification = async (recipientFcmToken, message, senderId, senderName, senderPhoto) => {
   try {
     const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notifications`, {
       method: 'POST',
@@ -8,8 +8,12 @@ export const sendNotification = async (recipientFcmToken, message) => {
       body: JSON.stringify({
         token: recipientFcmToken,
         title: 'New Message from firechat',
-        message: message
+        message: message,
+        senderId: senderId,
+        senderPhoto: senderPhoto,
+        senderName: senderName
       })
+      
     });
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);

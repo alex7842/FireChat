@@ -248,3 +248,29 @@
   50% { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
 }
+.custom-toast {
+  background: linear-gradient(to right, #4A90E2, #50C878);
+  padding: 12px;
+}
+
+.notification-content {
+  color: white;
+}
+
+.notification-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.notification-body {
+  font-size: 14px;
+  opacity: 0.9;
+  margin: 0;
+}
+
+.ant-message-custom-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}

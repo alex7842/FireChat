@@ -277,7 +277,7 @@ const sendnotify= async(ur)=>{
   console.log("recipientFcmToken",recipientFcmToken);
   // Send notification
   if (recipientFcmToken) {
-    await sendNotification(recipientFcmToken, `New message from ${user.displayName}: ${ur}`);
+    await sendNotification(recipientFcmToken, `New message from ${user.displayName}: ${ur}`,user.uid,user.displayName,user.photoURL);
   }
 }
 

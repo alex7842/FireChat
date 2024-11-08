@@ -10,93 +10,21 @@ import {db} from './config/firebase'
 import UserContext from './components/context/context';
 import ChatContext from './components/context/ChatContext';
 import { registerForPushNotifications } from './utils/fcmUtils';
+import { Hero } from './components/Design/Hero';
 
 function App() {
   const { user, setuser } = useContext(UserContext);
-  const {homereload,sethomereload}=useContext(ChatContext);
-  const date = new Date();
-  const messageref=collection(db,"users")
-  const navigate = useNavigate();
-  provider.setCustomParameters({
-    prompt: 'select_account'
-  });
-  const signin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const userData = {
-        uid: result.user.uid,
-        email: result.user.email,
-        displayName: result.user.displayName.toUpperCase(),
-        photoURL: result.user.photoURL,
-        lastactive: Timestamp.fromDate(date),
-        date
-      };
-      setuser(userData);
-      localStorage.setItem("isloggedin", "true");
-      localStorage.removeItem('cachedPosts');
-  // Reset counter to 0 instead of incrementing
-  sethomereload(0);
-      console.log(userData); // Set the correct user object
-      // await registerForPushNotifications(userData.uid);
-     
-      navigate('/Home');
-      const userQuery = query(messageref, where("uid", "==", result.user.uid));
-      const querySnapshot = await getDocs(userQuery);
-
-      if (querySnapshot.empty) {
-        const userDocRef = doc(db, 'users', userData.uid);
-        await setDoc(userDocRef, userData);
-        console.log("New user document written with UID:", result.user.uid);
-      } else {
-        console.log("User already exists with UID:", result.user.uid);
-      }
-
-    
-    } catch (error) {
-      console.error("Error during sign-in:", error);
-    }
-  };
+  
  
   return (
     <div>
       {(user &&  localStorage.getItem("isloggedin")==="true") ?(
         <>
         <Home/>
-           {/* <div>Hello please login to your google account</div>
-        <div className='p-5 text-center'>
-             <div> */}
-              {/* <img 
-          //       src="https://cdn.pixabay.com/photo/2023/08/21/03/34/droplets-8203505_1280.jpg" 
-          //       alt="logo" 
-          //       width={400} 
-          //       height={400} 
-          //       className='pr-2' 
-          //       style={{borderRadius: 200}}
-          //     /> */}
-            {/* </div>
-           <div className='btn btn-primary' style={{marginTop: "50px"}} onClick={signin}>
-           Login
-         </div>
-           </div> */}
+         
         </>
-      ) :  <>
-      <div>Hello is this your first time here sign up</div>
-      <div className='p-5 text-center'>
-        <div>
-          {/* <img 
-            src="https://cdn.pixabay.com/photo/2023/08/21/03/34/droplets-8203505_1280.jpg" 
-            alt="logo" 
-            width={400} 
-            height={400} 
-            className='pr-2' 
-            style={{borderRadius: 200}}
-          /> */}
-        </div>
-        <div className='btn btn-primary' style={{marginTop: "50px"}} onClick={signin}>
-          Login
-        </div>
-      </div>
-    </>}
+      ) :  <Hero/>
+    }
     </div>
   );
 }

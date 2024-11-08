@@ -4,9 +4,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import { Layout, Menu, Avatar, List, Spin,Row, Col, Card, Carousel, Divider, Typography,Flex, Popover} from 'antd';
 import { HeartFilled, HeartOutlined, ShareAltOutlined, CommentOutlined, DeleteOutlined,PlusOutlined,EllipsisOutlined } from '@ant-design/icons';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { Modal, Button, Input, message, Popconfirm } from 'antd';
+import { Modal, Button, Input, message, Popconfirm ,notification} from 'antd';
 import { SideBar } from './SideBar';
-import { collection,getDocs,query,doc,getDoc,setDoc,deleteDoc,Timestamp,updateDoc,increment,arrayUnion,addDoc} from 'firebase/firestore';
+import { collection,getDocs,query,doc,getDoc,setDoc,deleteDoc,Timestamp,updateDoc,increment,arrayUnion,addDoc,serverTimestamp} from 'firebase/firestore';
 import { db,messaging } from '../config/firebase';
 import { Report } from './Report';
 import { ShowPost } from './ShowPost';
@@ -34,57 +34,98 @@ const HomeIntro = () => {
   const [newsLikes, setNewsLikes] = useState({});
   const [newsComments, setNewsComments] = useState({});
 //console.log("users",users);
+const notificationSound = new Audio('/tap.mp3'); // Add an MP3 file to your public folder
 
-useEffect(() => {
-  const notificationsRef = collection(db, 'users', user.uid, 'notifications');
-  
-  const handleNotification = async (payload) => {
-    console.log('Message received:', payload);
+// useEffect(() => {
+//   const handleNewMessage = async (payload) => {
+//     console.log('New message received:', payload);
     
-    // Store notification in Firestore
-    await addDoc(notificationsRef, {
-      title: payload.notification.title,
-      body: payload.notification.body,
-      timestamp: new Date(),
-      read: false,
-      type: payload.data?.type || 'message',
-      senderId: payload.data?.senderId,
-      senderName: payload.data?.senderName,
-      senderPhoto: payload.data?.senderPhoto
-    });
+//     // Play notification sound
+//     notificationSound.play();
 
-    // Show toast notification
-    message.info({
-      content: (
-        <div>
-          <h4>{payload.notification.title}</h4>
-          <p>{payload.notification.body}</p>
-        </div>
-      ),
-      duration: 3,
-      className: 'custom-toast',
-      style: { marginTop: '20px' }
-    });
-  };
+//     // Show Ant Design notification
+//     notification.open({
+//       message: payload.notification.title,
+//       description: payload.notification.body,
+//       icon: <Avatar src={payload.data?.senderPhoto} />,
+//       placement: 'topRight',
+//       duration: 4,
+//       style: {
+//         borderRadius: '8px',
+//         backgroundColor: '#f0f2f5'
+//       }
+//     });
+//   };
 
-  // Register for notifications only once
-  const setupNotifications = async () => {
+//   const unsubscribe = onMessage(messaging, handleNewMessage);
+//   return () => unsubscribe();
+// }, []);
+
+// Second useEffect for FCM token registration
+// useEffect(() => {
+//   const registerToken = async () => {
+//     const token = await registerForPushNotifications(user.uid);
+//     console.log('FCM Token registered:', token);
+//   };
+
+//   registerToken();
+// }, [user.uid]);
+useEffect(() => {
+  const handleForegroundNotifications = async () => {
     const token = await registerForPushNotifications(user.uid);
-    if (token) {
-      const unsubscribe = onMessage(messaging, handleNotification);
-      return unsubscribe;
-    }
+    console.log('FCM Token registered:', token);
+
+    const unsubscribe = onMessage(messaging, (payload) => {
+      // Play notification sound
+      const notificationSound = new Audio('/tap.mp3');
+      notificationSound.play();
+
+      // Show Ant Design notification
+      message.info({
+        content: (
+          <div className="notification-content">
+            <h4 className="notification-title">{payload.notification.title}</h4>
+            <p className="notification-body">{payload.notification.body}</p>
+          </div>
+        ),
+        duration: 7,
+        className: 'custom-toast',
+        style: {
+          marginTop: '20px',
+          borderRadius: '8px',
+          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+        }
+      });
+      
+    });
+
+    return () => unsubscribe();
   };
 
-  let unsubscribe;
-  setupNotifications().then(unsub => {
-    unsubscribe = unsub;
-  });
-
-  return () => {
-    if (unsubscribe) unsubscribe();
-  };
+  handleForegroundNotifications();
 }, [user.uid]);
+
+
+// Third useEffect for storing notifications in Firestore
+// useEffect(() => {
+//   const storeNotification = async (payload) => {
+//     const notificationsRef = collection(db, 'users',payload.data?.senderId, 'notifications');
+    
+//     await addDoc(notificationsRef, {
+//       title: payload.notification.title,
+//       body: payload.notification.body,
+//       timestamp: serverTimestamp(),
+//       read: false,
+//       type: payload.data?.type || 'message',
+//       senderId: payload.data?.senderId,
+//       senderName: payload.data?.senderName,
+//       senderPhoto: payload.data?.senderPhoto
+//     });
+//   };
+
+//   const unsubscribe = onMessage(messaging, storeNotification);
+//   return () => unsubscribe();
+// }, [user.uid]);
 
 
 
@@ -193,6 +234,25 @@ useEffect(() => {
           timestamp: new Date(article.published_at),
           isNews: true
         }));
+    // fetch('https://newsapi.org/v2/everything?' +
+    //   'q=technology OR artificial intelligence OR science' +
+    //   '&language=en' +
+    //   '&pageSize=60' +
+    //   '&sortBy=publishedAt' +
+    //   '&apiKey=4b088fd990774c72a1ffbf23ca491daf')
+    //   .then(response => response.json())
+    //   .then(newsData => {
+    //     const newsAsPosts = newsData.articles.map((article) => ({
+    //       id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
+    //       author: article.source.name,
+    //       caption: article.content,
+    //       mediaUrl: article.urlToImage,
+    //       sourceName: article.source.name,
+    //       title: article.title,
+    //       publishedAt: article.publishedAt,
+    //       timestamp: new Date(article.publishedAt),
+    //       isNews: true
+    //     }));
     //const newsAsPosts="";
         
   console.log(newsAsPosts,"news posts");
@@ -233,7 +293,7 @@ useEffect(() => {
       //   console.log("recipientFcmToken",recipientFcmToken);
       //   // Send notification
       //   if (recipientFcmToken) {
-      //     await sendNotification(recipientFcmToken, `New message from ${user.displayName}: ${"hello plaese notify"}`);
+      //     await sendNotification(recipientFcmToken, `New message from ${user.displayName}: ${"hello plaese notify"}`,user.displayName,user.displayName,user.photoURL);
       //   }
       // }
 
