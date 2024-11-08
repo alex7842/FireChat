@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import AgoraRTC from 'agora-rtc-sdk-ng';
 import { VideoPlayer } from './VideoPlayer';
-import { Mic, MicOff } from 'lucide-react';
+import UserContext from './context/context';
 
 const APP_ID = '0446deea5d93437eae96def92c58c87e';
-const TOKEN =
-  '007eJxTYHggG/t13oqav4L7ayNWfHpUrmIvL7gr76xU8zeVXT6uy/0UGAxMTMxSUlMTTVMsjU2MzVMTUy2B/DRLo2RTi2QL89RXunrpDYGMDJOkQ1kYGSAQxGdhSMxJrWBgAACLfh+p';
+const TOKEN = '007eJxTYHggG/t13oqav4L7ayNWfHpUrmIvL7gr76xU8zeVXT6uy/0UGAxMTMxSUlMTTVMsjU2MzVMTUy2B/DRLo2RTi2QL89RXunrpDYGMDJOkQ1kYGSAQxGdhSMxJrWBgAACLfh+p';
 const CHANNEL = 'alex';
 
 AgoraRTC.setLogLevel(4);
-
 let agoraCommandQueue = Promise.resolve();
 
-const createAgoraClient = ({
-  onVideoTrack,
-  onUserDisconnected,
-}) => {
+const createAgoraClient = ({ onVideoTrack, onUserDisconnected, username }) => {
   const client = AgoraRTC.createClient({
     mode: 'rtc',
     codec: 'vp8',
@@ -36,16 +31,12 @@ const createAgoraClient = ({
 
   const connect = async () => {
     await waitForConnectionState('DISCONNECTED');
-
-    const uid = await client.join(
-      APP_ID,
-      CHANNEL,
-      TOKEN,
-      null
-    );
+    const uid = await client.join(APP_ID, CHANNEL, TOKEN, null);
 
     client.on('user-published', async (user, mediaType) => {
       await client.subscribe(user, mediaType);
+      user.username = username;
+      
       if (mediaType === 'video') {
         onVideoTrack(user);
       }
@@ -53,20 +44,18 @@ const createAgoraClient = ({
         user.audioTrack.play();
       }
     });
-    
 
     client.on('user-left', (user) => {
       onUserDisconnected(user);
     });
 
-    tracks =
-      await AgoraRTC.createMicrophoneAndCameraTracks();
-
+    tracks = await AgoraRTC.createMicrophoneAndCameraTracks();
     await client.publish(tracks);
 
     return {
       tracks,
       uid,
+      username
     };
   };
 
@@ -88,9 +77,11 @@ const createAgoraClient = ({
 };
 
 export const VideoRoom = () => {
+  const { user } = useContext(UserContext);
   const [users, setUsers] = useState([]);
   const [uid, setUid] = useState(null);
   const [audioTracks, setAudioTracks] = useState({});
+
   const toggleAudio = (userId) => {
     setAudioTracks((prev) => {
       const track = prev[userId];
@@ -101,7 +92,6 @@ export const VideoRoom = () => {
       return prev;
     });
   };
-  
 
   useEffect(() => {
     const onVideoTrack = (user) => {
@@ -110,33 +100,31 @@ export const VideoRoom = () => {
         setAudioTracks((prev) => ({ ...prev, [user.uid]: user.audioTrack }));
       }
     };
-    
 
     const onUserDisconnected = (user) => {
-      setUsers((previousUsers) =>
-        previousUsers.filter((u) => u.uid !== user.uid)
-      );
+      setUsers((previousUsers) => previousUsers.filter((u) => u.uid !== user.uid));
     };
 
     const { connect, disconnect } = createAgoraClient({
       onVideoTrack,
       onUserDisconnected,
+      username: user.displayName
     });
 
     const setup = async () => {
-      const { tracks, uid } = await connect();
+      const { tracks, uid, username } = await connect();
       setUid(uid);
       setUsers((previousUsers) => [
         ...previousUsers,
         {
           uid,
+          username,
           audioTrack: tracks[0],
           videoTrack: tracks[1],
         },
       ]);
       setAudioTracks((prev) => ({ ...prev, [uid]: tracks[0] }));
     };
-    
 
     const cleanup = async () => {
       await disconnect();
@@ -148,16 +136,13 @@ export const VideoRoom = () => {
       });
       setAudioTracks({});
     };
-    
 
-    // setup();
     agoraCommandQueue = agoraCommandQueue.then(setup);
 
     return () => {
-      // cleanup();
       agoraCommandQueue = agoraCommandQueue.then(cleanup);
     };
-  }, []);
+  }, [user.displayName]);
 
   return (
     <div
@@ -178,7 +163,7 @@ export const VideoRoom = () => {
         {users.map((user) => (
           <VideoPlayer
             key={user.uid}
-            user={user}
+            user1={user}
             audioTrack={audioTracks[user.uid]}
             toggleAudio={() => toggleAudio(user.uid)}
           />
