@@ -247,30 +247,51 @@
   0% { transform: translateY(0px); }
   50% { transform: translateY(-10px); }
   100% { transform: translateY(0px); }
-}
-.custom-toast {
-  background: linear-gradient(to right, #4A90E2, #50C878);
-  padding: 12px;
+}.custom-toast {
+  background: #ffffff !important;
+  padding: 16px !important;
 }
 
 .notification-content {
-  color: white;
+  min-width: 300px;
 }
 
-.notification-title {
-  font-size: 16px;
-  font-weight: 600;
+.notification-header {
   margin-bottom: 8px;
 }
 
-.notification-body {
-  font-size: 14px;
-  opacity: 0.9;
+.notification-title {
+  color: #1a73e8;
+  font-size: 16px;
+  font-weight: 600;
   margin: 0;
 }
 
-.ant-message-custom-content {
-  display: flex;
-  align-items: center;
-  gap: 12px;
+.notification-message {
+  background: #f8f9fa;
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+
+.notification-body {
+  color: #202124;
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Animation */
+.custom-toast {
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

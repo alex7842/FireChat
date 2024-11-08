@@ -11,6 +11,7 @@ import { ChatProvider } from './components/context/ChatContext.jsx'
 import { GroupProvider } from './components/context/GroupContext.jsx'
 import ProfilePage from './components/Profilepage.jsx'
 import { Notifications } from './components/Notifications.jsx'
+import { Videocall } from './components/Videocall.jsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
   
     <UserProvider> 
@@ -25,7 +26,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path='/ProfilePage' element={<ProfilePage />} />
             <Route path="/Profilepage/:uid" element={<ProfilePage />} />
             <Route path='/Notifications' element={<Notifications/>} />
-
+            <Route path='/VideoCall' element={<Videocall/>} />
+            
           </Routes>
         </BrowserRouter>
       </ChatProvider>

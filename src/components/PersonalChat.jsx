@@ -8,7 +8,7 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { CustomInput } from './CustomInput';
 import { Message } from './Message';
 import emailjs from '@emailjs/browser';
-
+import { useNavigate } from 'react-router-dom';
 import EmojiPicker from 'emoji-picker-react';
 import { QuerySnapshot, addDoc, collection, onSnapshot,doc,updateDoc,getDocs,arrayUnion,getDoc } from 'firebase/firestore';
 import {db} from '../config/firebase'
@@ -33,7 +33,7 @@ export const PersonalChat= () => {
     const {personalChats,cname,cimg,cemail}=useChat()
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [messages,setmessages]=useState([]);
- 
+ const navigate=useNavigate();
   const {email,photoURL,displayName,}=user
   const [text,settext]=useState('');
   const [del,setdel]=useState(false);
@@ -479,7 +479,9 @@ const suffix = (
   // if(videocall){
   //   return <Videocall/>
   // }
- 
+ const navivideo=()=>{
+  navigate('/Videocall')
+ }
    return (
     <div style={{ border: 'none' }}>
       {(group !== 'allowchat' && !personalChats && group!=='group' ) && <WelcomeTemplate />}
@@ -518,7 +520,7 @@ const suffix = (
 
   
           </Flex>
-          <div className="ml-9 " onClick={()=>setvideocall(true)}><Video/>Video Call</div>
+          <div className="ml-9 " onClick={navivideo}><Video/>Video Call</div>
          </Flex>:group==='group'?
 
          <Flex  onClick={calldrawer} align="center" justify='space-between' style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }} gap={4}>

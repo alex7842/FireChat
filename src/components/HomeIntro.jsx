@@ -84,18 +84,24 @@ useEffect(() => {
       message.info({
         content: (
           <div className="notification-content">
-            <h4 className="notification-title">{payload.notification.title}</h4>
-            <p className="notification-body">{payload.notification.body}</p>
+            <div className="notification-header">
+              <h4 className="notification-title">{payload.notification.title}</h4>
+            </div>
+            <div className="notification-message">
+              <p className="notification-body">{payload.notification.body}</p>
+            </div>
           </div>
         ),
         duration: 7,
         className: 'custom-toast',
         style: {
-          marginTop: '20px',
-          borderRadius: '8px',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)'
+          marginTop: '24px',
+          borderRadius: '12px',
+          boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
+          border: '1px solid #e8eaed'
         }
       });
+      
       
     });
 

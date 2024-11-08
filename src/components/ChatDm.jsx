@@ -99,10 +99,7 @@ const ChatDm = () => {
     }
 
   }
-  if(videocall){
-    return <Videocall/>
-  }
-
+ 
 
   // const handleMenuItemClick = (key) => {
    
