@@ -4,8 +4,9 @@ import GroupContext from './context/GroupContext';
 import UserContext from './context/context';
 import { Share2,Linkedin,Instagram,Twitter} from 'lucide-react';
 import { motion } from 'framer-motion';
-import { collection,setDoc,addDoc,doc } from 'firebase/firestore';
+import { collection,setDoc,addDoc,doc,getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
+import { sendNotification } from '../utils/notificationUtils';
 export const Share = ({  Sharemodel,SharePost }) => {
    //console.log("Sharepost",SharePost);
     const { users } = useContext(GroupContext);
@@ -37,6 +38,7 @@ export const Share = ({  Sharemodel,SharePost }) => {
             const timeString = `${hours}:${minutes} ${period}`;
             // Create chat rooms for each selected user
             for (const uid of selectedUIDs) {
+               
                 // Create unique chat ID
                 const chatId = (user.uid + uid).split("").sort().join("");
                 
@@ -73,11 +75,23 @@ export const Share = ({  Sharemodel,SharePost }) => {
                   };
                   console.log("Message Data:", messageData);    
                   await addDoc(chatRoomSubColRef, messageData);
+
+                 
                   
             }
+            Sharemodel(false);
             message.success("Post shared successfully!");
             console.log("Post shared successfully!");
-            Sharemodel(false);
+     for (const uid of selectedUIDs) {
+        const recipientDoc = await getDoc(doc(db, "users", uid));
+        const recipientFcmToken = recipientDoc.data().fcmToken;
+        console.log(" sharing user recipientFcmToken",recipientFcmToken);
+        // Send notification
+        if (recipientFcmToken) {
+          await sendNotification(recipientFcmToken, `${user.displayName}: has shared you a Post `,user.uid,user.displayName,user.photoURL);
+        }
+     }
+            
         } catch (error) {
             console.error("Error sharing post:", error);
         }
