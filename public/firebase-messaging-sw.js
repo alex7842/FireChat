@@ -18,7 +18,16 @@ self.addEventListener('notificationclick', (event) => {
   clickedNotification.close();
 
   event.waitUntil(
-    clients.openWindow('https://fire-chat-cloud.vercel.app/')
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
+      for (const client of clientList) {
+        if (client.url === 'https://fire-chat-cloud.vercel.app/' && 'focus' in client) {
+          return client.focus();
+        }
+      }
+      if (clients.openWindow) {
+        return clients.openWindow('https://fire-chat-cloud.vercel.app/');
+      }
+    })
   );
 });
 
