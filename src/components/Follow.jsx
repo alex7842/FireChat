@@ -1,9 +1,10 @@
 import { message, Modal } from 'antd';
 import React, { useContext, useState, useEffect } from 'react'
 import { db } from '../config/firebase'
-import { collection, addDoc, doc, getDocs, query, where, updateDoc,orderBy,limit } from 'firebase/firestore'
+import { collection, addDoc, doc, getDocs, query, where, updateDoc,orderBy,limit,getDoc } from 'firebase/firestore'
 import ChatContext from './context/ChatContext'
 import UserContext from './context/context'
+import { sendNotification } from '../utils/notificationUtils';
 
 export const Follow = ({uid1,username1,userurl1}) => {
   const { UserId } = useContext(ChatContext)
@@ -81,7 +82,13 @@ export const Follow = ({uid1,username1,userurl1}) => {
         timestamp: new Date(),
         message: `${user.displayName} sent you a friend request`
     });
-    
+    const recipientDoc = await getDoc(doc(db, "users", uid1));
+    const recipientFcmToken = recipientDoc.data().fcmToken;
+    console.log(" sharing user recipientFcmToken",recipientFcmToken);
+    // Send notification
+    if (recipientFcmToken) {
+      await sendNotification(recipientFcmToken, `${user.displayName}: has sent youa friend request`,user.uid,user.displayName,user.photoURL);
+    }
     settrack("Request Sent")
   }
 

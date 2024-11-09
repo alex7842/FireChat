@@ -14,6 +14,8 @@ import { SideBar } from './SideBar';
 import { collection,getDocs,query,doc,getDoc,setDoc,deleteDoc,Timestamp,updateDoc,increment,arrayUnion,addDoc,serverTimestamp} from 'firebase/firestore';
 import { db,messaging } from '../config/firebase';
 import { Report } from './Report';
+import { sendNotification } from '../utils/notificationUtils';
+
 export const PostModal = ({setpostData,postData}) => {
 
 
@@ -256,6 +258,13 @@ export const PostModal = ({setpostData,postData}) => {
   
         setNewComment('');
         message.success('Comment added successfully');
+        const recipientDoc = await getDoc(doc(db, "users", selectedPost.uid));
+        const recipientFcmToken = recipientDoc.data().fcmToken;
+        console.log("sharing user recipientFcmToken",recipientFcmToken);
+        // Send notification
+        if (recipientFcmToken) {
+          await sendNotification(recipientFcmToken, `${user.displayName}: has commented on your Post`,user.uid,user.displayName,user.photoURL);
+        }
       } catch (error) {
         console.log('Error adding comment:', error);  
         message.error('Failed to add comment');
