@@ -567,16 +567,29 @@ const suffix = (
             <LoadingOutlined style={{ color: '#00ccff', fontSize: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }} />
           ) :
             <div className="msg" id="msg">
-              {messages.map((msg, index) => (
+              {/* {messages.map((msg, index) => (
                 <Message
                   key={index}
                   msglen={messages.length}
                   handleReply={handleReply}
-                  {...msg}
+                 msg= {msg}
                   id1={index}
                  
                 />
-              ))}
+              ))} */}
+              {messages
+  .slice()
+  .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort messages by day
+  .map((msg, index) => (
+    <Message
+      key={index}
+      msglen={messages.length}
+      handleReply={handleReply}
+      msg={msg}
+      id1={index}
+    />
+  ))}
+
             </div>
 }
             {replyTo && (

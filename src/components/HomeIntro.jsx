@@ -10,6 +10,7 @@ import { collection,getDocs,query,doc,getDoc,setDoc,deleteDoc,Timestamp,updateDo
 import { db,messaging } from '../config/firebase';
 import { Report } from './Report';
 import { ShowPost } from './ShowPost';
+
 const { Header, Content, Sider } = Layout;
 import UserContext from './context/context';
 import ChatContext from './context/ChatContext';
@@ -20,19 +21,23 @@ import { onMessage } from 'firebase/messaging';
 
 import { registerForPushNotifications } from '../utils/fcmUtils';
 import { sendNotification } from '../utils/notificationUtils';
+import { Share } from './Share';
+import { PostModal } from './PostModal';
 const HomeIntro = () => {
   const [postData,setpostData]=useState([]);
-  const [selectedPost, setSelectedPost] = useState(null);
+ 
   const [modalVisible, setModalVisible] = useState(false);
   const [suggestedUsers,setsuggestedUsers]=useState([]);
   const [likedPosts, setLikedPosts] = useState({});
   const [isHeartAnimating, setIsHeartAnimating] = useState(false);
   const [newComment, setNewComment] = useState('');
   const { user } = useContext(UserContext);
-  const{users}=useContext(GroupContext);
+  const [SharePost,setSharePost]=useState(null);
+  const{users,selectedPost, setSelectedPost}=useContext(GroupContext);
   const {homereload}=useContext(ChatContext);
   const [newsLikes, setNewsLikes] = useState({});
   const [newsComments, setNewsComments] = useState({});
+  const [Sharemodel,setSharemodel]=useState(false);
 //console.log("users",users);
 const notificationSound = new Audio('/tap.mp3'); // Add an MP3 file to your public folder
 
@@ -70,46 +75,47 @@ const notificationSound = new Audio('/tap.mp3'); // Add an MP3 file to your publ
 
 //   registerToken();
 // }, [user.uid]);
-useEffect(() => {
-  const handleForegroundNotifications = async () => {
-    const token = await registerForPushNotifications(user.uid);
-    console.log('FCM Token registered:', token);
 
-    const unsubscribe = onMessage(messaging, (payload) => {
-      // Play notification sound
-      const notificationSound = new Audio('/tap.mp3');
-      notificationSound.play();
+// useEffect(() => {
+//   const handleForegroundNotifications = async () => {
+//     const token = await registerForPushNotifications(user.uid);
+//     console.log('FCM Token registered:', token);
 
-      // Show Ant Design notification
-      message.info({
-        content: (
-          <div className="notification-content">
-            <div className="notification-header">
-              <h4 className="notification-title">{payload.notification.title}</h4>
-            </div>
-            <div className="notification-message">
-              <p className="notification-body">{payload.notification.body}</p>
-            </div>
-          </div>
-        ),
-        duration: 7,
-        className: 'custom-toast',
-        style: {
-          marginTop: '24px',
-          borderRadius: '12px',
-          boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
-          border: '1px solid #e8eaed'
-        }
-      });
+//     const unsubscribe = onMessage(messaging, (payload) => {
+//       // Play notification sound
+//       const notificationSound = new Audio('/tap.mp3');
+//       notificationSound.play();
+
+//       // Show Ant Design notification
+//       message.info({
+//         content: (
+//           <div className="notification-content">
+//             <div className="notification-header">
+//               <h4 className="notification-title">{payload.notification.title}</h4>
+//             </div>
+//             <div className="notification-message">
+//               <p className="notification-body">{payload.notification.body}</p>
+//             </div>
+//           </div>
+//         ),
+//         duration: 7,
+//         className: 'custom-toast',
+//         style: {
+//           marginTop: '24px',
+//           borderRadius: '12px',
+//           boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
+//           border: '1px solid #e8eaed'
+//         }
+//       });
       
       
-    });
+//     });
 
-    return () => unsubscribe();
-  };
+//     return () => unsubscribe();
+//   };
 
-  handleForegroundNotifications();
-}, [user.uid]);
+//   handleForegroundNotifications();
+// }, [user.uid]);
 
 
 // Third useEffect for storing notifications in Firestore
@@ -259,7 +265,7 @@ useEffect(() => {
     //       timestamp: new Date(article.publishedAt),
     //       isNews: true
     //     }));
-    //const newsAsPosts="";
+    
         
   console.log(newsAsPosts,"news posts");
         const combinedPosts = [...allPosts, ...newsAsPosts].filter(
@@ -436,7 +442,36 @@ useEffect(() => {
         message.error('Unable to update like');
       }
     };
-    
+  
+
+const dataadd= async (item)=>{
+  const globalPostRef = doc(db, "globalPosts", item.id);
+  try {
+    if(item.isNews){
+    const postDoc = await getDoc(globalPostRef);
+    if (!postDoc.exists()) {
+      await setDoc(globalPostRef, {
+        id: item.id,
+        title: item.title,
+        caption: item.caption,
+        mediaUrl: item.mediaUrl,
+        sourceName: item.sourceName,
+        publishedAt: item.publishedAt,
+        uid:item.isNews?item.id:item.uid,
+        likes: 0 ,
+        likedBy: [{
+          
+        }],
+        comments: [],
+        lastUpdated: new Date()
+      });
+    } 
+  }
+}
+  catch(err){
+    console.log(err);
+  }
+}
     
     
     const handleNewsComment = async (postId) => {
@@ -578,160 +613,22 @@ const isValidImageUrl = (url) => {
   className="post-modal"
   style={{ top: 20 }}
 >
-  {selectedPost && (
-    <div className="flex max-h-[90vh]">
-      {/* Left Side - Media Display */}
-      <div className="w-3/5 relative bg-black">
-        <div className="flex items-center justify-center h-full">
-          {selectedPost.type === 'video' ? (
-            <video 
-              src={selectedPost.mediaUrl} 
-              controls 
-              className="max-h-[90vh] w-full object-contain"
-            />
-          ) : (
-            <img 
-              src={selectedPost.mediaUrl} 
-              alt={selectedPost.caption} 
-              className="max-h-[90vh] w-full object-contain"
-            />
-          )}
-        </div>
-
-        {/* Like Animation Overlay */}
-        {isHeartAnimating && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <HeartFilled 
-              className="text-6xl text-red-500 animate-like-heart"
-            />
-          </div>
-        )}
-
-        {/* Bottom Action Bar */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
-          <div className="flex justify-between items-center">
-            <div className="flex space-x-4">
-              <Button
-                type="text"
-                icon={likedPosts[selectedPost.id] ?
-                  <HeartFilled style={{ color: '#ff4d4f' }} /> :
-                  <HeartOutlined />
-                }
-                className="text-white hover:text-red-500 transition-colors"
-                onClick={() => selectedPost.isNews ? handleNewsLike(selectedPost) : handleLike(selectedPost)}
-              >
-                <span className="ml-1">{selectedPost.isNews ? newsLikes[selectedPost.id] || 0 :selectedPost.likes}</span>
-              </Button>
-              <Button 
-                type="text" 
-                icon={<CommentOutlined />} 
-                className="text-white hover:text-blue-500 transition-colors"
-              >
-                <span className="ml-1">
-  {selectedPost.isNews 
-    ? newsComments[selectedPost.id]?.length || 0 
-    : selectedPost.comments?.length || 0}
-</span>
-
-              </Button>
-              <Button 
-                type="text" 
-                icon={<ShareAltOutlined />} 
-                className="text-white hover:text-green-500 transition-colors"
-              />
-              
-            
-                
-            </div>
-          
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side - Comments and Info */}
-      <div className="w-2/5 flex flex-col bg-white">
-        {/* Post Info */}
-        <div className="p-4 border-b">
-          <div className="flex items-center space-x-3 mb-3">
-            <Avatar src={user.photoURL} size={40} />
-            <div>
-  <span className="font-semibold block">{user.displayName}</span>
-  <span className="text-xs text-gray-500">
-    {selectedPost.isNews 
-      ? new Date(selectedPost.publishedAt).toLocaleString()
-      : selectedPost.timestamp?.toDate?.()
-        ? selectedPost.timestamp.toDate().toLocaleString()
-        : new Date().toLocaleString()}
-  </span>
-</div>
-
-          </div>
-          <p className="text-gray-800 whitespace-pre-wrap">{selectedPost.caption}</p>
-        </div>
-
-        {/* Comments Section */}
-        <div className="flex-1 overflow-y-auto">
-  {selectedPost.isNews 
-    ? newsComments[selectedPost.id]?.map((comment, index) => (
-      <div key={index} className="p-4 border-b">
-        <div className="flex items-start space-x-3">
-          <Avatar src={comment.userPhoto} />
-          <div className="flex-1">
-            <div className="bg-gray-50 rounded-lg p-3">
-              <span className="font-semibold block">{comment.userName}</span>
-              <p className="text-gray-800">{comment.text}</p>
-            </div>
-            <span className="text-xs text-gray-500 mt-1 block">
-              {new Date(comment.timestamp).toLocaleString()}
-            </span>
-          </div>
-        </div>
-      </div>
-    ))
-    : selectedPost.comments?.map((comment, index) => (
-      <div key={index} className="p-4 border-b">
-        <div className="flex items-start space-x-3">
-          <Avatar src={comment.userPhoto} />
-          <div className="flex-1">
-            <div className="bg-gray-50 rounded-lg p-3">
-              <span className="font-semibold block">{comment.userName}</span>
-              <p className="text-gray-800">{comment.text}</p>
-            </div>
-            <span className="text-xs text-gray-500 mt-1 block">
-              {comment.timestamp?.toDate?.()
-                ? comment.timestamp.toDate().toLocaleString()
-                : new Date().toLocaleString()}
-            </span>
-          </div>
-        </div>
-      </div>
-    ))}
-</div>
-
-
-        {/* Comment Input */}
-        <div className="border-t p-4">
-          <div className="flex space-x-2">
-            <Input.TextArea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
-              autoSize={{ minRows: 1, maxRows: 4 }}
-              className="flex-1"
-              maxLength={500}
-            />
-            <Button
-              type="primary"
-              onClick={() => selectedPost.isNews?handleNewsComment(selectedPost.id):handleComment(selectedPost.id)}
-              disabled={!newComment.trim()}
-            >
-              Post
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
-  )}
+  <PostModal postData={postData} setpostData={setpostData} />
+  
+</Modal>
+<Modal 
+    open={Sharemodel}
+    onCancel={() => setSharemodel(false)}
+    width={500}
+    centered
+    footer={null}
+    className="rounded-lg overflow-hidden"
+    classNames={{
+        content: 'p-0',
+        header: 'hidden'
+    }}
+>
+    <Share SharePost={SharePost} Sharemodel={setSharemodel}/>
 </Modal>
 
     
@@ -877,6 +774,7 @@ const isValidImageUrl = (url) => {
                   className="absolute inset-0"
                   onClick={() => {
                     setSelectedPost(item);
+                    dataadd(item);
                     setModalVisible(true);
                   }}
                 />
@@ -894,11 +792,17 @@ const isValidImageUrl = (url) => {
                     type="text" 
                     icon={<CommentOutlined />}
                     onClick={() => {
+                      dataadd(item);
                       setSelectedPost(item);
                       setModalVisible(true);
                     }} 
                   />
-                  <Button type="text" icon={<ShareAltOutlined />} />
+                  <Button type="text" onClick={
+                    ()=>{
+                      setSharePost(item);
+                    setSharemodel(true);
+                    dataadd(item);
+                  }} icon={<ShareAltOutlined />} />
                 </div>
 
                 <div className="mt-2 font-semibold">

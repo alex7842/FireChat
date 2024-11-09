@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from 'react';
 import { Mic, MicOff } from 'lucide-react';
 import { useContext } from 'react';
 import UserContext from './context/context';
-
 export const VideoPlayer = ({ user1, audioTrack, toggleAudio }) => {
   const ref = useRef();
 
@@ -18,31 +17,33 @@ export const VideoPlayer = ({ user1, audioTrack, toggleAudio }) => {
   }, [user1.videoTrack]);
 
   return (
-    <div style={{ position: 'relative', width: '200px', height: '150px', backgroundColor: '#1a1a1a', borderRadius: '8px', overflow: 'hidden' }}>
-      <div ref={ref} style={{ width: '100%', height: '100%', objectFit: 'cover' }}></div>
-      <div style={{ 
-        position: 'absolute', 
-        bottom: '10px', 
-        left: '10px', 
-        color: 'white',
-        textShadow: '1px 1px 2px rgba(0,0,0,0.8)'
-      }}>
-        {user1.username || 'Anonymous'}
+    <div className="relative aspect-video  rounded-xl overflow-hidden shadow-lg transition-transform hover:scale-[1.02]">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-primary/80"></div>
+      
+      <div ref={ref} className="w-full h-full object-cover"></div>
+      
+      {/* User name overlay */}
+      <div className="absolute bottom-4 left-4 flex items-center space-x-2">
+        <div className="bg-primary/80 backdrop-blur-sm px-3 py-1.5 rounded-full">
+          <span className="text-secondary font-medium">
+            {user1.username || 'Anonymous'}
+          </span>
+        </div>
       </div>
-      <button
-        onClick={toggleAudio}
-        style={{ 
-          position: 'absolute', 
-          bottom: '10px', 
-          right: '10px', 
-          background: 'none', 
-          border: 'none', 
-          cursor: 'pointer',
-          padding: '5px'
-        }}
-      >
-        {audioTrack && audioTrack.enabled ? <Mic color="white" /> : <MicOff color="white" />}
-      </button>
+
+      {/* Controls */}
+      <div className="absolute bottom-4 right-4 flex items-center space-x-2">
+        <button
+          onClick={toggleAudio}
+          className="bg-primary/80 hover:bg-primary/80 backdrop-blur-sm p-2.5 rounded-full transition-colors duration-200"
+        >
+          {audioTrack && audioTrack.enabled ? (
+            <Mic className="w-5 h-5 text-secondary" />
+          ) : (
+            <MicOff className="w-5 h-5 text-red-500" />
+          )}
+        </button>
+      </div>
     </div>
   );
 };

@@ -146,30 +146,21 @@ export const VideoRoom = () => {
   }, [user.displayName]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'center',
-        flexDirection: 'column',
-        alignItems: 'center',
-      }}
-    >
-      <div
-        style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(2, 200px)',
-          gap: '10px',
-        }}
-      >
-        {participants.map((participant) => (
-          <VideoPlayer
-            key={participant.uid}
-            user1={participant}
-            audioTrack={participantAudioTracks[participant.uid]}
-            toggleAudio={() => toggleParticipantAudio(participant.uid)}
-          />
-        ))}
+   
+      <div className="flex flex-col h-screen bg-primary/20 p-4">
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-w-[1920px] mx-auto">
+          {participants
+            .sort((a, b) => (a.uid === localUid ? -1 : b.uid === localUid ? 1 : 0))
+            .map((participant) => (
+              <VideoPlayer
+                key={participant.uid}
+                user1={participant}
+                audioTrack={participantAudioTracks[participant.uid]}
+                toggleAudio={() => toggleParticipantAudio(participant.uid)}
+              />
+            ))}
+        </div>
       </div>
-    </div>
+    
   );
 };

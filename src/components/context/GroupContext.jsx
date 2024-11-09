@@ -20,10 +20,11 @@ export const GroupProvider = ({ children }) => {
   const [admin,setadmin]=useState("")
   const[groupdetails,setgroupdetails]=useState([]);
   const[selectedgroupid,setselectedgroupid]=useState("")
+  const [selectedPost, setSelectedPost] = useState(null);
   const [isopen,setisopen]=useState(false)
  const [draw,setdraw]=useState(false)
   return (
-    <GroupContext.Provider value={{ group,setgroup,users,setUsers,setisgroup,isgroup,groupid,setgroupid,setgroupname,setgrouplogo,setadmin,setgroupdescription,groupname,grouplogo,groupdescription,admin,setisopen,setdraw,draw,test,settest,videocall,setvideocall,setselectedgroupid,groupdetails,setgroupdetails,selectedgroupid,loading, setLoading}}>
+    <GroupContext.Provider value={{ group,setgroup,users,setUsers,setisgroup,isgroup,groupid,setgroupid,setgroupname,setgrouplogo,setadmin,setgroupdescription,groupname,grouplogo,groupdescription,admin,setisopen,setdraw,draw,test,settest,videocall,setvideocall,setselectedgroupid,groupdetails,setgroupdetails,selectedgroupid,loading, setLoading,selectedPost, setSelectedPost}}>
       {children}
     </GroupContext.Provider>
   );
