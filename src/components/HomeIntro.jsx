@@ -76,46 +76,46 @@ const notificationSound = new Audio('/tap.mp3'); // Add an MP3 file to your publ
 //   registerToken();
 // }, [user.uid]);
 
-// useEffect(() => {
-//   const handleForegroundNotifications = async () => {
-//     const token = await registerForPushNotifications(user.uid);
-//     console.log('FCM Token registered:', token);
+useEffect(() => {
+  const handleForegroundNotifications = async () => {
+    const token = await registerForPushNotifications(user.uid);
+    console.log('FCM Token registered:', token);
 
-//     const unsubscribe = onMessage(messaging, (payload) => {
-//       // Play notification sound
-//       const notificationSound = new Audio('/tap.mp3');
-//       notificationSound.play();
+    const unsubscribe = onMessage(messaging, (payload) => {
+      // Play notification sound
+      const notificationSound = new Audio('/tap.mp3');
+      notificationSound.play();
 
-//       // Show Ant Design notification
-//       message.info({
-//         content: (
-//           <div className="notification-content">
-//             <div className="notification-header">
-//               <h4 className="notification-title">{payload.notification.title}</h4>
-//             </div>
-//             <div className="notification-message">
-//               <p className="notification-body">{payload.notification.body}</p>
-//             </div>
-//           </div>
-//         ),
-//         duration: 7,
-//         className: 'custom-toast',
-//         style: {
-//           marginTop: '24px',
-//           borderRadius: '12px',
-//           boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
-//           border: '1px solid #e8eaed'
-//         }
-//       });
+      // Show Ant Design notification
+      message.info({
+        content: (
+          <div className="notification-content">
+            <div className="notification-header">
+              <h4 className="notification-title">{payload.notification.title}</h4>
+            </div>
+            <div className="notification-message">
+              <p className="notification-body">{payload.notification.body}</p>
+            </div>
+          </div>
+        ),
+        duration: 7,
+        className: 'custom-toast',
+        style: {
+          marginTop: '24px',
+          borderRadius: '12px',
+          boxShadow: '0 6px 16px rgba(0, 0, 0, 0.08)',
+          border: '1px solid #e8eaed'
+        }
+      });
       
       
-//     });
+    });
 
-//     return () => unsubscribe();
-//   };
+    return () => unsubscribe();
+  };
 
-//   handleForegroundNotifications();
-// }, [user.uid]);
+  handleForegroundNotifications();
+}, [user.uid]);
 
 
 // Third useEffect for storing notifications in Firestore

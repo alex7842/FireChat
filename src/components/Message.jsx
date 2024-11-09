@@ -219,9 +219,9 @@ const formatTime = (time) => {
         className="w-full h-64 object-cover rounded-lg"
       />
       <h2 className="text-xl font-semibold mt-4">{selectedPost?.title}</h2>
-      <p className="text-gray-600 mt-2">{selectedPost.caption}</p>
+      <p className="text-gray-600 mt-2">{selectedPost?.caption}</p>
       {!selectedPost?.isNews &&
-       <p className="text-gray-600 mt-2"> likes {selectedPost.likes}</p>
+       <p className="text-gray-600 mt-2"> likes {selectedPost?.likes}</p>
        }
       
       
