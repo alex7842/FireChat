@@ -328,163 +328,153 @@ const isValidImageUrl = (url) => {
     
   return (
     <>
-      {selectedPost && (
-    <div className="flex max-h-[90vh]">
-      {/* Left Side - Media Display */}
-      <div className="w-3/5 relative bg-black">
-        <div className="flex items-center justify-center h-full">
-          {selectedPost.type === 'video' ? (
-            <video 
-              src={selectedPost.mediaUrl} 
-              controls 
-              className="max-h-[90vh] w-full object-contain"
-            />
-          ) : (
-            <img 
-              src={selectedPost.mediaUrl} 
-              alt={selectedPost.caption} 
-              className="max-h-[90vh] w-full object-contain"
-            />
-          )}
+   {selectedPost && (
+    <div className="flex flex-col md:flex-row max-h-[90vh]">
+        {/* Left Side - Media Display */}
+        <div className="w-full md:w-3/5 relative bg-black">
+            <div className="flex items-center justify-center h-full">
+                {selectedPost.type === 'video' ? (
+                    <video
+                        src={selectedPost.mediaUrl}
+                        controls
+                        className="max-h-[50vh] md:max-h-[90vh] w-full object-contain"
+                    />
+                ) : (
+                    <img
+                        src={selectedPost.mediaUrl}
+                        alt={selectedPost.caption}
+                        className="max-h-[50vh] md:max-h-[90vh] w-full object-contain"
+                    />
+                )}
+            </div>
+
+            {/* Like Animation Overlay */}
+            {isHeartAnimating && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <HeartFilled className="text-4xl md:text-6xl text-violet-500 animate-like-heart" />
+                </div>
+            )}
+
+            {/* Bottom Action Bar */}
+            <div className="absolute bottom-0 left-0 right-0 p-3 md:p-4 bg-gradient-to-t from-black/70 to-transparent">
+                <div className="flex justify-between items-center">
+                    <div className="flex space-x-3 md:space-x-4">
+                        <Button
+                            type="text"
+                            icon={likedPosts[selectedPost.id] ? 
+                                <HeartFilled style={{ color: '#8B5CF6' }} /> : 
+                                <HeartOutlined />}
+                            className="text-white hover:text-violet-500 transition-colors"
+                            onClick={() => selectedPost.isNews ? handleNewsLike(selectedPost) : handleLike(selectedPost)}
+                        >
+                            <span className="ml-1">{selectedPost.isNews ? newsLikes[selectedPost.id] || 0 : selectedPost.likes}</span>
+                        </Button>
+                        <Button
+                            type="text"
+                            icon={<CommentOutlined />}
+                            className="text-white hover:text-violet-500 transition-colors"
+                        >
+                            <span className="ml-1">
+                                {selectedPost.isNews ? newsComments[selectedPost.id]?.length || 0 : selectedPost.comments?.length || 0}
+                            </span>
+                        </Button>
+                        <Button
+                            type="text"
+                            icon={<ShareAltOutlined />}
+                            className="text-white hover:text-violet-500 transition-colors"
+                        />
+                    </div>
+                </div>
+            </div>
         </div>
 
-        {/* Like Animation Overlay */}
-        {isHeartAnimating && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <HeartFilled 
-              className="text-6xl text-red-500 animate-like-heart"
-            />
-          </div>
-        )}
+        {/* Right Side - Comments and Info */}
+        <div className="w-full md:w-2/5 flex flex-col bg-white h-[40vh] md:h-[90vh]">
+            {/* Post Info */}
+            <div className="p-3 md:p-4 border-b">
+                <div className="flex items-center space-x-3 mb-2">
+                    <Avatar src={user.photoURL} size={32} className="border-2 border-violet-200" />
+                    <div>
+                        <span className="font-semibold block text-violet-900">{user.displayName}</span>
+                        <span className="text-xs text-gray-500">
+                            {selectedPost.isNews
+                                ? new Date(selectedPost.publishedAt).toLocaleString()
+                                : selectedPost.timestamp?.toDate?.()
+                                    ? selectedPost.timestamp.toDate().toLocaleString()
+                                    : new Date().toLocaleString()}
+                        </span>
+                    </div>
+                </div>
+                <p className="text-gray-800 whitespace-pre-wrap text-sm">{selectedPost.caption}</p>
+            </div>
 
-        {/* Bottom Action Bar */}
-        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/70 to-transparent">
-          <div className="flex justify-between items-center">
-            <div className="flex space-x-4">
-              <Button
-                type="text"
-                icon={likedPosts[selectedPost.id] ?
-                  <HeartFilled style={{ color: '#ff4d4f' }} /> :
-                  <HeartOutlined />
-                }
-                className="text-white hover:text-red-500 transition-colors"
-                onClick={() => selectedPost.isNews ? handleNewsLike(selectedPost) : handleLike(selectedPost)}
-              >
-                <span className="ml-1">{selectedPost.isNews ? newsLikes[selectedPost.id] || 0 :selectedPost.likes}</span>
-              </Button>
-              <Button 
-                type="text" 
-                icon={<CommentOutlined />} 
-                className="text-white hover:text-blue-500 transition-colors"
-              >
-                <span className="ml-1">
-  {selectedPost.isNews 
-    ? newsComments[selectedPost.id]?.length || 0 
-    : selectedPost.comments?.length || 0}
+            {/* Comments Section */}
+            <div className="flex-1 overflow-y-auto">
+                {/* ... Comments mapping stays the same ... */}
+                {selectedPost.isNews
+? newsComments[selectedPost.id]?.map((comment, index) => (
+<div key={index} className="p-4 border-b">
+ <div className="flex items-start space-x-3">
+ <Avatar src={comment.userPhoto} />
+<div className="flex-1">
+<div className="bg-gray-50 rounded-lg p-3">
+ <span className="font-semibold block">{comment.userName}</span>
+ <p className="text-gray-800">{comment.text}</p>
+</div>
+<span className="text-xs text-gray-500 mt-1 block">
+ {comment.timestamp?.toDate?.()
+ ? comment.timestamp.toDate().toLocaleString()
+ : new Date().toLocaleString()}
+{/* { new Date(comment.timestamp).toLocaleString()} */}
 </span>
-
-              </Button>
-              <Button 
-                type="text" 
-                icon={<ShareAltOutlined />} 
-                className="text-white hover:text-green-500 transition-colors"
-              />
-              
-            
-                
-            </div>
-          
-          </div>
-        </div>
-      </div>
-
-      {/* Right Side - Comments and Info */}
-      <div className="w-2/5 flex flex-col bg-white">
-        {/* Post Info */}
-        <div className="p-4 border-b">
-          <div className="flex items-center space-x-3 mb-3">
-            <Avatar src={user.photoURL} size={40} />
-            <div>
-  <span className="font-semibold block">{user.displayName}</span>
-  <span className="text-xs text-gray-500">
-    {selectedPost.isNews 
-      ? new Date(selectedPost.publishedAt).toLocaleString()
-      : selectedPost.timestamp?.toDate?.()
-        ? selectedPost.timestamp.toDate().toLocaleString()
-        : new Date().toLocaleString()}
-  </span>
 </div>
-
-          </div>
-          <p className="text-gray-800 whitespace-pre-wrap">{selectedPost.caption}</p>
-        </div>
-
-        {/* Comments Section */}
-        <div className="flex-1 overflow-y-auto">
-  {selectedPost.isNews 
-    ? newsComments[selectedPost.id]?.map((comment, index) => (
-      <div key={index} className="p-4 border-b">
-        <div className="flex items-start space-x-3">
-          <Avatar src={comment.userPhoto} />
-          <div className="flex-1">
-            <div className="bg-gray-50 rounded-lg p-3">
-              <span className="font-semibold block">{comment.userName}</span>
-              <p className="text-gray-800">{comment.text}</p>
-            </div>
-            <span className="text-xs text-gray-500 mt-1 block">
-            {comment.timestamp?.toDate?.()
-                ? comment.timestamp.toDate().toLocaleString()
-                : new Date().toLocaleString()}
-              {/* { new Date(comment.timestamp).toLocaleString()} */}
-            </span>
-          </div>
-        </div>
-      </div>
-    ))
-    : selectedPost.comments?.map((comment, index) => (
-      <div key={index} className="p-4 border-b">
-        <div className="flex items-start space-x-3">
-          <Avatar src={comment.userPhoto} />
-          <div className="flex-1">
-            <div className="bg-gray-50 rounded-lg p-3">
-              <span className="font-semibold block">{comment.userName}</span>
-              <p className="text-gray-800">{comment.text}</p>
-            </div>
-            <span className="text-xs text-gray-500 mt-1 block">
-              {comment.timestamp?.toDate?.()
-                ? comment.timestamp.toDate().toLocaleString()
-                : new Date().toLocaleString()}
-            </span>
-          </div>
-        </div>
-      </div>
-    ))}
+ </div>
+ </div>
+))
+: selectedPost.comments?.map((comment, index) => (
+ <div key={index} className="p-4 border-b">
+ <div className="flex items-start space-x-3">
+<Avatar src={comment.userPhoto} />
+ <div className="flex-1">
+ <div className="bg-gray-50 rounded-lg p-3">
+ <span className="font-semibold block">{comment.userName}</span>
+<p className="text-gray-800">{comment.text}</p>
 </div>
+<span className="text-xs text-gray-500 mt-1 block">
+{comment.timestamp?.toDate?.()
+? comment.timestamp.toDate().toLocaleString()
+: new Date().toLocaleString()}
+ </span>
+</div>
+ </div>
+ </div>
+ ))}
+            </div>
 
-
-        {/* Comment Input */}
-        <div className="border-t p-4">
-          <div className="flex space-x-2">
-            <Input.TextArea
-              value={newComment}
-              onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Add a comment..."
-              autoSize={{ minRows: 1, maxRows: 4 }}
-              className="flex-1"
-              maxLength={500}
-            />
-            <Button
-              type="primary"
-              onClick={() => selectedPost.isNews?handleNewsComment(selectedPost.id):handleComment(selectedPost.id)}
-              disabled={!newComment.trim()}
-            >
-              Post
-            </Button>
-          </div>
+            {/* Comment Input */}
+            <div className="border-t p-3 md:p-4">
+                <div className="flex space-x-2">
+                    <Input.TextArea
+                        value={newComment}
+                        onChange={(e) => setNewComment(e.target.value)}
+                        placeholder="Add a comment..."
+                        autoSize={{ minRows: 1, maxRows: 4 }}
+                        className="flex-1 focus:border-violet-500 hover:border-violet-400"
+                        maxLength={500}
+                    />
+                    <Button
+                        type="primary"
+                        onClick={() => selectedPost.isNews ? handleNewsComment(selectedPost.id) : handleComment(selectedPost.id)}
+                        disabled={!newComment.trim()}
+                        className="bg-violet-600 hover:bg-violet-700"
+                    >
+                        Post
+                    </Button>
+                </div>
+            </div>
         </div>
-      </div>
     </div>
-  )}
+)}
 
     </>
   )

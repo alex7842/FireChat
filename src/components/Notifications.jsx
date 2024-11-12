@@ -4,7 +4,7 @@ import { db } from '../config/firebase';
 import { collection, getDocs, doc, updateDoc, query, where } from 'firebase/firestore';
 import { SideBar } from './SideBar';
 import { Layout } from 'antd';
-
+import { AnimatedList } from './ui/animated-list';
 export const Notifications = () => {
     const { user } = useContext(UserContext);
     const [notifications, setNotifications] = useState([]);
@@ -43,52 +43,63 @@ export const Notifications = () => {
                 : notification
         ));
     };
-
     return (
-        <>
-         <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
-        <SideBar/>
-        <div className="p-4  max-w-2xl mx-auto">
-            <h2 className="text-2xl font-bold mb-4">Notifications</h2>
-            <div className="space-y-4">
-                {notifications.map((notification) => (
-                    <div key={notification.id} 
-                         className="bg-white p-4 rounded-lg shadow-md flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
-                            <img 
-                                src={notification.senderPhoto} 
-                                alt="sender" 
-                                className="w-12 h-12 rounded-full"
-                            />
-                            <div>
-                                <p className="font-semibold">{notification.message}</p>
-                                <p className="text-sm text-gray-500">
-                                    {notification.status}
-                                </p>
-                            </div>
-                        </div>
-                        
-                        {notification.status === 'pending' && (
-                            <div className="flex space-x-2">
-                                <button
-                                    onClick={() => handleRequest(notification.id, 'accepted')}
-                                    className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-                                >
-                                    Accept
-                                </button>
-                                <button
-                                    onClick={() => handleRequest(notification.id, 'rejected')}
-                                    className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600"
-                                >
-                                    Reject
-                                </button>
-                            </div>
-                        )}
+        <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
+            <SideBar/>
+            <div className="p-4 max-w-2xl mx-auto">
+                <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-transparent bg-clip-text">Notifications</h2>
+                {notifications.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-[60vh]">
+                        <img 
+                            src="/notify.jpeg" 
+                            alt="No notifications" 
+                            className="w-64 h-64 mb-4"
+                        />
+                        <h3 className="text-xl font-semibold text-gray-700">No Notifications Yet</h3>
+                        <p className="text-gray-500 mt-2">You're all caught up! Check back later.</p>
                     </div>
-                ))}
+                ) : (
+                    <AnimatedList delay={800} className="space-y-4" key="notification-list">
+                        {notifications.map((notification) => (
+                            <div 
+                                key={notification.id}
+                                className="bg-gradient-to-r from-violet-50 to-fuchsia-50 p-4 rounded-lg shadow-md flex items-center justify-between border border-violet-100 hover:shadow-lg transition-shadow"
+                            >
+                                <div className="flex items-center space-x-4">
+                                    <img
+                                        src={notification.senderPhoto}
+                                        alt="sender"
+                                        className="w-12 h-12 rounded-full border-2 border-violet-200"
+                                    />
+                                    <div>
+                                        <p className="font-semibold text-gray-800">{notification.message}</p>
+                                        <p className="text-sm text-violet-600">
+                                            {notification.status}
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                {notification.status === 'pending' && (
+                                    <div className="flex space-x-2">
+                                        <button
+                                            onClick={() => handleRequest(notification.id, 'accepted')}
+                                            className="bg-gradient-to-r from-violet-500 to-violet-600 text-white px-4 py-2 rounded-md hover:from-violet-600 hover:to-violet-700 transition-all"
+                                        >
+                                            Accept
+                                        </button>
+                                        <button
+                                            onClick={() => handleRequest(notification.id, 'rejected')}
+                                            className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-md hover:from-red-600 hover:to-red-700 transition-all"
+                                        >
+                                            Reject
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </AnimatedList>
+                )}
             </div>
-        </div>
         </Layout>
-        </>
     );
 };

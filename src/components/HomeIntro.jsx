@@ -168,41 +168,41 @@ useEffect(() => {
     setLoading(false);
     // Fetch news in parallel
    
-    fetch('https://api.mediastack.com/v1/news?access_key=6e434e5f81bc0a97106429f99493052b&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
+    // fetch('https://api.mediastack.com/v1/news?access_key=6e434e5f81bc0a97106429f99493052b&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
 
-      .then(response => response.json())
-      .then(newsData => {
-        console.log(newsData,"news data");  
-        const newsAsPosts = newsData.data.map((article) => ({
-          id: `news-${encodeURIComponent(article.published_at)}-${encodeURIComponent(article.title)}`,
-          author: article.author || article.source,
-          caption: article.description,
-          mediaUrl: article.image || `https://source.unsplash.com/800x400/?${encodeURIComponent(article.title)}`,
-          sourceName: article.source,
-          title: article.title,
-          publishedAt: article.published_at,
-          timestamp: new Date(article.published_at),
-          isNews: true
-        }));
-    // fetch('https://newsapi.org/v2/everything?' +
-    //   'q=technology OR artificial intelligence OR science' +
-    //   '&language=en' +
-    //   '&pageSize=60' +
-    //   '&sortBy=publishedAt' +
-    //   '&apiKey=4b088fd990774c72a1ffbf23ca491daf')
     //   .then(response => response.json())
     //   .then(newsData => {
-    //     const newsAsPosts = newsData.articles.map((article) => ({
-    //       id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
-    //       author: article.source.name,
-    //       caption: article.content,
-    //       mediaUrl: article.urlToImage,
-    //       sourceName: article.source.name,
+    //     console.log(newsData,"news data");  
+    //     const newsAsPosts = newsData.data.map((article) => ({
+    //       id: `news-${encodeURIComponent(article.published_at)}-${encodeURIComponent(article.title)}`,
+    //       author: article.author || article.source,
+    //       caption: article.description,
+    //       mediaUrl: article.image || `https://source.unsplash.com/800x400/?${encodeURIComponent(article.title)}`,
+    //       sourceName: article.source,
     //       title: article.title,
-    //       publishedAt: article.publishedAt,
-    //       timestamp: new Date(article.publishedAt),
+    //       publishedAt: article.published_at,
+    //       timestamp: new Date(article.published_at),
     //       isNews: true
     //     }));
+    fetch('https://newsapi.org/v2/everything?' +
+      'q=technology OR artificial intelligence OR science' +
+      '&language=en' +
+      '&pageSize=60' +
+      '&sortBy=publishedAt' +
+      '&apiKey=4b088fd990774c72a1ffbf23ca491daf')
+      .then(response => response.json())
+      .then(newsData => {
+        const newsAsPosts = newsData.articles.map((article) => ({
+          id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
+          author: article.source.name,
+          caption: article.content,
+          mediaUrl: article.urlToImage,
+          sourceName: article.source.name,
+          title: article.title,
+          publishedAt: article.publishedAt,
+          timestamp: new Date(article.publishedAt),
+          isNews: true
+        }));
     
         
   console.log(newsAsPosts,"news posts");
@@ -739,7 +739,7 @@ const scrollVariants = {
                 {/* Suggestions Sidebar */}
                 <div className="hidden md:block w-[320px] flex-shrink-0">
                   <div className="sticky top-4">
-                    <Card title={`Suggestions for you`} className="rounded-lg">
+                    <Card title={`Suggestions for you ${user.displayName}`} className="rounded-lg">
                       {suggestedUsers.length === 0 ? (
                         <List
                           itemLayout="horizontal"

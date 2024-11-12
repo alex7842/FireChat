@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Typography } from 'antd';
-
+import SparklesText from './ui/sparkles-text';
 export const WelcomeTemplate = () => {
   return (
     <motion.div 
@@ -43,7 +43,7 @@ export const WelcomeTemplate = () => {
         className="text-center"
       >
         <Typography.Title level={2} className="bg-gradient-to-r from-violet-500 to-fuchsia-500 text-transparent bg-clip-text">
-          Welcome to FireChat
+        <SparklesText text={"Welcome to FireChat"}/>
         </Typography.Title>
         
         <motion.div
