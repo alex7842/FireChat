@@ -612,6 +612,11 @@ return (
                       onSettings={() => setIsThemeDrawerVisible(true)}
                       onReport={() => message.info('Report submitted')}
                     />
+                    <ChatThemes 
+  visible={isThemeDrawerVisible}
+  onClose={() => setIsThemeDrawerVisible(false)}
+  onThemeSelect={handleThemeSelect}
+/>
                   </div>
                 </div>
               ) : group === 'group' ? (
@@ -654,6 +659,38 @@ return (
     className="h-[calc(100vh-220px)] md:h-[calc(100vh-180px)] overflow-y-auto px-4"
   >
     {/* Message content */}
+    {messages.length === 0 ? (
+  <EmptyChat/>
+) : (
+  load ? (
+    <LoadingOutlined 
+      style={{ 
+        color: '#00ccff', 
+        fontSize: '30px', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center' 
+      }} 
+    />
+  ) : (
+    <div className="msg" id="msg">
+      {messages
+        .slice()
+        .sort((a, b) => new Date(a.date) - new Date(b.date))
+        .map((msg, index) => (
+          <Message
+            key={index}
+            msglen={messages.length}
+            handleReply={handleReply}
+            msg={msg}
+            id1={index}
+            messageTheme={messageTheme}
+          />
+        ))}
+    </div>
+  )
+)}
+
   </div>
 
   {/* Reply Interface */}

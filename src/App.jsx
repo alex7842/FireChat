@@ -11,7 +11,8 @@ import UserContext from './components/context/context';
 import ChatContext from './components/context/ChatContext';
 import { registerForPushNotifications } from './utils/fcmUtils';
 import { Hero } from './components/Design/Hero';
-
+import { SpeedInsights } from '@vercel/speed-insights/react';
+import { Analytics } from "@vercel/analytics/react"
 function App() {
   const { user, setuser } = useContext(UserContext);
   
@@ -21,7 +22,8 @@ function App() {
       {(user &&  localStorage.getItem("isloggedin")==="true") ?(
         <>
         <Home/>
-         
+        <SpeedInsights />
+        <Analytics />
         </>
       ) :  <Hero/>
     }

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@emailjs/browser": "^4.3.3",
+    "@vercel/analytics": "^1.4.0",
+    "@vercel/speed-insights": "^1.1.0",
     "agora-rtc-sdk-ng": "^4.22.1",
     "antd": "^5.17.0",
     "antd-img-crop": "^4.23.0",
