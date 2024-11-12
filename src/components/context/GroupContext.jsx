@@ -23,8 +23,9 @@ export const GroupProvider = ({ children }) => {
   const [selectedPost, setSelectedPost] = useState(null);
   const [isopen,setisopen]=useState(false)
  const [draw,setdraw]=useState(false)
+ const [suggestedUsers,setsuggestedUsers]=useState([]);
   return (
-    <GroupContext.Provider value={{ group,setgroup,users,setUsers,setisgroup,isgroup,groupid,setgroupid,setgroupname,setgrouplogo,setadmin,setgroupdescription,groupname,grouplogo,groupdescription,admin,setisopen,setdraw,draw,test,settest,videocall,setvideocall,setselectedgroupid,groupdetails,setgroupdetails,selectedgroupid,loading, setLoading,selectedPost, setSelectedPost}}>
+    <GroupContext.Provider value={{ group,setgroup,users,setUsers,setisgroup,isgroup,groupid,setgroupid,setgroupname,setgrouplogo,setadmin,setgroupdescription,groupname,grouplogo,groupdescription,admin,setisopen,setdraw,draw,test,settest,videocall,setvideocall,setselectedgroupid,groupdetails,setgroupdetails,selectedgroupid,loading, setLoading,selectedPost, setSelectedPost,suggestedUsers,setsuggestedUsers}}>
       {children}
     </GroupContext.Provider>
   );

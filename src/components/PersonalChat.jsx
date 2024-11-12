@@ -1,16 +1,17 @@
 import React, { useEffect, useState,useContext,useMemo } from 'react'
 import {Flex, Typography, Space} from 'antd';
-import { AudioOutlined,SendOutlined,UploadOutlined,FileImageOutlined ,SmileOutlined,LoadingOutlined } from '@ant-design/icons';
+import { AudioOutlined,SendOutlined,UploadOutlined,FileImageOutlined ,SmileOutlined,LoadingOutlined,ArrowLeftOutlined } from '@ant-design/icons';
 import { Button, Popover,Modal,Form,Input,Select,message,Upload,Progress,Image,Empty} from 'antd';
-
+import { MessageCircleReply } from 'lucide-react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
-
+import { ChatOptions } from './ChatOptions';
+import { ChatThemes } from './ChatThemes';
 import { CustomInput } from './CustomInput';
 import { Message } from './Message';
 import emailjs from '@emailjs/browser';
 import { useNavigate } from 'react-router-dom';
 import EmojiPicker from 'emoji-picker-react';
-import { QuerySnapshot, addDoc, collection, onSnapshot,doc,updateDoc,getDocs,arrayUnion,getDoc } from 'firebase/firestore';
+import { QuerySnapshot, addDoc, collection, onSnapshot,doc,updateDoc,getDocs,arrayUnion,getDoc, deleteDoc } from 'firebase/firestore';
 import {db} from '../config/firebase'
 import UserContext from './context/context';
 import  ChatContext, { useChat } from './context/ChatContext';
@@ -25,7 +26,8 @@ import ai from '../hooks/ai';
 import { Ai } from './Ai';
 import { sendNotification } from '../utils/notificationUtils';
 import { Videocall } from './Videocall';
-export const PersonalChat= () => {
+import { EmptyChat } from './EmptyChat';
+export const PersonalChat= ({onBack}) => {
     const { user } = useContext(UserContext);
     const {targetuserid} =useContext(ChatContext);
     const [load,setload]=useState(false)
@@ -46,8 +48,13 @@ export const PersonalChat= () => {
 const [selectedFile, setSelectedFile] = useState(null);
 const [imagePreview, setImagePreview] = useState(null);
 const[load1,setload1]=useState(false);
-
+const [isThemeDrawerVisible, setIsThemeDrawerVisible] = useState(false);
+const [chatBackground, setChatBackground] = useState('#ffffff');
 const { suggestions, loading, error, fetchSuggestions,setSuggestions } = ai();
+const [messageTheme, setMessageTheme] = useState({
+  msgRight: '#BA38D0', // Default violet
+  msgLeft: '#CECECE'  // Default white
+});
  const chats = useMemo(() => {
   if (personalChats) {
     setload(true)
@@ -476,167 +483,213 @@ const suffix = (
     settext('');
     handlesubmit("");
   };
-  // if(videocall){
-  //   return <Videocall/>
-  // }
- const navivideo=()=>{
-  navigate('/Videocall')
- }
-   return (
-    <div style={{ border: 'none' }}>
-      {(group !== 'allowchat' && !personalChats && group!=='group' ) && <WelcomeTemplate />}
-  
-      {(group === 'allowchat' || personalChats || group==='group') && (
-        <div>
-        
-
-       
-      <Modal title="Profile" open={isModalOpen1}  footer={[
-        
-      ]} onCancel={handleCancel1}>
-        <Profilecard/>
-        </Modal>
-      
-      <Modal title="All Members" open={isModalOpen2}  footer={[
-        
-      ]} onCancel={handleCancel2}>
-      <ShowGroup/>
-        </Modal>
-      
-        
-      {draw && <GroupDetails   />}
-
-          { group !== 'allowchat' && group!=='group'?
-           <Flex  id='new'align="center" style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }} onClick={showprofile}  gap={4}>
-           <img src={cimg}  style={{ borderRadius: '50%', width: '5%', height: '5%' }} alt="Chat Avatar" />
-           <Flex vertical>
-           <Typography.Text style={{ fontSize: 34 }}>{cname}</Typography.Text>
-          
-           {allUsers.map((i) => 
-    i.typing && i.uid!=user.uid  && (
-      <p key={user.uid}>Typing...</p>
-    )
-  )}
-
-  
-          </Flex>
-          <div className="ml-9 " onClick={navivideo}><Video/>Video Call</div>
-         </Flex>:group==='group'?
-
-         <Flex  onClick={calldrawer} align="center" justify='space-between' style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }} gap={4}>
-          <Flex align='center' >
-          <img   src={grouplogo} style={{ borderRadius: '50%', width: '5%', height: '5%' }} alt="Chat Avatar" />
-       
-           <Flex vertical>
-          <Typography.Text style={{ fontSize: 34 }}>{groupname}</Typography.Text>
-          
-          {allUsers.map((i) => 
-    i.typing && i.uid!=user.uid  && (
-      <p key={user.uid}>{i.displayName} is Typing...</p>
-    )
-  )}
-          </Flex>
-           </Flex>
-           <Button>Leave Group</Button>
-           {contextHolder}
-           
-         </Flex>:
-         <Flex align="center" justify='space-between' style={{ marginLeft: '2px',backgroundColor:'#D5DBDB' }}  gap={4}>
-          <Flex onClick={showgroup}  align='center' justify='center'>
-          
-         <Group/>
-         <Flex vertical>
-           <Typography.Text style={{ fontSize: 28 }}>Community Chat</Typography.Text>
-           {allUsers.map((i) => 
-    i.typing && i.uid!=user.uid  && (
-      <p key={user.uid}>{i.displayName} is Typing...</p>
-    )
-  )}
-          </Flex>
-          <div className="ml-9 " onClick={navivideo}><Video/>Video Call</div>
-           </Flex>
-           {contextHolder}
-         
-         </Flex>
-        
-}
+ 
+ const navivideo= async (diff)=>{
+  if(diff==1){
+    navigate('/Videocall')
+    await addDoc(chats, {
+      text:"You Requested a Video Call",
+      email: email,
+      logo: "https://icon-library.com/images/iphone-call-icon/iphone-call-icon-28.jpg",
+      name: displayName,
+      call:true,
+      day,
+      time,
+      date
+    });
    
-        <div className="child">
-          <div id="msg-container1" className="msg-container1">
-          {load ? (
-            <LoadingOutlined style={{ color: '#00ccff', fontSize: '30px', display: 'flex', justifyContent: 'center', alignItems: 'center' }} />
-          ) :
-            <div className="msg" id="msg">
-              {/* {messages.map((msg, index) => (
-                <Message
-                  key={index}
-                  msglen={messages.length}
-                  handleReply={handleReply}
-                 msg= {msg}
-                  id1={index}
-                 
-                />
-              ))} */}
-              {messages
-  .slice()
-  .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort messages by day
-  .map((msg, index) => (
-    <Message
-      key={index}
-      msglen={messages.length}
-      handleReply={handleReply}
-      msg={msg}
-      id1={index}
-    />
-  ))}
+    const recipientDoc = await getDoc(doc(db, "users",targetuserid));
+    const recipientFcmToken = recipientDoc.data().fcmToken;
+    console.log(" sharing user recipientFcmToken",recipientFcmToken);
+    // Send notification
+    if (recipientFcmToken) {
+      await sendNotification(recipientFcmToken, `${user.displayName}: has requested you a Video Call`,user.uid,user.displayName,user.photoURL);
+    }
+  }
+ }
+ const handleDeleteChat =  async() => {
+  Modal.confirm({
+    title: 'Delete Chat',
+    content: 'Are you sure you want to delete this chat? This action cannot be undone.',
+    okText: 'Delete',
+    okType: 'danger',
+    cancelText: 'Cancel',
+    onOk: async () => {
+      const chatRoomDocs = await getDocs(chats);
+      const deletePromises = chatRoomDocs.docs.map((doc) => deleteDoc(doc.ref));
+      await Promise.all(deletePromises);
+      console.log("Subcollection 'chatroom' deleted successfully.");
+      message.success('Chat deleted');
+    }
+  });
+};
 
-            </div>
-}
-            {replyTo && (
-              <div id={`reply`} className="reply" style={{ display: 'block' }}>
-                <span>Replying to {replyTo.name}</span>
-                <span
-                  style={{ cursor: "pointer", marginLeft: '600px', fontSize: '22px' }}
-                  onClick={() => setReplyTo(false)}
-                >
-                  ❌
-                </span>
-                <p style={{ color: '#707070' }}>{replyTo.text}</p>
+
+
+const handleThemeSelect = (color) => {
+  setChatBackground(color);
+  // setMessageTheme({
+  //   msgRight: getMatchingDarkColor(color),
+  //   msgLeft: '#FFFFFF'
+  // });
+  message.success('Theme applied');
+};
+return (
+  <div className="h-screen">
+    {/* Welcome Template for initial state */}
+    {(group !== 'allowchat' && !personalChats && group !== 'group') && (
+      <WelcomeTemplate />
+    )}
+
+    {/* Main Chat Interface */}
+    {(group === 'allowchat' || personalChats || group === 'group') && (
+      <div className="h-full flex flex-col">
+        {/* Profile Modal */}
+        <Modal 
+          title="Profile" 
+          open={isModalOpen1} 
+          footer={null} 
+          onCancel={handleCancel1}
+        >
+          <Profilecard />
+        </Modal>
+
+        {/* Members Modal */}
+        <Modal 
+          title="All Members" 
+          open={isModalOpen2} 
+          footer={null} 
+          onCancel={handleCancel2}
+        >
+          <ShowGroup />
+        </Modal>
+
+        {/* Group Details Drawer */}
+        {draw && <GroupDetails />}
+
+        {/* Chat Container */}
+        <div className="flex flex-col h-full">
+          {/* Chat Header */}
+          <div className="bg-white border-b shadow-sm">
+            <div className="p-4 flex items-center justify-between">
+              {/* Mobile Back Button */}
+              <div className="md:hidden">
+                <button onClick={onBack} className="p-2 hover:bg-gray-100 rounded-full">
+                  <MessageCircleReply className="text-xl text-black" />
+                </button>
               </div>
-            )}
-           
+
+              {/* Header Content Based on Chat Type */}
+              {group !== 'allowchat' && group !== 'group' ? (
+                <div className="flex-1 flex items-center justify-between bg-gray-50 rounded-lg p-2 md:p-4">
+                  <div className="flex items-center gap-4">
+                    <img
+                      src={cimg}
+                      onClick={showprofile}
+                      className="w-12 h-12 rounded-full object-cover cursor-pointer hover:ring-2 hover:ring-blue-500"
+                      alt="Profile"
+                    />
+                    <div>
+                      <h3 className="text-lg font-medium capitalize">{cname}</h3>
+                      <div className="typing-indicator">
+                        {allUsers.map(user => 
+                          user.typing && user.uid !== user.uid && (
+                            <p key={user.uid} className="text-sm text-gray-500 animate-pulse">
+                              Typing...
+                            </p>
+                          )
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <Video 
+                      className="w-6 h-6 cursor-pointer text-gray-600 hover:text-blue-500" 
+                      onClick={() => navivideo(1)}
+                    />
+                    <ChatOptions
+                      onDelete={handleDeleteChat}
+                      onSettings={() => setIsThemeDrawerVisible(true)}
+                      onReport={() => message.info('Report submitted')}
+                    />
+                  </div>
+                </div>
+              ) : group === 'group' ? (
+                <div className="flex-1 flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center gap-4 cursor-pointer" onClick={calldrawer}>
+                    <img
+                      src={grouplogo}
+                      className="w-12 h-12 rounded-full object-cover hover:ring-2 hover:ring-blue-500"
+                      alt="Group"
+                    />
+                    <span className="text-lg font-medium">{groupname}</span>
+                  </div>
+                  <button className="px-4 py-2 text-red-500 border border-red-500 rounded-lg hover:bg-red-50">
+                    Leave Group
+                  </button>
+                </div>
+              ) : (
+                <div className="flex-1 flex items-center justify-between bg-gray-50 rounded-lg p-4">
+                  <div className="flex items-center gap-4 cursor-pointer" onClick={showgroup}>
+                    <Group className="w-8 h-8 text-blue-500" />
+                    <span className="text-lg font-medium">Community Chat</span>
+                  </div>
+                  <button 
+                    onClick={() => navivideo(2)}
+                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                  >
+                    <Video className="w-5 h-5" />
+                    <span>Video Call</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
-  
-            {/* <Input.Search
-              placeholder="Type here"
-              enterButton="Send"
-              style={{ border: '1px solid black' }}
-              size="large"
-              suffix={suffix}
-              value={text}
-              onChange={(e) => settext(e.target.value)}
-              onKeyDown={handleKeyDown}
-              addonAfter={text}
-              onSearch={(value) => {
-                settext('');
-                handlesubmit("");
-              }}
-            /> */}
-          <div id="child1" className="child1" >
-             <CustomInput
+
+          {/* Messages Container */}
+          <div className="flex-1 overflow-hidden">
+  <div
+    id="msg-container1"
+    style={{ backgroundColor: chatBackground }}
+    className="h-[calc(100vh-220px)] md:h-[calc(100vh-180px)] overflow-y-auto px-4"
+  >
+    {/* Message content */}
+  </div>
+
+  {/* Reply Interface */}
+  {replyTo && (
+    <div className="bg-gray-50 border-t border-gray-200 p-3">
+      <div className="flex justify-between items-center">
+        <span className="text-gray-600">Replying to {replyTo.name}</span>
+        <button
+          onClick={() => setReplyTo(false)}
+          className="text-gray-400 hover:text-gray-600"
+        >
+          ❌
+        </button>
+      </div>
+      <p className="text-gray-500 truncate mt-1">{replyTo.text}</p>
+    </div>
+  )}
+
+  {/* Input Area */}
+  <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3">
+    <CustomInput
       value={text}
       suffix={suffix}
       onChange={handleChange}
       onSearch={handleSearch}
       suggestion={suggestions}
       onKeyDown={handleKeyDown}
+      className="w-full"
     />
-          </div>
+  </div>
+</div>
         </div>
-    </div>
-      )}
-      <span id='pls'></span>
-    </div>
-  );
-  
+      </div>
+    )}
+  </div>
+);
+
+
 };

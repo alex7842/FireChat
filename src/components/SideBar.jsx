@@ -1,5 +1,7 @@
-import React,{useContext,useState}from 'react'
-import { Layout,Menu,Divider,Typography,Modal } from 'antd'
+import React, { useContext, useState } from 'react';
+import { Layout, Menu, Divider, Typography, Modal } from 'antd';
+import { useLocation } from 'react-router-dom';
+
 import { useNavigate } from 'react-router-dom';
 import GroupContext from './context/GroupContext';
 import UserContext from './context/context';
@@ -16,35 +18,51 @@ import {
     MoreOutlined,
   } from '@ant-design/icons';
 
-export const SideBar = () => {
+export const SideBar = ({showChat}) => {
     const { Header, Content, Sider } = Layout;
     const { user,setuser,setupdateuser,globaltrigger,setglobaltrigger } = useContext(UserContext);
     const {setgroup}=useContext(GroupContext)
     const [open, setOpen] = useState(false);
-
-    const navigate=useNavigate()
-    const handleclick=(e)=>{
-      setglobaltrigger(prev => prev + 1);
-      switch(e){
-       
-        case 1:
-          
-        navigate('/ChatDm')
-        break;
-        case 2:
-         navigate('/Home')
-         localStorage.removeItem("chatrommid")
-         localStorage.removeItem("personalChats")
-         break
-        case 3:
-         navigate(`/ProfilePage/${user.uid}`)
-         break
-         case 4:
-          navigate(`/Notifications`)
-          break
-       
-      }
+    const location = useLocation();
+    const [selectedKey, setSelectedKey] = useState(getInitialSelectedKey(location.pathname));
+    function getInitialSelectedKey(pathname) {
+      if (pathname.includes('/ChatDm')) return '1';
+      if (pathname.includes('/Home')) return '2';
+      if (pathname.includes('/ProfilePage')) return '3';
+      if (pathname.includes('/Notifications')) return '4';
+      if (pathname.includes('/Search')) return '5';
+      return '2'; // Default to Home
     }
+    const navigate=useNavigate()
+    
+    const handleclick = (key) => {
+      setglobaltrigger(prev => prev + 1);
+      setSelectedKey(key);
+    
+      switch (key) {
+        case '1':
+          navigate('/ChatDm');
+          break;
+        case '2':
+          navigate('/Home');
+          localStorage.removeItem("chatrommid");
+          localStorage.removeItem("personalChats");
+          break;
+        case '3':
+          navigate(`/ProfilePage/${user.uid}`);
+          break;
+        case '4':
+          navigate(`/Notifications`);
+          break;
+        case '5':
+          navigate(`/Search`);
+          break;
+        case 'logout':
+          setOpen(true);
+          break;
+      }
+    };
+    
     const showModal = () => {
       setOpen(true);
       console.log("modal")
@@ -79,6 +97,15 @@ export const SideBar = () => {
         console.error("Error during sign-out:", error);
       });
     };
+    const menuItems = [
+      { key: '2', icon: HomeOutlined, label: 'Home' },
+      { key: '5', icon: SearchOutlined, label: 'Search' },
+      { key: '1', icon: MessageOutlined, label: 'Message' },
+      { key: '4', icon: HeartOutlined, label: 'Notification' },
+      { key: '3', icon: UserOutlined, label: 'Profile' },
+      { key: 'logout', icon: MoreOutlined, label: 'Logout' }
+    ];
+    
   return (
     <>
       <Modal
@@ -96,89 +123,58 @@ export const SideBar = () => {
       >
      
       </Modal>
-   
-    <Sider width={220} className="site-layout-background">
-    <Menu
-  
-    
-    style={{ height: '100%', borderRight: 0 }}
-    // Set theme to light to avoid default blue color
-  >
-    <Divider />
-    <div style={{ marginLeft: '13px', display: 'flex', justifyContent: 'start' }}>
-      <Typography.Title level={2}>FireChat</Typography.Title>
-    </div>
-    <br />
-    <br />
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-      <div onClick={()=>handleclick(2)} className='menu-item'
-        key="home"
-      
-        
-      >
-        <HomeOutlined  style={{fontSize:'24px'}} className='icon'/>
-        Home
+      <div className="hidden md:block">
+  <Sider width={220} className="site-layout-background">
+    <Menu className="h-full border-r-0">
+      <Divider />
+      <div className="ml-4 flex justify-start">
+        <Typography.Title level={2} className="hover:scale-105 transition-transform">FireChat</Typography.Title>
       </div>
-      <div className='menu-item'
-        key="Search"
-    
-     
-      >
-        <SearchOutlined style={{fontSize:'24px'}}/>
-        Search
+      <div className="flex flex-col gap-5 mt-8">
+        {menuItems.map((item) => (
+          <div
+            key={item.key}
+            onClick={() => handleclick(item.key)}
+            className={`menu-item transition-all duration-300 hover:scale-105 ${
+              selectedKey === item.key
+                ? 'bg-primary/10 text-primary shadow-lg'
+                : 'hover:bg-gray-100 hover:shadow-md'
+            }`}
+          >
+            <item.icon
+              className={`text-2xl transition-all duration-300 ${
+                selectedKey === item.key
+                  ? 'bg-primary/10 text-primary'
+                  : 'text-gray-600'
+              }`}
+            />
+            {item.label}
+          </div>
+        ))}
       </div>
-      <div className='menu-item'
-        key="Explore"
-      
-        
-      >
-        <CompassOutlined style={{fontSize:'24px'}} />
-        Explore
-      </div>
-      <div className='menu-item'
-     
-        
-      >
-       <PlaySquareOutlined style={{fontSize:'24px'}} />
-        Reels
-      </div>
-      <div className='menu-item'
-        key="message" onClick={()=>handleclick(1)}
-  
-       
-      >
-        <MessageOutlined  style={{fontSize:'24px'}} />
-        Message
-      </div>
-      <div className='menu-item' onClick={()=>handleclick(4)}
-        key="notifications"
+    </Menu>
+  </Sider>
+</div>
 
-      
-      >
-        <HeartOutlined style={{fontSize:'24px'}} />
-        Notification
-      </div>
-      <div className='menu-item'
-        key="profile"
-        onClick={()=>handleclick(3)}
-       
-      >
-        <UserOutlined style={{fontSize:'24px'}} />
-        Profile
-      </div>
-      <div className='menu-item'
-        key="Logout" onClick={()=>setOpen(true)}
-   
-        
-      >
-        <MoreOutlined style={{fontSize:'24px'}} />
-       Logout
-      </div>
+{/* Mobile Bottom Navigation */}
+{!showChat && (
+  <div className="fixed bottom-0 left-0 right-0 bg-white border-t md:hidden z-50 shadow-lg">
+    <div className="flex justify-around items-center h-16">
+      {menuItems.map((item) => (
+        <div
+          key={item.key}
+          onClick={() => handleclick(item.key)}
+          className={`p-2 rounded-full transition-all duration-300 active:scale-90 hover:bg-gray-100 ${
+            selectedKey === item.key
+              ? 'text-primary scale-110 shadow-md'
+              : 'text-gray-600 hover:scale-105'
+          }`}
+        >
+          <item.icon className="text-2xl" />
+        </div>
+      ))}
     </div>
-  </Menu>
-    </Sider>
- 
-
- </>
-  )
-}
+  </div>
+)}
+    </>
+  )}

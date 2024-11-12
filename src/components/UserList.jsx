@@ -7,7 +7,7 @@ import { Spin,Input,Image,Badge } from 'antd';
 import UserContext from './context/context';
 import ChatContext, { useChat } from './context/ChatContext';
 import GroupContext from './context/GroupContext';
-export const UserList = () => {
+export const UserList = ({ onUserSelect }) => {
 
   const { user} = useContext(UserContext);
   const{targetuserid,settargetuserid}=useContext(ChatContext)
@@ -37,7 +37,9 @@ export const UserList = () => {
     await updateDoc(currentUserRef, {
         newMessages: arrayRemove(id)
     });
-   
+    if (onUserSelect) {
+      onUserSelect({ uid: id, displayName: name, photoURL: img, email });
+    }
 
     }
     const fetchUsers = async () => {
@@ -66,11 +68,14 @@ export const UserList = () => {
   useEffect(() => {
 
    fetchUsers();
-  }, []);
+  }, [user.uid]);
 
 
 
-
+  const handleSearch = (e) => {
+    const searchValue = e.target.value;
+    handlevalue(searchValue);
+  };
 
  const handlevalue = async (v) => {
 
@@ -88,7 +93,13 @@ export const UserList = () => {
       console.log(data)
       setUsers(data);
     } else {
-      setUsers([]);
+      const querySnapshot = await getDocs(collection(db, "users"));
+      const allUsers = querySnapshot.docs
+      .map(doc => doc.data())
+      .filter(userData => userData.uid !== user.uid);
+    
+    setUsers(allUsers);
+    
     }
   };
   const isActive = (user1) => {
@@ -111,68 +122,102 @@ export const UserList = () => {
   };
   
   return (
-    <div className="users-container p-4">
-      <div className="search-container mb-4">
-        <input
-          type="search"
-          ref={inp}
-          id="input"
-          className="search-input w-full p-2 rounded-lg border focus:ring-2 focus:ring-blue-400"
-          onChange={() => handlevalue(document.getElementById('input').value)}
-          placeholder="Search users..."
-        />
-        <span className="search-icon" onClick={() => inp.current.focus()}>
-          <SearchOutlined />
-        </span>
-      </div>
-  
-      {loading ? (
-        <Spin indicator={<LoadingOutlined style={{ fontSize: 24 }} spin />} />
-      ) : users.length > 0 ? (
-        <ul className="space-y-3">
-          {users.map(user1 => {
-            const userIsActive = isActive(user1);
-            const hasNewMessage = user?.newMessages?.includes(user1.uid);
-  
-            return (
-              <li 
-                key={user1.id} 
-                className="user-item p-3 rounded-lg hover:bg-gray-50 transition-all cursor-pointer shadow-md"
-                onClick={() => handleid(user1.uid, user1.displayName, user1.photoURL, user1.email)}
-              >
-                <Flex align="center" justify="space-between">
-                  <Flex align="center" gap={12}>
-                    <div className="relative">
-                      <img 
-                        className="w-12 h-12 rounded-full object-cover border-2 border-gray-200" 
-                        src={user1.photoURL} 
-                        alt={user1.displayName} 
-                      />
-                      {userIsActive && (
-                        <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full" />
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-gray-800">
-                        {user1.displayName.charAt(0).toUpperCase() + user1.displayName.slice(1)}
-                      </p>
-                      {userIsActive && (
-                        <span className="text-sm text-green-600">Active now</span>
-                      )}
-                    </div>
-                  </Flex>
-                  {hasNewMessage && (
-                    <Badge count={<MessageOutlined style={{ color: '#1890ff' }} />} />
-                  )}
-                </Flex>
-              </li>
-            );
-          })}
-        </ul>
-      ) : (
-        <p className="text-center text-gray-500">No users found</p>
-      )}
+<div className="users-container p-4">
+  {/* Centered Search Container */}
+  <div className="max-w-xl mx-auto mb-6">
+    <div className="relative group">
+      <input
+        type="search"
+        ref={inp}
+        id="input"
+        className="w-full h-12 pl-12 pr-4 
+                 rounded-lg border-2 
+                 bg-gradient-to-r from-blue-50 to-purple-50
+                 border-gray-200 
+                 focus:border-blue-400 focus:ring-2 focus:ring-blue-100
+                 transition-all duration-300
+                 text-base placeholder-gray-400
+                 group-hover:border-blue-300 group-hover:shadow-md"
+                 onChange={handleSearch}
+        placeholder="Search users..."
+      />
+      <span 
+        className="absolute left-4 top-1/2 -translate-y-1/2
+                   text-blue-500 group-hover:text-purple-500
+                   transition-colors duration-300 cursor-pointer"
+        onClick={() => inp.current.focus()}
+      >
+        <SearchOutlined className="text-lg" />
+      </span>
     </div>
+  </div>
+
+  {/* Centered Loader */}
+  {loading ? (
+    <div className="flex justify-center items-center h-40">
+      <Spin 
+        indicator={
+          <LoadingOutlined 
+            style={{ fontSize: 28 }} 
+            className="text-blue-500" 
+            spin 
+          />
+        } 
+      />
+    </div>
+  ) : users.length > 0 ? (
+    <ul className="space-y-2">
+      {users.map(user1 => {
+        const userIsActive = isActive(user1);
+        const hasNewMessage = user?.newMessages?.includes(user1.uid);
+
+        return (
+          <li
+            key={user1.id}
+            className="user-item p-3 rounded-lg 
+                     hover:bg-blue-50 hover:border-blue-200
+                     transition-all cursor-pointer 
+                     border border-gray-200"
+            onClick={() => handleid(user1.uid, user1.displayName, user1.photoURL, user1.email)}
+          >
+            <Flex align="center" justify="space-between">
+              <Flex align="center" gap={8}>
+                <div className="relative">
+                  <img
+                    className="w-10 h-10 rounded-full object-cover 
+                             border-2 border-gray-200
+                             hover:border-blue-300 transition-colors"
+                    src={user1.photoURL}
+                    alt={user1.displayName}
+                  />
+                  {userIsActive && (
+                    <span className="absolute bottom-0 right-0 
+                                   w-3 h-3 bg-green-500 
+                                   border-2 border-white rounded-full" />
+                  )}
+                </div>
+                <div>
+                  <p className="font-medium text-gray-800 text-sm">
+                    {user1.displayName.charAt(0).toUpperCase() + user1.displayName.slice(1)}
+                  </p>
+                  {userIsActive && (
+                    <span className="text-xs text-green-600">Active now</span>
+                  )}
+                </div>
+              </Flex>
+              {hasNewMessage && (
+                <Badge count={<MessageOutlined style={{ color: '#1890ff' }} />} />
+              )}
+            </Flex>
+          </li>
+        );
+      })}
+    </ul>
+  ) : (
+    <p className="text-center text-gray-500">No users found</p>
+  )}
+</div>
+
   );
   
 }

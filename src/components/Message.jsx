@@ -8,7 +8,7 @@ import {  Flex, Popover,message,Image ,Modal,Input} from 'antd';
 import GroupContext from './context/GroupContext';
 import { Share2,MessageCircle,Heart } from 'lucide-react';
 import { PostModal } from './PostModal';
-export const Message = ({msglen,id1,msg,handleReply}) => {
+export const Message = ({msglen,id1,msg,handleReply,messageTheme}) => {
   const {UserId}=useChat()
 const[modelopen,setmodelopen]=useState(false);
   const {group}=useContext(GroupContext)
@@ -20,6 +20,10 @@ const {selectedPost,setSelectedPost}=useContext(GroupContext);
  const [newsLikes, setNewsLikes] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
   const[userid,setuserid]=useState("");
+
+  const { user } = useContext(UserContext);
+  const emoji=[ '❤️', '😂' ,'😁' ,'👍' ,'😊', '🤣']
+ 
  function handleclick(d,msgid){
  
   const messageBox = document.getElementById(`msgr-${msgid}`);
@@ -97,9 +101,7 @@ const formatTime = (time) => {
 
   return `${hours}:${formattedMinutes} ${period}`;
 };
-  const { user } = useContext(UserContext);
-  const emoji=[ '❤️', '😂' ,'😁' ,'👍' ,'😊', '🤣']
- 
+
   const content = (
     <div>
        {contextHolder}
@@ -201,7 +203,7 @@ const formatTime = (time) => {
       messageApi.error('Failed to load post details');
     }
   };
-  
+  //console.log(msg);
   
   return (
     <>
@@ -262,15 +264,49 @@ const formatTime = (time) => {
       </div>
     </div>
   </Modal>
-
-      <div className='text-[#8A8A8A] text-center text-sm py-2'>{msg.day}</div>
+  {msglen === 0 ? (
+    
+  <div className="flex flex-col items-center justify-center h-full">
+    <div className="animate-bounce mb-4">
+      <svg 
+        className="w-16 h-16 text-blue-500" 
+        fill="none" 
+        stroke="currentColor" 
+        viewBox="0 0 24 24"
+      >
+        <path 
+          strokeLinecap="round" 
+          strokeLinejoin="round" 
+          strokeWidth={2} 
+          d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" 
+        />
+      </svg>
+    </div>
+    <h3 className="text-xl font-semibold text-gray-700 mb-2">Start a Conversation</h3>
+    <p className="text-gray-500 text-center max-w-sm">
+      Send your first message to begin chatting with your friends
+    </p>
+    <div className="mt-4">
+      <span className="inline-block animate-pulse">
+        <span className="inline-block animate-bounce mx-1">👋</span>
+      </span>
+    </div>
+  </div>
+) :(
+  <>
+<div className='text-[#8A8A8A] text-center text-sm py-2'>{msg.day}</div>
       <div className={`flex ${msg.email === user.email ? 'justify-end' : 'justify-start'}`}>
         <Popover placement={msg.email === user.email ? "left" : "right"} title='React' content={content}>
-          <div 
-            className={`max-w-[50%] ${
-              msg.email === user.email ? 'message-right' : 'message-left'
-            }`}
-          >
+        <div
+  style={{ 
+    backgroundColor: msg.email === user.email ? messageTheme.msgRight : messageTheme.msgLeft 
+  }}
+  className={`max-w-[50%] rounded-[22px] m-4 ${
+    msg.email === user.email 
+      ? 'ml-auto px-[5px] py-[2px] pb-[3px]' 
+      : 'mr-auto px-4 py-2'
+  }`}
+>
             {contextHolder}
             <div className="flex flex-col gap-2">
               {msg.post ? ( 
@@ -297,7 +333,7 @@ const formatTime = (time) => {
                 // Regular Message Layout
                 <div className="flex items-start gap-2">
                   <img 
-                    src={msg.email === user.email ? user.photoURL : msg.logo} 
+                    src={msg.email === user.email ? msg.call?msg.logo:user.photoURL : msg.logo} 
                     className="w-8 h-8 rounded-full"
                   />
                   {msg.text.startsWith("https://firebasestorage.googleapis.com") ? (
@@ -324,6 +360,8 @@ const formatTime = (time) => {
           </div>
         </Popover>
       </div>
+      </>
+    )}
     </>
   );
 }  

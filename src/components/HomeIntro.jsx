@@ -21,60 +21,27 @@ import { onMessage } from 'firebase/messaging';
 
 import { registerForPushNotifications } from '../utils/fcmUtils';
 import { sendNotification } from '../utils/notificationUtils';
+import { motion } from 'framer-motion';
+import { Skeleton } from 'antd';
+
 import { Share } from './Share';
 import { PostModal } from './PostModal';
 const HomeIntro = () => {
   const [postData,setpostData]=useState([]);
- 
+  const[loading,setLoading]=useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [suggestedUsers,setsuggestedUsers]=useState([]);
+ 
   const [likedPosts, setLikedPosts] = useState({});
   const [isHeartAnimating, setIsHeartAnimating] = useState(false);
   const [newComment, setNewComment] = useState('');
   const { user } = useContext(UserContext);
   const [SharePost,setSharePost]=useState(null);
-  const{users,selectedPost, setSelectedPost}=useContext(GroupContext);
+  const{users,selectedPost, setSelectedPost,suggestedUsers,setsuggestedUsers}=useContext(GroupContext);
   const {homereload}=useContext(ChatContext);
   const [newsLikes, setNewsLikes] = useState({});
   const [newsComments, setNewsComments] = useState({});
   const [Sharemodel,setSharemodel]=useState(false);
-//console.log("users",users);
-const notificationSound = new Audio('/tap.mp3'); // Add an MP3 file to your public folder
-
-// useEffect(() => {
-//   const handleNewMessage = async (payload) => {
-//     console.log('New message received:', payload);
-    
-//     // Play notification sound
-//     notificationSound.play();
-
-//     // Show Ant Design notification
-//     notification.open({
-//       message: payload.notification.title,
-//       description: payload.notification.body,
-//       icon: <Avatar src={payload.data?.senderPhoto} />,
-//       placement: 'topRight',
-//       duration: 4,
-//       style: {
-//         borderRadius: '8px',
-//         backgroundColor: '#f0f2f5'
-//       }
-//     });
-//   };
-
-//   const unsubscribe = onMessage(messaging, handleNewMessage);
-//   return () => unsubscribe();
-// }, []);
-
-// Second useEffect for FCM token registration
-// useEffect(() => {
-//   const registerToken = async () => {
-//     const token = await registerForPushNotifications(user.uid);
-//     console.log('FCM Token registered:', token);
-//   };
-
-//   registerToken();
-// }, [user.uid]);
+  
 
 useEffect(() => {
   const handleForegroundNotifications = async () => {
@@ -115,37 +82,8 @@ useEffect(() => {
   };
 
   handleForegroundNotifications();
-}, [user.uid]);
-
-
-// Third useEffect for storing notifications in Firestore
-// useEffect(() => {
-//   const storeNotification = async (payload) => {
-//     const notificationsRef = collection(db, 'users',payload.data?.senderId, 'notifications');
-    
-//     await addDoc(notificationsRef, {
-//       title: payload.notification.title,
-//       body: payload.notification.body,
-//       timestamp: serverTimestamp(),
-//       read: false,
-//       type: payload.data?.type || 'message',
-//       senderId: payload.data?.senderId,
-//       senderName: payload.data?.senderName,
-//       senderPhoto: payload.data?.senderPhoto
-//     });
-//   };
-
-//   const unsubscribe = onMessage(messaging, storeNotification);
-//   return () => unsubscribe();
-// }, [user.uid]);
-
-
-
-
-// Add this near your other useEffect hooks
-// useEffect(() => {
   
-// }, []);
+}, [user.uid]);
 
  
 useEffect(() => {
@@ -165,7 +103,7 @@ useEffect(() => {
       }));
     }
   };
-
+  
   // Fetch likes for news posts
   postData.forEach(item => {
     if (item.isNews) {
@@ -187,7 +125,7 @@ const getLastThreeDays = () => {
 
 useEffect(() => {
   const fetchData = async () => {
-    
+    setLoading(true);
     const storedPosts = localStorage.getItem('cachedPosts');
     const notInterestedPosts = JSON.parse(localStorage.getItem('notInterestedPosts') || '[]');
     
@@ -197,7 +135,7 @@ useEffect(() => {
       );
 
       setpostData(filteredPosts);
-     
+      setLoading(false);
       return;
     }
 
@@ -227,44 +165,44 @@ useEffect(() => {
   console.log("db post",allPosts)
     // Set database posts immediately
     setpostData(allPosts);
-   
+    setLoading(false);
     // Fetch news in parallel
    
-    fetch('https://api.mediastack.com/v1/news?access_key=83f26e0b599a2f52b3c245fa871da266&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
+    // fetch('https://api.mediastack.com/v1/news?access_key=83f26e0b599a2f52b3c245fa871da266&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
 
-      .then(response => response.json())
-      .then(newsData => {
-        console.log(newsData,"news data");  
-        const newsAsPosts = newsData.data.map((article) => ({
-          id: `news-${encodeURIComponent(article.published_at)}-${encodeURIComponent(article.title)}`,
-          author: article.author || article.source,
-          caption: article.description,
-          mediaUrl: article.image || `https://source.unsplash.com/800x400/?${encodeURIComponent(article.title)}`,
-          sourceName: article.source,
-          title: article.title,
-          publishedAt: article.published_at,
-          timestamp: new Date(article.published_at),
-          isNews: true
-        }));
-    // fetch('https://newsapi.org/v2/everything?' +
-    //   'q=technology OR artificial intelligence OR science' +
-    //   '&language=en' +
-    //   '&pageSize=60' +
-    //   '&sortBy=publishedAt' +
-    //   '&apiKey=4b088fd990774c72a1ffbf23ca491daf')
     //   .then(response => response.json())
     //   .then(newsData => {
-    //     const newsAsPosts = newsData.articles.map((article) => ({
-    //       id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
-    //       author: article.source.name,
-    //       caption: article.content,
-    //       mediaUrl: article.urlToImage,
-    //       sourceName: article.source.name,
+    //     console.log(newsData,"news data");  
+    //     const newsAsPosts = newsData.data.map((article) => ({
+    //       id: `news-${encodeURIComponent(article.published_at)}-${encodeURIComponent(article.title)}`,
+    //       author: article.author || article.source,
+    //       caption: article.description,
+    //       mediaUrl: article.image || `https://source.unsplash.com/800x400/?${encodeURIComponent(article.title)}`,
+    //       sourceName: article.source,
     //       title: article.title,
-    //       publishedAt: article.publishedAt,
-    //       timestamp: new Date(article.publishedAt),
+    //       publishedAt: article.published_at,
+    //       timestamp: new Date(article.published_at),
     //       isNews: true
     //     }));
+    fetch('https://newsapi.org/v2/everything?' +
+      'q=technology OR artificial intelligence OR science' +
+      '&language=en' +
+      '&pageSize=60' +
+      '&sortBy=publishedAt' +
+      '&apiKey=4b088fd990774c72a1ffbf23ca491daf')
+      .then(response => response.json())
+      .then(newsData => {
+        const newsAsPosts = newsData.articles.map((article) => ({
+          id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
+          author: article.source.name,
+          caption: article.content,
+          mediaUrl: article.urlToImage,
+          sourceName: article.source.name,
+          title: article.title,
+          publishedAt: article.publishedAt,
+          timestamp: new Date(article.publishedAt),
+          isNews: true
+        }));
     
         
   console.log(newsAsPosts,"news posts");
@@ -274,14 +212,16 @@ useEffect(() => {
 
         localStorage.setItem('cachedPosts', JSON.stringify(combinedPosts));
         setpostData(combinedPosts);
+        
       });
   };
 
   fetchData();
-  
+
 
   
 }, [homereload]);
+
 
   
 //console.log("suggestedUsers",suggestedUsers);
@@ -473,81 +413,6 @@ const dataadd= async (item)=>{
   }
 }
     
-    
-    const handleNewsComment = async (postId) => {
-      if (!newComment.trim()) return;
-    
-      const globalPostRef = doc(db, "globalPosts", postId);
-      const comment = {
-        text: newComment,
-        userId: user.uid,
-        userName: user.displayName,
-        userPhoto: user.photoURL,
-        timestamp: Timestamp.now()
-      };
-    
-      try {
-        await updateDoc(globalPostRef, {
-          comments: arrayUnion(comment)
-        });
-    
-        setSelectedPost({
-          ...selectedPost,
-          comments: [...(selectedPost.comments || []), comment]
-        });
-    
-        setpostData(postData.map(post =>
-          post.id === postId
-            ? { ...post, comments: [...(post.comments || []), comment] }
-            : post
-        ));
-    
-        setNewComment('');
-        message.success('Comment added successfully');
-      } catch (error) {
-        console.log('Error adding comment:', error);
-        message.error('Failed to add comment');
-      }
-    };
-    
-    
-    const handleComment = async (postId) => {
-      if (!newComment.trim()) return;
-  
-      const postRef = doc(db, "users", selectedPost.uid, "posts", postId);
-      const comment = {
-        text: newComment,
-        userId: user.uid,
-        userName: user.displayName,
-        userPhoto: user.photoURL,
-        timestamp: Timestamp.now()
-      };
-  
-      try {
-        await updateDoc(postRef, {
-          comments: [...(selectedPost.comments || []), comment]
-        });
-  
-        setSelectedPost({
-          ...selectedPost,
-          comments: [...(selectedPost.comments || []), comment]
-        });
-  
-        setpostData(postData.map(post => 
-          post.id === postId 
-            ? { ...post, comments: [...(post.comments || []), comment] }
-            : post
-        ));
-  
-        setNewComment('');
-        message.success('Comment added successfully');
-      } catch (error) {
-        console.log('Error adding comment:', error);  
-        message.error('Failed to add comment');
-      }
-    };
-    
-
 // Add this helper function
 const isValidImageUrl = (url) => {
   if (!url) return false;
@@ -602,276 +467,333 @@ const isValidImageUrl = (url) => {
       }
     }
     
+const scrollVariants = {
+  hidden: { 
+    opacity: 0, 
+    y: 100,
+    scale: 0.9 
+  },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: 0.6,
+      ease: [0.6, -0.05, 0.01, 0.99]
+    }
+  }
+};
+    const PostSkeleton = () => (
+      <div className="p-4 bg-white rounded-lg shadow-sm">
+        <div className="flex items-center space-x-4 mb-4">
+          <Skeleton.Avatar active size={32} />
+          <Skeleton.Input style={{ width: 150 }} active size="small" />
+        </div>
+        <Skeleton.Image active className="w-full aspect-square" />
+        <div className="mt-4">
+          <Skeleton active paragraph={{ rows: 2 }} />
+        </div>
+      </div>
+    );  
   
     return (
-      <Layout>
-         <Modal
-  open={modalVisible}
-  onCancel={() => setModalVisible(false)}
-  width={1000}
-  footer={null}
-  className="post-modal"
-  style={{ top: 20 }}
->
-  <PostModal postData={postData} setpostData={setpostData} />
-  
-</Modal>
-<Modal 
-    open={Sharemodel}
-    onCancel={() => setSharemodel(false)}
-    width={500}
-    centered
-    footer={null}
-    className="rounded-lg overflow-hidden"
-    classNames={{
-        content: 'p-0',
-        header: 'hidden'
-    }}
->
-    <Share SharePost={SharePost} Sharemodel={setSharemodel}/>
-</Modal>
+      <div className="min-h-screen bg-gray-50 pb-16 md:pb-0"> {/* Added pb-16 for mobile */}
+  <div className="max-w-screen-xl mx-auto">
+        <div className="flex flex-col md:flex-row">
+          <SideBar />
+          <Modal
+        open={modalVisible}
+        onCancel={() => setModalVisible(false)}
+        width={1000}
+        footer={null}
+        className="post-modal"
+        style={{ top: 20 }}
+      >
+        <PostModal postData={postData} setpostData={setpostData} />
+      </Modal>
 
-    
-     
-        <SideBar/>
-       
-          <Layout style={{ padding: '0 24px 24px 70px' }}>
-            <Content
-              className="site-layout-background"
-              style={{
-                padding: 24,
-                margin: 0,
-                minHeight: 280,
-              }}
-            >
-              <Row gutter={[60,40]}>
-                <Col span={15}>
-                  <Carousel arrows dots={false} slidesToShow={4} infinite={false} >
-                    {storiesData.map(story => (
-                      <Card key={story.id} style={{ textAlign: 'center' }}>
-                        <Avatar size={64} src={story.avatar} />
-                        <p>{story.user}</p>
-                      </Card>
-                    ))}
-                  </Carousel>
-                  <InfiniteScroll
-                    dataLength={postData.length}
-                 
-              
-                    loader={<Spin />}
-                   // endMessage={<p style={{ textAlign: 'center' }}></p>}
-                  >
-                 <List
-      itemLayout="horizontal"
-      dataSource={postData}
-      renderItem={item => {
-        if (item.isNews && (!isValidImageUrl(item.mediaUrl) || !item.author)) return null;
-
-
-        return (
-          <div className="grid lg:grid-cols-1 sm:grid-cols-1 gap-4 p-4 bg-white relative">
-            {isHeartAnimating && (
-              <div className="absolute inset-0 flex items-center justify-center z-50">
-                <HeartFilled
-                  className="text-6xl text-red-500 animate-like-heart"
-                  style={{ filter: 'drop-shadow(0 0 10px rgba(0,0,0,0.3))' }}
-                />
-              </div>
-            )}
-
-            <div className="flex flex-col rounded-lg shadow-sm">
-              {/* Header Section */}
-              <div className="flex items-center justify-between p-3 border-b">
-                <div className="flex items-center space-x-5">
-                  
-                  <div className="flex items-center space-x-3 cursor-pointer" onClick={()=>handlenavigate(item.uid,item.isNews)}>
-                    <Avatar 
-                      src={item.isNews ? '/newslogo.png' : item.profile} 
-                      size={32} 
-                    />
-                    <span className="font-semibold">
-                      {item.isNews ? item.author : item.username}
-                    </span>
-                  </div>
-                  {item.isNews ? (
-                    <span className="text-gray-500 text-sm">
-                      {new Date(item.publishedAt).toLocaleDateString()}
-                    </span>
-                  ) : (
-                    user.uid !== item.uid ? 
-                    <>
-      <Follow uid1={item.uid} username1={item.username} userurl1={item.profile}/>
-      <p className="text-gray-500 text-sm">
-      {formatRelativeDate(item.timestamp)}
-      </p>
-    </>
-                      :  <>
-                       <p className="text-blue-500">(You)</p>
-                      <p className="text-gray-500 text-sm">
-                      {formatRelativeDate(item.timestamp)}
-                      </p>
-                     
-                    </>
-                  )}
-                </div>
-
-                {/* Options Popover */}
-                <Popover
-                  content={
-                    <div className="flex flex-col space-y-2">
-                      <Button
-                        type="text"
-                        block
-                        onClick={() => {
-                          const notInterestedPosts = JSON.parse(localStorage.getItem('notInterestedPosts') || '[]');
-                          localStorage.setItem('notInterestedPosts',
-                            JSON.stringify([...notInterestedPosts, item.id])
-                          );
-                          setpostData(prevPosts => prevPosts.filter(post => post.id !== item.id));
-                          message.success('Post removed from your feed');
-                        }}
-                      >
-                        Not Interested
-                      </Button>
-                      <Report />
-                      {item.mediaUrl && (
-                        <Button
-                          type="text"
-                          block
-                          onClick={() => {
-                            window.open(item.mediaUrl, '_blank');
-                            message.success('Download started');
-                          }}
-                        >
-                          Download
-                        </Button>
-                      )}
-                    </div>
-                  }
-                >
-                  <Button type="text" icon={<EllipsisOutlined />} />
-                </Popover>
-              </div>
-
-              {/* Media Content */}
-              <div className="group relative aspect-square overflow-hidden cursor-pointer">
-                <img 
-                  src={item.mediaUrl} 
-                  alt={item.title || item.caption} 
-                  className="w-full h-full object-cover brightness-100" 
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900/70 opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center">
-                  <div className="text-white flex items-center space-x-4">
-                    <span className="flex items-center">
-                      <HeartOutlined className="text-2xl mr-2" /> {item.likes}
-                    </span>
-                    <span className="flex items-center">
-                      <CommentOutlined className="text-2xl mr-2" /> {item.comments?.length || 0}
-                    </span>
-                  </div>
-                </div>
-                <div
-                  className="absolute inset-0"
-                  onClick={() => {
-                    setSelectedPost(item);
-                    dataadd(item);
-                    setModalVisible(true);
-                  }}
-                />
-              </div>
-
-              {/* Actions and Content Section */}
-              <div className="p-3">
-                <div className="flex items-center space-x-4">
-                  <Button 
-                    type="text" 
-                    icon={likedPosts[item.id] ? <HeartFilled style={{color: '#ff4d4f'}} /> : <HeartOutlined />}
-                    onClick={() => item.isNews ? handleNewsLike(item) : handleLike(item)}
+      <Modal 
+        open={Sharemodel}
+        onCancel={() => setSharemodel(false)}
+        width={500}
+        centered
+        footer={null}
+        className="rounded-lg overflow-hidden"
+        classNames={{
+          content: 'p-0',
+          header: 'hidden'
+        }}
+      >
+        <Share SharePost={SharePost} Sharemodel={setSharemodel}/>
+      </Modal>
+          
+          {/* Main Content Area */}
+          <main className="flex-1 md:ml-16 mb-16 md:mb-0">
+          <div className="max-w-[935px] mx-auto px-2 md:px-4">
+              <div className="flex flex-col md:flex-row md:gap-8">
+                {/* Stories and Posts Column */}
+                <div className="w-full md:w-[calc(100%-320px)]">
+                  {/* Stories Section */}
+                  <div className="bg-white rounded-lg mb-4 overflow-hidden relative">
+  <div className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 py-4">
+    <Carousel
+      arrows={true}
+      dots={false}
+      slidesToShow={3}
+      slidesToScroll={1}
+      infinite={false}
+      responsive={[
+        {
+          breakpoint: 640,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1,
+            arrows: false
+          }
+        },
+        {
+          breakpoint: 768,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 1024,
+          settings: {
+            slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        }
+      ]}
+      className="stories-carousel"
+    >
+      {users?.map(story => (
+        <div key={story.id} className="px-2">
+          <div className="flex flex-col items-center justify-center">
+            <button className="block focus:outline-none">
+              <div className="story-ring p-[2px] rounded-full bg-gradient-to-tr from-yellow-400 to-fuchsia-600">
+                <div className="bg-white p-[2px] rounded-full flex items-center justify-center">
+                  <Avatar
+                    size={48}
+                    src={story.photoURL || '/default-avatar.png'}
+                    alt={story.displayName}
+                    className="story-avatar"
                   />
-                  <Button 
-                    type="text" 
-                    icon={<CommentOutlined />}
-                    onClick={() => {
-                      dataadd(item);
-                      setSelectedPost(item);
-                      setModalVisible(true);
-                    }} 
-                  />
-                  <Button type="text" onClick={
-                    ()=>{
-                      setSharePost(item);
-                    setSharemodel(true);
-                    dataadd(item);
-                  }} icon={<ShareAltOutlined />} />
                 </div>
-
-                <div className="mt-2 font-semibold">
-  {item.isNews ? newsLikes[item.id] || 0 : item.likes} likes
+              </div>
+              <p className="text-white text-xs mt-2 truncate w-14 text-center">
+                {story.displayName}
+              </p>
+            </button>
+          </div>
+        </div>
+      ))}
+    </Carousel>
+  </div>
 </div>
 
-                {item.isNews ? (
-                  <div className="mt-3">
-                    <h3 className="text-xl font-bold mb-2">{item.title}</h3>
-                    <p className="text-base mb-2">{item.caption}</p>
-                    <p className="text-sm text-gray-500">
-                      Source: {item.sourceName} • {new Date(item.publishedAt).toLocaleString()}
-                    </p>
-                  </div>
-                ) : (
-                  <div className="mt-1">
-                    <span className="font-semibold mr-2">{item.username}</span>
-                    <span>{item.caption}</span>
-                  </div>
-                )}
 
-                {!item.isNews && item.comments?.length > 0 && (
-                  <div className="mt-2">
-                    <Button
-                      type="text"
-                      block
-                      onClick={() => {
-                        setSelectedPost(item);
-                        setModalVisible(true);
-                      }}
+
+                  {/* Posts Section */}
+                  <div className="w-full">
+                    <InfiniteScroll
+                      dataLength={postData.length}
+                      // next={fetchMorePosts}
+                      // hasMore={hasMore}
+                      loader={<Spin />}
+                      endMessage={
+                        <motion.div
+                          animate={{ 
+                            opacity: [0.4, 1, 0.4],
+                            scale: [0.98, 1, 0.98]
+                          }}
+                          transition={{ 
+                            duration: 2,
+                            repeat: Infinity,
+                            ease: "easeInOut"
+                          }}
+                          className="text-center p-6"
+                        >
+                          <span className="text-xl font-bold bg-gradient-to-r from-violet-500 to-fuchsia-500 text-transparent bg-clip-text">
+                           Analyzing ✨
+                          </span>
+                        </motion.div>
+                      }
                     >
-                      View all {item.comments.length} comments
-                    </Button>
+                      <List
+                        itemLayout="vertical"
+                        dataSource={postData}
+                        loading={loading}
+                        className="space-y-4"
+                        renderItem={item => (
+                          <motion.div
+                            className="bg-white rounded-lg shadow-sm overflow-hidden"
+                            initial="hidden"
+                            whileInView="visible"
+                            viewport={{ margin: "-100px" }}
+                            variants={scrollVariants}
+                          >
+                            {/* Post Header */}
+                            <div className="flex items-center justify-between p-3 border-b">
+                              <div className="flex items-center space-x-3">
+                                <Avatar 
+                                  src={item.isNews ? '/newslogo.png' : item.profile} 
+                                  size={32}
+                                  className="cursor-pointer"
+                                  onClick={() => handlenavigate(item.uid, item.isNews)}
+                                />
+                                <div className="flex items-center space-x-2">
+                                  <span className="font-semibold text-sm">
+                                    {item.isNews ? item.author : item.username}
+                                  </span>
+                                  <span className="text-gray-500 text-xs">
+                                    {item.isNews 
+                                      ? new Date(item.publishedAt).toLocaleDateString()
+                                      : formatRelativeDate(item.timestamp)
+                                    }
+                                  </span>
+                                </div>
+                              </div>
+                              <Popover
+                                content={
+                                  <div className="flex flex-col space-y-2">
+                                    <Button type="text" block>Not Interested</Button>
+                                    <Report />
+                                    {item.mediaUrl && (
+                                      <Button type="text" block>Download</Button>
+                                    )}
+                                  </div>
+                                }
+                              >
+                                <Button type="text" icon={<EllipsisOutlined />} />
+                              </Popover>
+                            </div>
+
+                            {/* Post Image */}
+                            <div className="relative aspect-square w-full">
+                              <img 
+                                src={item.mediaUrl} 
+                                alt={item.title || item.caption} 
+                                className="w-full h-full object-cover"
+                                onClick={() => {
+                                  setSelectedPost(item);
+                                  dataadd(item);
+                                  setModalVisible(true);
+                                }}
+                              />
+                            </div>
+
+                            {/* Post Actions */}
+                            <div className="p-3">
+                              <div className="flex items-center space-x-4">
+                                <Button 
+                                  type="text" 
+                                  icon={likedPosts[item.id] ? <HeartFilled style={{color: '#ff4d4f'}} /> : <HeartOutlined />}
+                                  onClick={() => item.isNews ? handleNewsLike(item) : handleLike(item)}
+                                />
+                                <Button 
+                                  type="text" 
+                                  icon={<CommentOutlined />}
+                                  onClick={() => {
+                                    dataadd(item);
+                                    setSelectedPost(item);
+                                    setModalVisible(true);
+                                  }}
+                                />
+                                <Button 
+                                  type="text" 
+                                  icon={<ShareAltOutlined />}
+                                  onClick={() => {
+                                    setSharePost(item);
+                                    setSharemodel(true);
+                                    dataadd(item);
+                                  }}
+                                />
+                              </div>
+
+                              <div className="mt-2">
+                                <span className="font-semibold">
+                                  {item.isNews ? newsLikes[item.id] || 0 : item.likes} likes
+                                </span>
+                              </div>
+
+                              {/* Caption */}
+                              <div className="mt-2">
+                                <span className="font-semibold mr-2">{item.username}</span>
+                                <span className="text-sm">{item.caption}</span>
+                              </div>
+
+                              {/* Comments */}
+                              {!item.isNews && item.comments?.length > 0 && (
+                                <Button
+                                  type="text"
+                                  block
+                                  className="text-gray-500 text-sm mt-2"
+                                  onClick={() => {
+                                    setSelectedPost(item);
+                                    setModalVisible(true);
+                                  }}
+                                >
+                                  View all {item.comments.length} comments
+                                </Button>
+                              )}
+                            </div>
+                          </motion.div>
+                        )}
+                      />
+                    </InfiniteScroll>
                   </div>
-                )}
+                </div>
+
+                {/* Suggestions Sidebar */}
+                <div className="hidden md:block w-[320px] flex-shrink-0">
+                  <div className="sticky top-4">
+                    <Card title={`Suggestions for you`} className="rounded-lg">
+                      {suggestedUsers.length === 0 ? (
+                        <List
+                          itemLayout="horizontal"
+                          dataSource={[1, 2, 3]}
+                          renderItem={() => (
+                            <List.Item>
+                              <Skeleton
+                                loading={true}
+                                active
+                                avatar
+                                paragraph={false}
+                                title={{ width: '60%' }}
+                              />
+                            </List.Item>
+                          )}
+                        />
+                      ) : (
+                        <List
+                          itemLayout="horizontal"
+                          dataSource={suggestedUsers}
+                          renderItem={user => (
+                            <List.Item>
+                              <List.Item.Meta
+                                avatar={<Avatar src={user.photoURL} />}
+                                title={user.displayName}
+                              />
+                              <Follow 
+                                uid1={user.uid} 
+                                username1={user.displayName} 
+                                userurl1={user.photoURL}
+                              />
+                            </List.Item>
+                          )}
+                        />
+                      )}
+                    </Card>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        );
-      }}
-    />
-                  </InfiniteScroll>
-                </Col>
-               
-                <Col span={8}>
-                  <Card title={`Suggested for you (${user.displayName})`}>
-                    <List
-                      itemLayout="horizontal"
-                      dataSource={users.slice(0,3)}
-                      renderItem={user => (
-                        //onClick={()=>sendnotify(user.uid)}
-                        <List.Item >
-                          <List.Item.Meta
-                            avatar={<Avatar src={user.photoURL} />}
-                            title={user.displayName}
-                          />
-                          <div><Follow uid1={user.uid} username1={user.displayName} userurl1={user.photoURL}/></div>
-                        </List.Item>
-                      )}
-                    />
-                  </Card>
-                </Col>
-              </Row>
-            </Content>
-          </Layout>
-
-
-        </Layout>
-
+          </main>
+        </div>
+      </div>
+      </div>
   );
 };
 

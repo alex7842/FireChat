@@ -17,7 +17,7 @@ export const Home = () => {
   
   const messageref=collection(db,"users")
    
- const{test,users,loading, setLoading,setUsers}=useContext(GroupContext)
+ const{test,users,loading, setLoading,setUsers,suggestedUsers,setsuggestedUsers}=useContext(GroupContext)
    // console.log("from home",user);
     const date = new Date();
     const updateLastActive = async () => {
@@ -42,6 +42,10 @@ export const Home = () => {
         const usersList = querySnapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
           .filter(user1 => user1.uid !== user.uid);
+          const shuffledUsers = usersList.sort(() => 0.5 - Math.random());
+          const randomThreeUsers = shuffledUsers.slice(0, 3);
+          
+          setsuggestedUsers(randomThreeUsers);
         setUsers(usersList);
       } catch (error) {
         console.error("Error fetching users: ", error);

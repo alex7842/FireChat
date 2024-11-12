@@ -16,7 +16,6 @@ const messaging = firebase.messaging();
 self.addEventListener('notificationclick', (event) => {
   const clickedNotification = event.notification;
   clickedNotification.close();
-
   event.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clientList) => {
       for (const client of clientList) {

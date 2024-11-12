@@ -4,17 +4,11 @@ import { UserList } from './UserList';
 import { PersonalChat } from './PersonalChat';
 import {useNavigate  } from 'react-router-dom';
 import UserContext from './context/context';
-import { auth } from '../config/firebase';
-
-
-
+import { MessageCircle,Users } from 'lucide-react';
 import {
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
-  UploadOutlined,
-  UserOutlined,
-  VideoCameraOutlined,
-  FilterOutlined
+  ArrowLeftOutlined,
+  FilterOutlined,
+  
 } from '@ant-design/icons';
 import { Button, Menu, Modal, Tour } from 'antd';
 
@@ -35,7 +29,9 @@ const ChatDm = () => {
   const {setgroup}=useContext(GroupContext)
   const ref1 = useRef(null);
   const ref2 = useRef(null);
-
+  const [showChat, setShowChat] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  
  
   const [open1, setOpen1] = useState(false);
   const steps = [
@@ -109,105 +105,176 @@ const ChatDm = () => {
   // };
   return (
     <Layout style={{ minHeight: '100vh' }}>
-      {/* Sidebar */}
-     
-        <SideBar/>
-        {contextHolder}
-        {/* <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={['1']}
-          items={[
-            {
-              
-              key: '1',
-              icon: <UserOutlined />,
-              label: 'Group Community',
-              onClick: () => handleMenuItemClick('1'), // Use title instead of label for Ant Design v4 compatibility
-            },
-            {
-              key: '2',
-              icon: <VideoCameraOutlined />,
-              label: 'Logout',
-              onClick:() => showModal(),
-            },
-            
-            {
-              key: '3',
-              icon: <UploadOutlined />,
-              label: 'Reels',
-              onClick:()=>success()
-            },
-            
-            {
-              key: '4',
-              icon: <UserOutlined />,
-              label: 'tour',
-              onClick:()=>setOpen1(true)
-            },
-          ]}
-        /> */}
+    <SideBar showChat={showChat}/>
+    {contextHolder}
     
-
-      {/* Main Content Area */}
-      <Layout>
-       
-
-        {/* Content Layout */}
-        <Layout.Content >
-          <Flex gap={0}>
-            {/* User List */}
-            <Modal
-        open={open}
-        title="Are you Sure want to Logout ?"
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={(_, { OkBtn, CancelBtn }) => (
-          <>
-           
-            <CancelBtn />
-            <OkBtn />
-          </>
-        )}
-      >
-     
-      </Modal>
-            <div className='userdiv'>
-              <Flex align='center' justify='space-between' >
-                <Flex align='center'>
-        
-          <Typography.Title className="ml-20" level={2}>{user.displayName}</Typography.Title>
-          </Flex>
-          <Flex ref={ref1} align='center'><FilterOutlined style={{fontSize:17}} /></Flex>
-          </Flex>
-          <Flex justify='space-between' align='center'>
-  <div  onClick={()=>handleactivetab('msg')} style={{cursor: 'pointer',
-            borderBottom: activetab==='msg' ? '2px solid blue' : 'none',
-            paddingBottom: '3px' 
-        }}>
-            Messages
-        </div>
-        <div  onClick={()=>handleactivetab('group')} style={{cursor: 'pointer',
-            borderBottom: activetab==='group' ? '2px solid blue' : 'none',
-            paddingBottom: '3px' 
-        }}>
-           Community
-        </div>
- </Flex>
- { activetab==='msg' ?
-              <UserList  />:<CommunityGroup/>}
-            </div>
-
-          
-            <div ref={ref2} className='div'>
+    <Layout>
+      <Layout.Content>
+        <div className="md:hidden">
+          {/* Mobile View */}
+          {showChat ? (
+            <div className="h-screen">
              
-              <PersonalChat />
+              <PersonalChat onBack={() => setShowChat(false)} />
             </div>
-          </Flex>
-          <Tour open={open1} onClose={() => setOpen1(false)} mask={false} type="primary" steps={steps} />
-        </Layout.Content>
-      </Layout>
+          ) : (
+            <div className="h-screen">
+  <div className="p-6 border-b bg-white shadow-sm">
+    {/* User Profile Section */}
+    <div className="flex items-center gap-3 mb-6">
+      <img 
+        src={user.photoURL} 
+        alt="profile"
+        className="w-12 h-12 rounded-full border-2 border-blue-500"
+      />
+      <div>
+        <Typography.Title 
+          level={3} 
+          className="m-0 text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+        >
+          {user.displayName}
+        </Typography.Title>
+        <span className="text-gray-500 text-sm">Online</span>
+      </div>
+    </div>
+
+    {/* Navigation Tabs */}
+    <Flex justify="center" align="center" className="mt-4">
+      <div className="flex gap-12 text-lg font-medium">
+        <div
+          onClick={() => handleactivetab('msg')}
+          className={`
+            flex items-center gap-2 cursor-pointer pb-2 px-4
+            transition-all duration-300 transform hover:scale-105
+            ${activetab === 'msg' 
+              ? 'border-b-2 border-blue-500 text-blue-600 translate-y-[-2px]' 
+              : 'text-gray-500 hover:text-blue-500'
+            }
+          `}
+        >
+          <MessageCircle className="w-6 h-6" />
+          Messages
+        </div>
+
+        <div
+          onClick={() => handleactivetab('group')}
+          className={`
+            flex items-center gap-2 cursor-pointer pb-2 px-4
+            transition-all duration-300 transform hover:scale-105
+            ${activetab === 'group' 
+              ? 'border-b-2 border-blue-500 text-blue-600 translate-y-[-2px]' 
+              : 'text-gray-500 hover:text-blue-500'
+            }
+          `}
+        >
+          <Users className="w-6 h-6" />
+          Community
+        </div>
+      </div>
+    </Flex>
+  </div>
+
+  {/* Content Section */}
+  <div className="animate-fadeIn">
+    {activetab === 'msg' ? (
+      <UserList 
+        onUserSelect={(user) => {
+          setSelectedUser(user);
+          setShowChat(true);
+        }} 
+      />
+    ) : (
+      <CommunityGroup 
+        onGroupSelect={(group) => {
+          setSelectedUser(group);
+          setShowChat(true);
+        }} 
+      />
+    )}
+  </div>
+</div>
+          )}
+        </div>
+
+        {/* Desktop View */}
+        <div className="hidden md:block">
+  <Flex className="h-screen">
+    {/* Sidebar */}
+    <div className="w-[380px] border-r bg-white">
+      {/* Header */}
+      <div className="p-6 border-b">
+        <Flex align='center' justify='space-between'>
+          <div className="flex items-center gap-3">
+            <img 
+              src={user.photoURL} 
+              alt="profile"
+              className="w-12 h-12 rounded-full border-2 border-blue-500"
+            />
+            <Typography.Title 
+              level={2} 
+              className="m-0 text-xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"
+            >
+              {user.displayName}
+            </Typography.Title>
+          </div>
+          <div ref={ref1} className="cursor-pointer hover:bg-gray-100 p-2 rounded-full transition-colors">
+            <FilterOutlined className="text-xl text-gray-600" />
+          </div>
+        </Flex>
+
+        {/* Navigation Tabs */}
+        <Flex justify='center' className="mt-6">
+          <div className="flex gap-12 text-lg font-medium">
+            <div
+              onClick={() => handleactivetab('msg')}
+              className={`
+                flex items-center gap-2 cursor-pointer pb-2 px-4
+                transition-all duration-300 transform hover:scale-105
+                ${activetab === 'msg' 
+                  ? 'border-b-2 border-blue-500 text-blue-600 translate-y-[-2px]' 
+                  : 'text-gray-500 hover:text-blue-500'
+                }
+              `}
+            >
+              <MessageCircle className="w-5 h-5" />
+              Messages
+            </div>
+            <div
+              onClick={() => handleactivetab('group')}
+              className={`
+                flex items-center gap-2 cursor-pointer pb-2 px-4
+                transition-all duration-300 transform hover:scale-105
+                ${activetab === 'group' 
+                  ? 'border-b-2 border-blue-500 text-blue-600 translate-y-[-2px]' 
+                  : 'text-gray-500 hover:text-blue-500'
+                }
+              `}
+            >
+              <Users className="w-5 h-5" />
+              Community
+            </div>
+          </div>
+        </Flex>
+      </div>
+
+      {/* List Content */}
+      <div className="animate-fadeIn">
+        {activetab === 'msg' ? <UserList /> : <CommunityGroup />}
+      </div>
+    </div>
+
+    {/* Chat Area */}
+    <div ref={ref2} className="flex-1 bg-gray-50">
+      <PersonalChat />
+    </div>
+  </Flex>
+</div>
+
+
+        <Tour open={open1} onClose={() => setOpen1(false)} mask={false} type="primary" steps={steps} />
+      </Layout.Content>
     </Layout>
+  </Layout>
   );
 };
 

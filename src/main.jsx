@@ -12,6 +12,8 @@ import { GroupProvider } from './components/context/GroupContext.jsx'
 import ProfilePage from './components/Profilepage.jsx'
 import { Notifications } from './components/Notifications.jsx'
 import { Videocall } from './components/Videocall.jsx'
+import { Search } from './components/Search.jsx'
+
 ReactDOM.createRoot(document.getElementById('root')).render(
   
     <UserProvider> 
@@ -27,6 +29,8 @@ ReactDOM.createRoot(document.getElementById('root')).render(
             <Route path="/Profilepage/:uid" element={<ProfilePage />} />
             <Route path='/Notifications' element={<Notifications/>} />
             <Route path='/VideoCall' element={<Videocall/>} />
+            <Route path='/Search' element={<Search/>} />
+
             
           </Routes>
         </BrowserRouter>
