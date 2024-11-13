@@ -13,6 +13,7 @@ import '../../../src/tailwind-build.css';
 import '../../../src/index.css';
 
 import { Helmet } from 'react-helmet';
+import { Button } from 'antd';
 
 
 
@@ -78,13 +79,16 @@ export const Hero = () => {
   }, []);
   return (
     <>
-    <Helmet>
+    <div>Sign in with firechat</div>
+    <Button onClick={signin}>Sign in</Button>
+    {
+    /* <Helmet>
         <html lang="en" className="tw-dark" />
         <title>All your AI models in one place - Try Pixa Playground</title>
         <meta name="description" content="Get all your AI models and tools in one place" />
         <link rel="shortcut icon" href="./assets/logo/logo.png" type="image/x-icon" />
         
-        {/* Open Graph / Facebook */}
+       
         <meta property="og:title" content="All your AI models in one place - Try Pixa Playground" />
         <meta property="og:description" content="Get all your AI models and tools in one place" />
         <meta property="og:type" content="website" />
@@ -99,7 +103,7 @@ export const Hero = () => {
             referrerpolicy="no-referrer"
         />
 
-        {/* Google Analytics */}
+       
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-"></script>
         <script>
           {`
@@ -302,7 +306,7 @@ export const Hero = () => {
                         class="reveal-up tw-mt-8 tw-max-w-[450px] tw-text-lg max-lg:tw-text-base tw-p-2 tw-text-center
                          tw-text-gray-800 dark:tw-text-white max-lg:tw-max-w-full"
                     >
-                        {/* <!-- Test, Develop and Deploy all your AI models in one place, with Pixa seamless playground interface --> */}
+
                         Your all in one AI companion. generate Images, videos, codes, docs, debug your web apps all with Pixa's interface.
                     </div>
 
@@ -334,7 +338,7 @@ export const Hero = () => {
                     </div>
                 </div>
                 
-                {/* <!-- prompt container --> */}
+               
                 <div
                     class="reveal-up  tw-relative tw-mt-8 tw-flex tw-w-full tw-place-content-center tw-place-items-center"
                     id="dashboard-container"
@@ -354,7 +358,7 @@ export const Hero = () => {
                         ></div> 
                         <div class="animated-border tw-w-full tw-h-full tw-p-[2px]">
                             <div class="tw-w-full tw-h-full tw-rounded-xl tw-overflow-hidden tw-flex">
-                                {/* <!-- sign-up pop-up --> */}
+                              
                                 <div class="tw-absolute tw-rounded-xl tw-text-center tw-transition-transform tw-duration-300 tw-scale-0 tw-backdrop-blur-lg tw-flex tw-flex-col tw-p-10 tw-place-items-center 
                                         tw-gap-4 tw-w-full tw-h-full dark:tw-bg-[#000000b4] tw-bg-[#ffffff6a] firefox:tw-bg-white tw-top-0 tw-left-0 tw-z-20"
                                         id="signup-prompt"
@@ -387,9 +391,7 @@ export const Hero = () => {
 
                                 <div class="tw-min-w-[250px] max-lg:tw-hidden tw-p-2 tw-gap-2 tw-flex tw-flex-col tw-bg-gray-100 
                                             dark:tw-bg-[#171717] tw-h-full">
-                                    {/* <!-- <h3 class="tw-text-xl tw-uppercase">
-                                        Pixa
-                                    </h3> --> */}
+                                 
                                     <div class="tw-h-[30px] tw-w-fit tw-max-w-[100px]">
                                         <img
                                             src="./assets/logo/logo.png"
@@ -460,7 +462,7 @@ export const Hero = () => {
                                         <div class="tw-min-w-[140px] tw-min-h-[80px] max-lg:tw-absolute tw-z-10 tw-top-1 tw-left-1/2 max-lg:tw--translate-x-1/2 
                                                     tw-flex tw-flex-col tw-text-sm tw-gap-1 tw-place-content-center">
                                             <div class="dropdown tw-p-2 tw-rounded-md  tw-bg-[#f3f4f6] dark:tw-bg-[#171717]" id="dropdown1">
-                                                {/* <!-- store the value of the dropdown--> */}
+                                           
                                                 <input type="hidden" class="dropdown-input"/>
                                                 <button
                                                     type="button"
@@ -539,7 +541,7 @@ export const Hero = () => {
                 <div
                     class="carousel lg:w-place-content-center tw-mt-10 tw-flex tw-w-full tw-gap-5 max-md:tw-gap-2"
                 >
-                    {/* <!-- add the brands using your app  --> */}
+                    
                     <div class="carousel-img tw-h-[30px] tw-w-[150px]">
                         <img
                             src="./assets/images/brand-logos/google.svg"
@@ -653,7 +655,7 @@ export const Hero = () => {
                                 <div class="tw-overflow-hidden tw-w-full tw-min-h-[180px] tw-h-[180px]">
                                     <img src="./assets/images/home/api.png" class="tw-w-full tw-object-contain tw-h-auto" 
                                         alt="unified interface"/>
-                                    {/* <!-- <i class="bi bi-grid-1x2-fill"></i> --> */}
+                                   
                                 </div>
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Unified interface</h2>
                                 <p class="tw-text-base tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
@@ -674,7 +676,7 @@ export const Hero = () => {
                                 <div class="tw-w-full tw-min-h-[180px] tw-h-[180px] tw-overflow-hidden">
                                     <img src="./assets/images/home/api.png" 
                                         alt="API" class="tw-w-full tw-h-auto tw-object-contain"/>
-                                    {/* <!-- <i class="bi bi-grid-1x2-fill"></i> --> */}
+                                    
                                 </div>
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">API Access</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
@@ -715,7 +717,7 @@ export const Hero = () => {
                             <div class="tw-text-6xl tw-overflow-hidden tw-rounded-xl tw-w-full tw-h-full max-md:tw-h-[180px]">
                                 <img src="./assets/images/home/ai-models.png" class="tw-w-full tw-object-contain tw-h-full" 
                                     alt="AI models"/>
-                                {/* <!-- <i class="bi bi-grid-1x2-fill"></i> --> */}
+                             
                             </div>
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Multiple AI models</h2>
@@ -946,9 +948,7 @@ export const Hero = () => {
                 <h3 class="reveal-up tw-text-5xl tw-font-medium max-md:tw-text-3xl tw-text-center tw-leading-normal">
                     Additional Features
                 </h3>
-                {/* <!-- <p class="reveal-up tw-mt-3 tw-max-w-[600px] tw-text-center ">
-                </p> -->
-                 */}
+               
                 <div class="tw-mt-8 tw-relative tw-gap-10 tw-p-4 tw-grid tw-place-items-center tw-grid-cols-3 max-lg:tw-flex max-lg:tw-flex-col">
 
 
@@ -1123,7 +1123,7 @@ export const Hero = () => {
             >
                 Join the professionals using Pixa
             </h3>
-            {/* <!-- Testimonials --> */}
+           
             <div
                 class="tw-mt-20 tw-gap-10 tw-space-y-8  max-md:tw-columns-1 lg:tw-columns-2 xl:tw-columns-3"
             >
@@ -1306,7 +1306,7 @@ export const Hero = () => {
             >
                 Choose the right plan for you
             </h3>
-            {/* <!-- pricing --> */}
+           
             <div
                 class="tw-mt-10 tw-flex tw-flex-wrap tw-place-content-center tw-gap-8 max-lg:tw-flex-col"
             >
@@ -1467,7 +1467,7 @@ export const Hero = () => {
             >
                 Read resources by experts ✨
             </h3>
-            {/* <!-- articles --> */}
+      
         
             <div
                 class="reveal-up tw-mt-10 tw-flex tw-flex-wrap tw-place-content-center tw-gap-10 max-lg:tw-flex-col"
@@ -1724,7 +1724,7 @@ export const Hero = () => {
                             PIXA
                         </div>
                     </a>
-                    {/* <!-- <div class="tw-mt-3 tw-text-lg tw-font-semibold">Follow us</div> --> */}
+                   
                     <div class="tw-flex tw-gap-4 tw-text-lg">
                         <a
                             href="https://github.com/PaulleDemon/"
@@ -1793,7 +1793,7 @@ export const Hero = () => {
 
         </footer>
     </body>
-    
+     */}
 
 
     </>
