@@ -97,7 +97,11 @@ export const UploadPosts = ({uid,settrigger}) => {
         />
       </Modal>
       <button 
-        className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out shadow-md ml-3' 
+       className='bg-gradient-to-r from-violet-400 to-purple-500 text-white font-medium
+                  py-2 px-4 rounded-full text-sm
+                  transition-all duration-200 ease-in-out shadow-md
+                  hover:shadow-violet-200 hover:scale-102
+                  flex items-center justify-center gap-2 max-w-[140px] mx-auto'
         onClick={() => setModalVisible(true)}
       >
         Upload Post

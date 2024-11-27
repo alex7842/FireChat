@@ -124,7 +124,8 @@ export const SideBar = ({showChat}) => {
      
       </Modal>
       <div className="hidden md:block">
-  <Sider width={220} className="site-layout-background">
+      <Sider width={220} className="site-layout-background fixed left-0 top-0 h-screen">
+
     <Menu className="h-full border-r-0">
       <Divider />
       <div className="ml-4 flex justify-start">
@@ -137,17 +138,18 @@ export const SideBar = ({showChat}) => {
             onClick={() => handleclick(item.key)}
             className={`menu-item transition-all duration-300 hover:scale-105 ${
               selectedKey === item.key
-                ? 'bg-primary/10 text-primary shadow-lg'
-                : 'hover:bg-gray-100 hover:shadow-md'
+              ? 'bg-gradient-to-r from-violet-500 to-fuchsia-500 bg-clip-text text-transparent font-semibold'
+              : 'text-gray-600 '
             }`}
           >
-            <item.icon
-              className={`text-2xl transition-all duration-300 ${
-                selectedKey === item.key
-                  ? 'bg-primary/10 text-primary'
-                  : 'text-gray-600'
-              }`}
-            />
+<item.icon
+  className={`text-2xl transition-all duration-300 ${
+    selectedKey === item.key
+    ? ' text-violet-500  drop-shadow-lg'
+    : 'text-gray-500  hover:drop-shadow-md'
+  }`}
+/>
+
             {item.label}
           </div>
         ))}

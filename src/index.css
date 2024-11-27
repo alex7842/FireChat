@@ -39,20 +39,101 @@
   align-items: center;
   font-size: 24px;
  gap:5%;
-  padding: 6.5%;
+  padding: 6%;
   cursor: pointer;
   border-radius: 8px;
   transition: all 0.3s ease;
   }
+  .menu-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer;
+    /* Reduce transform origin scale for subtler effect */
+    transform-origin: left center;
+  }
   
- 
-.menu-item:hover {
-  background-color: #f0f0f0; /* Light gray background on hover */
-}
-
-.menu-item:hover .icon {
-  transform: scale(1.1); /* Scale up the icon on hover */
-}
+  .menu-item:hover {
+    /* Reduce the scale value for subtler hover effect */
+    @apply transform transition-all duration-200;
+    transform: scale(1.02); /* Reduced from 1.05 */
+  }
+  
+  /* Update the icon hover animation to be more subtle */
+  .menu-item:hover .icon {
+    @apply transform scale-105 text-secondary; /* Reduced from scale-110 */
+  }
+  
+  .profile-modal {
+    @apply rounded-2xl overflow-hidden;
+  }
+  
+  .profile-modal .ant-modal-content {
+    @apply bg-white shadow-xl;
+  }
+  
+  .profile-modal .ant-modal-header {
+    @apply bg-violet-50 border-b-2 border-violet-200;
+  }
+  
+  .profile-modal .ant-modal-footer {
+    @apply border-t-2 border-violet-200;
+  }
+  
+  .profile-card {
+    @apply bg-white rounded-xl shadow-md hover:shadow-lg transition-all duration-300;
+  }
+  
+  .profile-input {
+    @apply border-2 border-violet-200 rounded-lg px-4 py-2 
+           focus:border-violet-600 hover:border-violet-400 
+           transition-all duration-300;
+  }
+  
+  .highlight-item {
+    @apply bg-white rounded-lg overflow-hidden shadow-sm 
+           hover:shadow-md transition-all duration-300 
+           hover:scale-105 cursor-pointer;
+  }
+  
+  @media (max-width: 768px) {
+    .profile-modal {
+      @apply mx-4;
+    }
+    
+    .profile-modal .ant-modal-content {
+      @apply p-4;
+    }
+    
+    .avatar-large {
+      @apply w-24 h-24;
+    }
+    
+    .profile-card {
+      @apply mx-2;
+    }
+  }
+  
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-out;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .hover-scale {
+    @apply transition-transform duration-300 hover:scale-105;
+  }
+  
+  .violet-gradient {
+    background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%);
+  }
+  
 
 .icon {
   font-size: 24px;
@@ -230,6 +311,30 @@
   margin: 5px;
   cursor: pointer;
   animation: float 3s ease-in-out infinite;
+}
+.animate-spin-slow {
+  animation: spin 3s linear infinite;
+}
+
+.story-ring {
+  transition: all 0.3s ease;
+}
+
+.story-ring:hover {
+  transform: scale(1.05);
+}
+
+.story-upload-modal .ant-modal-content,
+.story-view-modal .ant-modal-content {
+  border-radius: 12px;
+  overflow: hidden;
+}
+.story-progress .ant-progress-inner {
+  background-color: rgba(255,255,255,0.3);
+}
+
+.story-progress .ant-progress-bg {
+  height: 2px !important;
 }
 
 @keyframes likeHeart {

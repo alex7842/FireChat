@@ -1,6 +1,6 @@
 import React,{useContext,useState} from 'react'
 import UserContext from './context/context';
-import  { useChat } from './context/ChatContext';
+import  ChatContext, { useChat } from './context/ChatContext';
 import { db } from '../config/firebase';
 import { collection,doc, deleteDoc,query,where,getDocs,getDoc,updateDoc,arrayUnion,Timestamp } from 'firebase/firestore';
 import {ShareAltOutlined,DeleteOutlined,InfoCircleOutlined ,RollbackOutlined } from '@ant-design/icons'
@@ -8,6 +8,7 @@ import {  Flex, Popover,message,Image ,Modal,Input} from 'antd';
 import GroupContext from './context/GroupContext';
 import { Share2,MessageCircle,Heart } from 'lucide-react';
 import { PostModal } from './PostModal';
+import { Share } from './Share';
 export const Message = ({msglen,id1,msg,handleReply,messageTheme}) => {
   const {UserId}=useChat()
 const[modelopen,setmodelopen]=useState(false);
@@ -20,10 +21,12 @@ const {selectedPost,setSelectedPost}=useContext(GroupContext);
  const [newsLikes, setNewsLikes] = useState({});
   const [messageApi, contextHolder] = message.useMessage();
   const[userid,setuserid]=useState("");
-
+ const [Sharemodel,setSharemodel]=useState(false);
   const { user } = useContext(UserContext);
   const emoji=[ '❤️', '😂' ,'😁' ,'👍' ,'😊', '🤣']
- 
+  const [SharePost,setSharePost]=useState(null);
+  const {targetuserid,settargetuserid}=useContext(ChatContext)
+  const [bol, setBol] = useState("");
  function handleclick(d,msgid){
  
   const messageBox = document.getElementById(`msgr-${msgid}`);
@@ -102,20 +105,59 @@ const formatTime = (time) => {
   return `${hours}:${formattedMinutes} ${period}`;
 };
 
-  const content = (
-    <div>
-       {contextHolder}
-      
-      <p > {emoji.map((data,index)=><span  onClick={()=>handleclick(data,id1)} key={index} className='emoj'>{data}</span>)}</p>
-      <p  style={{cursor:'pointer'}} onClick={() => handleReply(msg.text,msg.name)}><RollbackOutlined /> Reply</p>
-      <p  style={{cursor:'pointer'}}><ShareAltOutlined /> Forward</p>
-      
-      <p  style={{cursor:'pointer'}} onClick={handleDelete}><DeleteOutlined /> Delete</p>
-      
-      <p  onClick={handleinfo} style={{cursor:'pointer'}}><InfoCircleOutlined /> Info</p>
-      <span id={`info-${id1}`} style={{display:'none'}}></span>
+ const content = (
+  <div className="min-w-[40px] md:min-w-[120px] py-1 mx-auto text-center">
+
+        {contextHolder}
+        
+        <div className="px-3 mb-2 border-b border-gray-100">
+            {emoji.map((data, index) => (
+                <span 
+                    onClick={() => handleclick(data, id1)} 
+                    key={index} 
+                    className="inline-block p-1 hover:bg-violet-100 rounded cursor-pointer transition-colors emoj"
+                >
+                    {data}
+                </span>
+            ))}
+        </div>
+
+        <div className="space-y-1">
+            <div onClick={() => handleReply(msg.text, msg.name)} 
+                className="flex items-center gap-2 px-3 py-2 hover:bg-violet-50 cursor-pointer transition-colors">
+                <RollbackOutlined className="text-violet-600" /> 
+                <span>Reply</span>
+            </div>
+
+            <div  onClick={
+              ()=>{
+                setSharemodel(true);
+                setSharePost(msg)
+                 setBol(msg.isNews?"post":"message")
+                console.log("bol value",bol)
+                console.log(msg)
+            }}className="flex items-center gap-2 px-3 py-2 hover:bg-violet-50 cursor-pointer transition-colors">
+                <ShareAltOutlined className="text-violet-600" /> 
+                <span>Forward</span>
+            </div>
+
+            <div onClick={handleDelete} 
+                className="flex items-center gap-2 px-3 py-2 hover:bg-violet-50 cursor-pointer transition-colors">
+                <DeleteOutlined className="text-red-500" /> 
+                <span>Delete</span>
+            </div>
+
+            <div onClick={handleinfo} 
+                className="flex items-center gap-2 px-3 py-2 hover:bg-violet-50 cursor-pointer transition-colors">
+                <InfoCircleOutlined className="text-violet-600" /> 
+                <span>Info</span>
+            </div>
+        </div>
+
+        <span id={`info-${id1}`} className="hidden"></span>
     </div>
-  );
+);
+
 
   
   
@@ -207,6 +249,20 @@ const formatTime = (time) => {
   
   return (
     <>
+    <Modal 
+        open={Sharemodel}
+        onCancel={() => setSharemodel(false)}
+        width={500}
+        centered
+        footer={null}
+        className="rounded-lg overflow-hidden"
+        classNames={{
+          content: 'p-0',
+          header: 'hidden'
+        }}
+      >
+        <Share SharePost={SharePost} Sharemodel={setSharemodel} curuser={user.uid} source={bol}/>
+      </Modal>
     <Modal
     open={modelopen}
     onCancel={() => setmodelopen(false)}
@@ -296,7 +352,7 @@ const formatTime = (time) => {
   <>
 <div className='text-[#8A8A8A] text-center text-sm py-2'>{msg.day}</div>
       <div className={`flex ${msg.email === user.email ? 'justify-end' : 'justify-start'}`}>
-        <Popover placement={msg.email === user.email ? "left" : "right"} title='React' content={content}>
+        <Popover placement={msg.email === user.email ? "left" : "right"} title='Options' content={content}>
         <div
   style={{ 
     backgroundColor: msg.email === user.email ? messageTheme.msgRight : messageTheme.msgLeft 
@@ -312,6 +368,11 @@ const formatTime = (time) => {
               {msg.post ? ( 
                 // Post Layout
                 <div className="rounded-lg border border-gray-200 overflow-hidden"  onClick={() => fetchPostDetails(msg, msg.isNews)}>
+                   {msg.forward && (
+      <div className="text-xs text-gray-500 flex items-center mb-1">
+        <span>↩️ Forwarded</span>
+      </div>
+    )}
                   <img 
                     src={msg.mediaUrl} 
                     alt={msg.title} 
@@ -336,6 +397,12 @@ const formatTime = (time) => {
                     src={msg.email === user.email ? msg.call?msg.logo:user.photoURL : msg.logo} 
                     className="w-8 h-8 rounded-full"
                   />
+                  <div>
+                  {msg.forward && (
+      <div className="text-xs text-gray-500 flex items-center mb-1">
+        <span>↩️ Forwarded</span>
+      </div>
+    )}
                   {msg.text.startsWith("https://firebasestorage.googleapis.com") ? (
                     <Image 
                       src={msg.text} 
@@ -345,6 +412,7 @@ const formatTime = (time) => {
                   ) : (
                     <span className="message-text break-words">{msg.text}</span>
                   )}
+                </div>
                 </div>
               )}
               

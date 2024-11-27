@@ -26,11 +26,17 @@ import { Skeleton } from 'antd';
 
 import { Share } from './Share';
 import { PostModal } from './PostModal';
+import { Story } from './Story';
+import { StoryView } from './StoryView';
+import { StoryUpload } from './StoryUpload';
+import { AllStories } from './AllStories';
 const HomeIntro = () => {
   const [postData,setpostData]=useState([]);
   const[loading,setLoading]=useState(false);
   const [modalVisible, setModalVisible] = useState(false);
- 
+  const [storyUploadModal,setStoryUploadModal]=useState(false);
+  const [storyViewModal,setStoryViewModal]=useState(false);
+  const [ selectedStory,setSelectedStory] = useState(null);
   const [likedPosts, setLikedPosts] = useState({});
   const [isHeartAnimating, setIsHeartAnimating] = useState(false);
   const [newComment, setNewComment] = useState('');
@@ -168,41 +174,41 @@ useEffect(() => {
     setLoading(false);
     // Fetch news in parallel
    
-    fetch('https://api.mediastack.com/v1/news?access_key=6e434e5f81bc0a97106429f99493052b&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
+    // fetch('https://api.mediastack.com/v1/news?access_key=6e434e5f81bc0a97106429f99493052b&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
 
-      .then(response => response.json())
-      .then(newsData => {
-        console.log(newsData,"news data");  
-        const newsAsPosts = newsData.data.map((article) => ({
-          id: `news-${encodeURIComponent(article.published_at)}-${encodeURIComponent(article.title)}`,
-          author: article.author || article.source,
-          caption: article.description,
-          mediaUrl: article.image || `https://source.unsplash.com/800x400/?${encodeURIComponent(article.title)}`,
-          sourceName: article.source,
-          title: article.title,
-          publishedAt: article.published_at,
-          timestamp: new Date(article.published_at),
-          isNews: true
-        }));
-    // fetch('https://newsapi.org/v2/everything?' +
-    //   'q=technology OR artificial intelligence OR science' +
-    //   '&language=en' +
-    //   '&pageSize=60' +
-    //   '&sortBy=publishedAt' +
-    //   '&apiKey=4b088fd990774c72a1ffbf23ca491daf')
     //   .then(response => response.json())
     //   .then(newsData => {
-    //     const newsAsPosts = newsData.articles.map((article) => ({
-    //       id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
-    //       author: article.source.name,
-    //       caption: article.content,
-    //       mediaUrl: article.urlToImage,
-    //       sourceName: article.source.name,
+    //     console.log(newsData,"news data");  
+    //     const newsAsPosts = newsData.data.map((article) => ({
+    //       id: `news-${encodeURIComponent(article.published_at)}-${encodeURIComponent(article.title)}`,
+    //       author: article.author || article.source,
+    //       caption: article.description,
+    //       mediaUrl: article.image || `https://source.unsplash.com/800x400/?${encodeURIComponent(article.title)}`,
+    //       sourceName: article.source,
     //       title: article.title,
-    //       publishedAt: article.publishedAt,
-    //       timestamp: new Date(article.publishedAt),
+    //       publishedAt: article.published_at,
+    //       timestamp: new Date(article.published_at),
     //       isNews: true
     //     }));
+    fetch('https://newsapi.org/v2/everything?' +
+      'q=technology OR artificial intelligence OR science' +
+      '&language=en' +
+      '&pageSize=60' +
+      '&sortBy=publishedAt' +
+      '&apiKey=4b088fd990774c72a1ffbf23ca491daf')
+      .then(response => response.json())
+      .then(newsData => {
+        const newsAsPosts = newsData.articles.map((article) => ({
+          id: `news-${encodeURIComponent(article.publishedAt)}-${encodeURIComponent(article.title)}`,
+          author: article.source.name,
+          caption: article.content,
+          mediaUrl: article.urlToImage,
+          sourceName: article.source.name,
+          title: article.title,
+          publishedAt: article.publishedAt,
+          timestamp: new Date(article.publishedAt),
+          isNews: true
+        }));
     
         
   console.log(newsAsPosts,"news posts");
@@ -406,16 +412,32 @@ const dataadd= async (item)=>{
 // Add this helper function
 const isValidImageUrl = (url) => {
   if (!url) return false;
-  // Check if it's an unsplash fallback URL
-  if (url.includes('source.unsplash.com')) return false;
-  // Check for common image extensions and valid URL patterns
-  return (
-    url.match(/\.(jpeg|jpg|gif|png|webp)$/i) ||
-    url.includes('images') ||
-    url.includes('media') ||
-    url.includes('photos')
-  );
+
+  // Check for direct image file extensions
+  const imageExtensions = /\.(jpg|jpeg|png|gif|bmp|webp|svg|avif)$/i;
+  
+  // Check for common image hosting patterns
+  const imageHostingPatterns = [
+    /\.(jpg|jpeg|png|gif|bmp|webp|svg|avif)/i,  // Matches image extensions anywhere in URL
+    /\/image\//i,
+    /\/images\//i,
+    /\/media\//i,
+    /\/photos?\//i,
+    /\/full\//i,
+    /\/upload/i,
+    /cloudinary/i,
+    /imgix/i,
+    /\.cdn\./i
+  ];
+
+  // Test for direct extension match
+  if (imageExtensions.test(url)) return true;
+
+  // Test for any image hosting pattern
+  return imageHostingPatterns.some(pattern => pattern.test(url));
 };
+
+
 
     const formatRelativeDate = (timestamp) => {
       let date;
@@ -457,22 +479,22 @@ const isValidImageUrl = (url) => {
       }
     }
     
-const scrollVariants = {
-  hidden: { 
-    opacity: 0, 
-    y: 100,
-    scale: 0.9 
-  },
-  visible: { 
-    opacity: 1, 
-    y: 0,
-    scale: 1,
-    transition: {
-      duration: 0.6,
-      ease: [0.6, -0.05, 0.01, 0.99]
-    }
-  }
-};
+    const scrollVariants = {
+      hidden: {
+        opacity: 0,
+        y: 20, // Reduced distance
+        scale: 0.98 // Subtler scale
+      },
+      visible: {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        transition: {
+          duration: 0.3, // Faster duration
+          ease: "easeOut"
+        }
+      }
+    };
     const PostSkeleton = () => (
       <div className="p-4 bg-white rounded-lg shadow-sm">
         <div className="flex items-center space-x-4 mb-4">
@@ -487,10 +509,21 @@ const scrollVariants = {
     );  
   
     return (
-      <div className="min-h-screen bg-gray-50 pb-16 md:pb-0"> {/* Added pb-16 for mobile */}
-  <div className="max-w-screen-xl mx-auto">
-        <div className="flex flex-col md:flex-row">
+      <div className="min-h-screen bg-gray-50 pb-16 md:pb-0">
+      <div className="max-w-screen-xl mx-auto">
+        <div className="flex flex-col md:flex-row md:justify-center">
           <SideBar />
+         
+<Modal
+  open={storyViewModal}
+  onCancel={() => setStoryViewModal(false)}
+  footer={null}
+  width={400}
+  centered
+ // className="story-view-modal"
+>
+  <StoryView owner="firechat"/>
+</Modal>
           <Modal
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
@@ -514,17 +547,23 @@ const scrollVariants = {
           header: 'hidden'
         }}
       >
-        <Share SharePost={SharePost} Sharemodel={setSharemodel}/>
+        <Share SharePost={SharePost} Sharemodel={setSharemodel} curuser={user.uid} source="home"/>
       </Modal>
           
           {/* Main Content Area */}
-          <main className="flex-1 md:ml-16 mb-16 md:mb-0">
-          <div className="max-w-[935px] mx-auto px-2 md:px-4">
+          <main className="flex-1 md:ml-[220px] mb-16 md:mb-0 relative max-w-[935px]">
+          <div className="mx-auto px-2 md:px-4">
               <div className="flex flex-col md:flex-row md:gap-8">
                 {/* Stories and Posts Column */}
                 <div className="w-full md:w-[calc(100%-320px)]">
                   {/* Stories Section */}
                   <div className="bg-white rounded-lg mb-4 overflow-hidden relative">
+                  {isHeartAnimating && (
+                <div className="absolute inset-0 flex items-center justify-center">
+                    <HeartFilled className="text-4xl md:text-6xl text-violet-500 animate-like-heart" />
+                </div>
+            )}
+
   <div className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 py-4">
     <Carousel
       arrows={true}
@@ -558,27 +597,34 @@ const scrollVariants = {
       ]}
       className="stories-carousel"
     >
-      {users?.map(story => (
-        <div key={story.id} className="px-2">
-          <div className="flex flex-col items-center justify-center">
-            <button className="block focus:outline-none">
-              <div className="story-ring p-[2px] rounded-full bg-gradient-to-tr from-yellow-400 to-fuchsia-600">
-                <div className="bg-white p-[2px] rounded-full flex items-center justify-center">
-                  <Avatar
-                    size={48}
-                    src={story.photoURL || '/default-avatar.png'}
-                    alt={story.displayName}
-                    className="story-avatar"
-                  />
-                </div>
-              </div>
-              <p className="text-white text-xs mt-2 truncate w-14 text-center">
-                {story.displayName}
-              </p>
-            </button>
+     <StoryUpload/>
+
+  {/* FireChat Logo Card */}
+  <div className="px-2">
+    <div className="flex flex-col items-center justify-center">
+      <div className="block cursor-pointer"  onClick={() => {
+            //setSelectedStory(story);
+            setStoryViewModal(true);
+          }}
+        >
+        <div className="story-ring p-[2px] rounded-full relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-violet-500 to-fuchsia-500 rounded-full animate-spin-slow"></div>
+          <div className="bg-white p-[2px] rounded-full flex items-center justify-center relative z-10">
+            <Avatar
+              size={48}
+              src="/newslogo.png"
+              alt="FireChat"
+              className="story-avatar"
+            />
           </div>
         </div>
-      ))}
+        <p className="text-white text-xs mt-2 truncate w-14 text-center">
+          FireChat
+        </p>
+      </div>
+    </div>
+  </div>
+      <AllStories/>
     </Carousel>
   </div>
 </div>
@@ -613,17 +659,36 @@ const scrollVariants = {
                     >
                       <List
                         itemLayout="vertical"
-                        dataSource={postData}
+                        dataSource={postData.filter(item => {
+                          
+                          if (!item.mediaUrl || !item.author) return false;
+                          return isValidImageUrl(item.mediaUrl);
+                        })}
                         loading={loading}
-                        className="space-y-4"
-                        renderItem={item => (
+                        className="space-y-2"
+                        renderItem={(item,index) => (
                           <motion.div
-                            className="bg-white rounded-lg shadow-sm overflow-hidden"
-                            initial="hidden"
-                            whileInView="visible"
-                            viewport={{ margin: "-100px" }}
-                            variants={scrollVariants}
-                          >
+                          className="bg-white rounded-lg shadow-sm overflow-hidden relative"
+                          initial="hidden"
+                          whileInView="visible"
+                          viewport={{ 
+                            margin: "100px", 
+                            once: true // Ensures animation plays only once
+                          }}
+                          variants={scrollVariants}
+                          custom={index} // Use index for staggered animations
+                          transition={{
+                            delay: index * 0.1 // Stagger the animations
+                          }}
+                        >
+                               {isHeartAnimating && (
+<div className="absolute inset-0 flex items-center justify-center z-50">
+<HeartFilled
+className="text-6xl text-red-500 animate-like-heart"
+ style={{ filter: 'drop-shadow(0 0 10px rgba(0,0,0,0.3))' }}
+/>
+</div>
+ )}
                             {/* Post Header */}
                             <div className="flex items-center justify-between p-3 border-b">
                               <div className="flex items-center space-x-3">
@@ -648,10 +713,24 @@ const scrollVariants = {
                               <Popover
                                 content={
                                   <div className="flex flex-col space-y-2">
-                                    <Button type="text" block>Not Interested</Button>
+                                    <Button type="text" block
+                                    onClick={()=>{
+                                        const notInterestedPosts = JSON.parse(localStorage.getItem('notInterestedPosts') || '[]');
+                                        localStorage.setItem('notInterestedPosts',
+                                        JSON.stringify([...notInterestedPosts, item.id])
+                                     );
+                                        setpostData(prevPosts => prevPosts.filter(post => post.id !== item.id));
+                                         message.success('Post removed from your feed');
+                                        }}
+                                    >Not Interested</Button>
                                     <Report />
                                     {item.mediaUrl && (
-                                      <Button type="text" block>Download</Button>
+                                      <Button type="text" block
+                                    onClick={() => {
+                                         window.open(item.mediaUrl, '_blank');
+                                         message.success('Download started');
+                                         }}
+                                      >Download</Button>
                                     )}
                                   </div>
                                 }
@@ -659,6 +738,7 @@ const scrollVariants = {
                                 <Button type="text" icon={<EllipsisOutlined />} />
                               </Popover>
                             </div>
+                            
 
                             {/* Post Image */}
                             <div className="relative aspect-square w-full">
@@ -761,7 +841,7 @@ const scrollVariants = {
                           itemLayout="horizontal"
                           dataSource={suggestedUsers}
                           renderItem={user => (
-                            <List.Item>
+                            <List.Item    onClick={() => handlenavigate(user.uid, false)}>
                               <List.Item.Meta
                                 avatar={<Avatar src={user.photoURL} />}
                                 title={user.displayName}

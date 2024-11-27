@@ -7,17 +7,17 @@ import { motion } from 'framer-motion';
 import { collection,setDoc,addDoc,doc,getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { sendNotification } from '../utils/notificationUtils';
-export const Share = ({  Sharemodel,SharePost }) => {
-   //console.log("Sharepost",SharePost);
+export const Share = ({  Sharemodel,SharePost,curuser,source}) => {
+   console.log("Source",source);
     const { users } = useContext(GroupContext);
     const { user } = useContext(UserContext);
     const [form] = Form.useForm();
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const filteredOptions = users.filter((o) => o.uid !== user.uid && !selectedItems.includes(o));
+    const filteredOptions = users.filter((o) => o.uid !== curuser && !selectedItems.includes(o));
     const userMapping = {};
-    filteredOptions.forEach(user => {
-        userMapping[user.displayName] = user.uid;
+    filteredOptions.forEach(user1 => {
+        userMapping[user1.displayName] = user1.uid;
     });
     const onFinish = async (values) => {
         try {
@@ -52,12 +52,26 @@ export const Share = ({  Sharemodel,SharePost }) => {
                 // Create chatroom subcollection
                 const userDocRef = doc(db, "chatusers", chatId);
                 const chatRoomSubColRef = collection(userDocRef, "chatroom");
-    
+                let messageData;
+                if(source==="message"){
+                    messageData={
+                        text: SharePost.text,
+                        email: SharePost.email,
+                        forward:true,
+                        day: new Date().toLocaleDateString(),
+                        time: timeString,
+                        date: new Date(),
+                        logo:SharePost.logo,
+                        
+                        post: false
+                    }
+                }
                 // Add shared post as a message
-                const messageData = {
+                else{
+                messageData = {
                     text: SharePost.isNews?SharePost.title:SharePost.caption,
                     email: user.email,
-                    
+                    forward:source==="post"?true:false,
                     day: new Date().toLocaleDateString(),
                     time: timeString,
                     date: new Date(),
@@ -73,6 +87,7 @@ export const Share = ({  Sharemodel,SharePost }) => {
                     timestamp: SharePost.timestamp,
                     title: SharePost.isNews ? SharePost.title : SharePost.caption
                   };
+                }
                   console.log("Message Data:", messageData);    
                   await addDoc(chatRoomSubColRef, messageData);
 

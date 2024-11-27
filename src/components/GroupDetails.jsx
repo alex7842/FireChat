@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Drawer, Menu, Avatar, Typography, Divider, Button, List } from 'antd';
+import { Drawer, Menu,Switch, Avatar, Typography, Divider, Button, List, Empty } from 'antd';
 import {
   UserOutlined,
   TeamOutlined,
@@ -7,6 +7,7 @@ import {
   LinkOutlined,
   LockOutlined,
 
+ArrowRightOutlined,
   LogoutOutlined,
   WarningOutlined,
 } from '@ant-design/icons';
@@ -42,8 +43,7 @@ const GroupDetails = () => {
     { key: 'overview', icon: <UserOutlined />, label: 'Overview' },
     { key: 'members', icon: <TeamOutlined />, label: 'Members' },
     { key: 'media', icon: <FileOutlined />, label: 'Media' },
-    { key: 'files', icon: <FileOutlined />, label: 'Files' },
-    { key: 'links', icon: <LinkOutlined />, label: 'Links' },
+   
     { key: 'encryption', icon: <LockOutlined />, label: 'Encryption' },
   ];
   const leave = async () => {
@@ -71,7 +71,17 @@ const GroupDetails = () => {
 
             <Paragraph>{`Description ${groupdet?.description ||"description"}`}</Paragraph>
             <Paragraph>Disappearing messages: Off</Paragraph>
-            <Paragraph>Mute notifications</Paragraph>
+            <div className="flex items-center justify-between mb-2">
+    <Typography.Paragraph className="mb-0">Mute notifications</Typography.Paragraph>
+    <Switch 
+        defaultChecked={false}
+        className="bg-gray-200" 
+        checkedChildren="On" 
+        unCheckedChildren="Off"
+        style={{ backgroundColor: '#8B5CF6'}}
+    />
+</div>
+
             <Paragraph>Notification tone</Paragraph>
             <Divider />
             <Button type="primary"  onClick={leave} icon={<LogoutOutlined />}>
@@ -86,22 +96,45 @@ const GroupDetails = () => {
         return (
           <List
             itemLayout="horizontal"
-            dataSource={[
-              { name: 'Member 1', role: 'Admin' },
-              { name: 'Member 2', role: 'Member' },
-              // Add more members here
-            ]}
+            dataSource={groupdet?.members || []}
             renderItem={item => (
               <List.Item>
                 <List.Item.Meta
                   avatar={<Avatar icon={<UserOutlined />} />}
-                  title={item.name}
-                  description={item.role}
+                  title={item}
+                  description={item==groupdet.admin?<Typography.Paragraph className='text-violet-700 font-bold text-sm'>Admin</Typography.Paragraph>
+                    :"Member"}
                 />
               </List.Item>
             )}
           />
         );
+        case 'encryption':
+          return (
+            <div className="flex flex-col items-center space-y-4 p-4">
+            <div className="flex items-center gap-2">
+                <LockOutlined className="text-2xl text-violet-600" />
+                <Title level={4} className="m-0">Encryption</Title>
+            </div>
+            <div className="text-center space-y-2">
+                <Paragraph className="text-gray-700">
+                    This group is encrypted. Only you and the people can see your  shared  or send messages.
+                </Paragraph>
+                <div className="flex items-center gap-2 text-gray-600 text-sm">
+    
+    <Paragraph className="mb-0">
+        To make as  private : Go to Profile <ArrowRightOutlined className="text-xs mx-1"/> Settings <ArrowRightOutlined className="text-xs mx-1"/> <LockOutlined className="text-xs mx-1"/> Private
+    </Paragraph>
+</div>
+
+            </div>
+        </div>
+        
+          );
+          case 'media':
+            return (
+            <Empty description="No media available" />
+            );
       // Add more cases for other menu items
       default:
         return null;

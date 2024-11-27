@@ -337,8 +337,8 @@ const {sethomereload}=useContext(ChatContext);
         </div>
 
         {/* Comment Input */}
-        <div className="border-t p-4">
-          <div className="flex space-x-2">
+        <div className="border-t p-2 sm:p-3 md:p-4">
+          <div className="flex  flex-col sm:flex-row gap-1" >
             <Input.TextArea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
@@ -348,7 +348,7 @@ const {sethomereload}=useContext(ChatContext);
               maxLength={500}
             />
             <Button
-              type="primary"
+              className='bg-violet-600 hover:bg-violet-500 text-black'
               onClick={() => handleComment(selectedPost.id)}
               disabled={!newComment.trim()}
             >

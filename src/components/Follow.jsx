@@ -1,6 +1,7 @@
 import { message, Modal } from 'antd';
 import React, { useContext, useState, useEffect } from 'react'
 import { db } from '../config/firebase'
+import { PlusCircleIcon,ClockIcon,CheckCircleIcon } from 'lucide-react';
 import { collection, addDoc, doc, getDocs, query, where, updateDoc,orderBy,limit,getDoc } from 'firebase/firestore'
 import ChatContext from './context/ChatContext'
 import UserContext from './context/context'
@@ -94,11 +95,37 @@ export const Follow = ({uid1,username1,userurl1}) => {
   }
 
   return (
-    <button 
-      onClick={handlefollow}
-      className={`${track === "Following" ? 'bg-green-500 hover:bg-green-600' : 'bg-blue-500 hover:bg-blue-600'} text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out shadow-md flex items-center space-x-2`}
-    >
-      {track}
-    </button>
+    <button
+    onClick={handlefollow}
+    className={`
+      ${track === "Following" 
+        ? 'bg-violet-500 hover:bg-violet-600' 
+        : 'bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600'
+      } 
+      text-white font-medium py-1.5 px-4 rounded-full 
+      transition-all duration-300 ease-in-out
+      shadow-md hover:shadow-lg
+      flex items-center justify-center gap-2
+      min-w-[120px]
+    `}
+  >
+    {track === "Following" ? (
+      <>
+        <CheckCircleIcon className="w-4 h-4" />
+        <span>Following</span>
+      </>
+    ) : track === "Requested" ? (
+      <>
+        <ClockIcon className="w-4 h-4 animate-pulse" />
+        <span>Requested</span>
+      </>
+    ) : (
+      <>
+        <PlusCircleIcon className="w-4 h-4" />
+        <span>Follow</span>
+      </>
+    )}
+  </button>
+  
   )
 }

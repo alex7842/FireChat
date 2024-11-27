@@ -82,7 +82,7 @@ export const Search = () => {
      // console.log(users);
  
      return (
-      <div className="flex min-h-screen bg-gray-50">
+      <div className="flex min-h-screen bg-gray-50 md:ml-[220px]">
           <SideBar />
           <div className="flex-1">
               <motion.div

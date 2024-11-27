@@ -289,13 +289,13 @@ const sendnotify= async(ur)=>{
 }
 
 
- const scrollToBottom = () => {
-  const msgContainer = document.getElementById('msg');
+const scrollToBottom = () => {
+  const msgContainer = document.getElementById('msg-container1');
   if (msgContainer) {
-    msgContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    msgContainer.scrollTop = msgContainer.scrollHeight;
   }
-  
-}
+};
+
 
  const handlePopoverOpen = () => {
   setPopoverVisible(true);
@@ -629,7 +629,7 @@ return (
                     />
                     <span className="text-lg font-medium">{groupname}</span>
                   </div>
-                  <button className="px-4 py-2 text-red-500 border border-red-500 rounded-lg hover:bg-red-50">
+                  <button className="px-4 py-2 text-red-500 border border-red-500 rounded-lg hover:bg-red-50"  onClick={calldrawer}>
                     Leave Group
                   </button>
                 </div>
@@ -640,11 +640,11 @@ return (
                     <span className="text-lg font-medium">Community Chat</span>
                   </div>
                   <button 
-                    onClick={() => navivideo(2)}
-                    className="flex items-center gap-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+                    onClick={() => navivideo(1)}
+                    className="flex items-center gap-2 px-4 py-2  text-violet-500 rounded-lg hover:text-violet-600"
                   >
                     <Video className="w-5 h-5" />
-                    <span>Video Call</span>
+                   
                   </button>
                 </div>
               )}
@@ -652,12 +652,13 @@ return (
           </div>
 
           {/* Messages Container */}
-          <div className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-hidden flex flex-col">
   <div
     id="msg-container1"
     style={{ backgroundColor: chatBackground }}
-    className="h-[calc(100vh-220px)] md:h-[calc(100vh-180px)] overflow-y-auto px-4"
+    className="flex-1 overflow-y-auto px-4 pb-2 relative"
   >
+      <div className="absolute w-full h-full">
     {/* Message content */}
     {messages.length === 0 ? (
   <EmptyChat/>
@@ -673,7 +674,7 @@ return (
       }} 
     />
   ) : (
-    <div className="msg" id="msg">
+    <div className="msg pb-4" id="msg">
       {messages
         .slice()
         .sort((a, b) => new Date(a.date) - new Date(b.date))
@@ -690,9 +691,10 @@ return (
     </div>
   )
 )}
+</div>
 
-  </div>
-
+</div>
+<div className="w-full">
   {/* Reply Interface */}
   {replyTo && (
     <div className="bg-gray-50 border-t border-gray-200 p-3">
@@ -708,7 +710,7 @@ return (
       <p className="text-gray-500 truncate mt-1">{replyTo.text}</p>
     </div>
   )}
-
+  </div>
   {/* Input Area */}
   <div className="sticky bottom-0 bg-white border-t border-gray-200 p-3">
     <CustomInput

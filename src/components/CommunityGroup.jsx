@@ -221,14 +221,14 @@ console.log("Error",e)
     <div className="bg-white rounded-xl p-6 shadow-md">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold text-gray-800">Your Groups</h3>
-        <Button 
+        <button 
           onClick={Creategroup}
-          className="flex items-center gap-2 bg-blue-500 text-white hover:bg-blue-600 
+          className="flex items-center gap-2 bg-violet-500 text-white hover:bg-violet-600 
                      transition-colors rounded-lg px-4 py-2"
         >
           <Plus className="w-4 h-4" />
           Create Group
-        </Button>
+        </button>
       </div>
   
       <div className="space-y-3">

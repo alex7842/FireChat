@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Layout, Avatar, Tooltip, Button, Typography, Row, Col, Card, Space, 
   Divider, Empty, Input,Mentions,Flex,Modal} from 'antd';
   import Resizer from 'react-image-file-resizer';
-import { EditOutlined, UserOutlined, PlusOutlined,ReloadOutlined,LoadingOutlined, SettingOutlined } from '@ant-design/icons';
+import { EditOutlined, UserOutlined, PlusOutlined,ReloadOutlined,LoadingOutlined, SettingOutlined,SaveOutlined,MessageOutlined,FileImageOutlined,TeamOutlined,StarOutlined } from '@ant-design/icons';
 import { SideBar } from './SideBar';
 import { useParams,useNavigate } from 'react-router-dom';
 
@@ -16,7 +16,8 @@ import ChatContext from './context/ChatContext';
 import { UploadPosts } from './UploadPosts';
 import { ShowPost } from './ShowPost';
 import { ProfileSettings } from './ProfileSettings';
-
+import Loader from './Design/Loader';
+import { motion } from 'framer-motion';
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
@@ -238,197 +239,276 @@ const ProfilePage = () => {
 navigate('/ChatDm')
  
   }
+  const modalStyles = {
+    content: {
+      borderRadius: '16px',
+      padding: '24px',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+    },
+    header: {
+      borderBottom: '2px solid #8b5cf6',
+      paddingBottom: '12px',
+    },
+    footer: {
+      borderTop: '2px solid #8b5cf6',
+      paddingTop: '12px',
+    }
+  };
   if (isLoading || !userstate) {
     return (
-      <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
-        <SideBar />
-        <Content style={{ margin: "3%", marginLeft: "5%" }}>
-          <div>Loading...</div>
-        </Content>
-      </Layout>
+      <Loader/>
     );
   }
  
   return (
-    <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
+    <Layout className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50 md:ml-[220px]">
       <SideBar />
       <Modal
-  title="Edit Profile"
-  open={isModalVisible}
-  onCancel={() => setIsModalVisible(false)}
-  footer={[
-    <Button key="save" type="primary" onClick={handleSave1}>
-      {!load1 ? 'Save' : 'Saving...'} 
-    </Button>,
-  ]}
->
-  <Space direction="vertical" align="center" style={{width: '100%'}}>
-    <div style={{ position: 'relative' }}>
-    <Avatar size={100} src={avatarUrl} />
-
-     { !load ?<EditOutlined 
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          border:'1px solid #d9d9d9',
-          right: 0,
-          backgroundColor: 'white',
-          borderRadius: '50%',
-          padding: '5px',
-          cursor: 'pointer'
-        }}
-        onClick={() => document.getElementById('imageUpload').click()}
-      />:<LoadingOutlined 
-      style={{
-        position: 'absolute',
-        bottom: 0,
-        border:'1px solid #d9d9d9',
-        right: 0,
-        backgroundColor: 'white',
-        borderRadius: '50%',
-        padding: '5px',
-        cursor: 'pointer'
-      }}/>
-}
-    </div>
-    <input
-      type="file"
-      accept='image/*'
-      id="imageUpload"
-      hidden
-      onChange={handleImageUpload}
-    />
-<Input
-    value={inputValue}
-    onChange={handleInputChange}
-   
-    suffix={
-      <ReloadOutlined
-        onClick={cycleNextSuggestion}
-        style={{ cursor: 'pointer' }}
-      />
-    }
-  />
-  </Space>
-</Modal>
-
-      <Content style={{ margin: "3%", marginLeft: "5%" }}>
-        <Row gutter={[16, 24]}>
-          {/* Profile Info Section */}
-          <Col xs={24} sm={8}>
-  <Space direction="vertical" align="center" style={{width: '100%'}}>
-    <Avatar size={148} src={avatarUrl}  />
-    <Flex justify='space-between' align='center' style={{width: '100%'}}>
-      <Title level={3}>{!userstate.username?userstate.displayName:userstate.username }</Title>
-    {isowner?  <EditOutlined onClick={() => setIsModalVisible(true)} shape="round" style={{marginLeft:'14px',cursor:'pointer'}}/>:<></>}
-    </Flex>
-    <Text>{Posttotal} posts</Text>
-    <Text>{FriendsCount} friends</Text>
-    
-    {/* <Tooltip title="Follow">
-      <Button shape="round" icon={<UserOutlined />} type="default">
-        Follow
-      </Button>
-    </Tooltip> */}
-  </Space>
-</Col>
-
-          {/* Profile Bio and Actions */}
-          <Col xs={24} sm={16}>
-            <Card
-              actions={[
-                isowner?<button
-                onClick={() => active ? handleSave() : setActive(true)}
-                className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out shadow-md flex items-center space-x-2'
+        title={<Text className="text-xl font-bold text-violet-800">Edit Profile</Text>}
+        open={isModalVisible}
+        onCancel={() => setIsModalVisible(false)}
+        className="profile-modal"
+        style={modalStyles.content}
+        footer={[
+          <Button
+            key="save"
+            type="primary"
+            onClick={handleSave1}
+            className="bg-violet-600 hover:bg-violet-700 border-none h-10 px-6"
+          >
+            {!load1 ? (
+              <span className="flex items-center gap-2">
+                <SaveOutlined /> Save
+              </span>
+            ) : (
+              <span className="flex items-center gap-2">
+                <LoadingOutlined /> Saving...
+              </span>
+            )}
+          </Button>,
+        ]}
+      >
+        <Space direction="vertical" align="center" className="w-full">
+          <motion.div
+            className="relative"
+            whileHover={{ scale: 1.05 }}
+            transition={{ duration: 0.2 }}
+          >
+            <Avatar
+              size={120}
+              src={avatarUrl}
+              className="border-4 border-violet-200 hover:border-violet-400 transition-all duration-300"
+            />
+            {!load ? (
+              <motion.div
+                whileHover={{ scale: 1.1 }}
+                className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg cursor-pointer border-2 border-violet-200"
+                onClick={() => document.getElementById('imageUpload').click()}
               >
-                <EditOutlined />
-             <span>{active ? 'Save' : 'Edit'}</span>
-              </button>:<Follow uid1={userstate.uid} username1={userstate.displayName} userurl1={userstate.photoURL} />,
-                isowner?
-             <UploadPosts  trigger={trigger} settrigger={settrigger} Uid={uid}/>
-             : <button className='bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out shadow-md ml-3' onClick={Navigatedm}>
-               Message
-             </button>
-                
-              
-              ]}
-            >
-              <Card.Meta
-                title=""
-                description={
-                  <>
-                  <ProfileSettings/>
-                  <Title level={4} style={inputStyle}>{userstate.displayName.toUpperCase()}</Title>
-                  <Input
-                    ref={descriptionInputRef}
-                    readOnly={!active}
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    style={inputStyle}
-                  />
-                   <Mentions
-        readOnly={!active}
-        style={inputStyle}
-        placeholder="# to mention tag"
-        prefix={['@', '#']}
-        value={tags}
-        onChange={handleMentionsChange}
-        onSearch={onSearch}
-        options={(MOCK_DATA[prefix] || []).map((value) => ({
-          key: value,
-          value,
-          label: value,
-        }))}
-      />
-                  {/* <Input
-                    readOnly={!active}
-                    value={tags}
-                    onChange={(e) => setTags(e.target.value)}
-                    style={inputStyle}
-                  /> */}
-                  {/* <Button
-                    icon={<EditOutlined />}
-                    onClick={() => active ? handleSave() : setActive(true)}
-                    className='bg-blue-500 hover:bg-blue-600 text-white'
-                  >
-                    {active ? 'Save' : 'Edit'}
-                  </Button> */}
-                </>
-                }
-              />
-            </Card>
-
-            {/* Highlights Section */}
-            <Space direction="vertical" size="large" style={{ marginTop: '24px', width: '100%' }}>
-              <Title level={4}>Highlights</Title>
-              <Row gutter={[16, 16]}>
-              {highlights.map((highlight) => (
-      <Flex key={highlight.id} vertical align='center' justify='center'>
+                <EditOutlined className="text-violet-600 text-lg" />
+              </motion.div>
+            ) : (
+              <div className="absolute -bottom-2 -right-2 bg-white rounded-full p-2 shadow-lg border-2 border-violet-200">
+                <LoadingOutlined className="text-violet-600 text-lg" />
+              </div>
+            )}
+          </motion.div>
         
-        <Avatar 
-          shape="square" 
-          size={64} 
-          src={highlight.mediaUrl} 
+          <input
+            type="file"
+            accept='image/*'
+            id="imageUpload"
+            hidden
+            onChange={handleImageUpload}
+          />
+  
+          <Input
+            value={inputValue}
+            onChange={handleInputChange}
+            className="rounded-lg border-2 border-violet-200 hover:border-violet-400 focus:border-violet-600 px-4 py-2 mt-4"
+            suffix={
+              <ReloadOutlined
+                onClick={cycleNextSuggestion}
+                className="text-violet-600 hover:text-violet-800 cursor-pointer"
+              />
+            }
+          />
+        </Space>
+      </Modal>
+      <Content className="p-6">
+      {/* Profile Cards Section */}
+      <div className="flex flex-col md:flex-row gap-4 mb-6">
+        {/* Profile Card with Avatar */}
+        <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-xl shadow-md p-4  md:w-1/3"
+    >
+      <Space direction="vertical" align="center" className="w-full">
+        <Avatar
+          size={120}
+          src={avatarUrl}
+          className="border-4 border-violet-200 hover:border-violet-400 transition-all duration-300"
         />
-          <Text className='p-2'>{highlight.title}</Text>
-      
-      </Flex>
-    ))}
-              </Row>
-            </Space>
-          </Col>
-          <Divider />
-          <div className='ml-0'>
-            <Typography.Title level={3}>Posts</Typography.Title>
-           
-          </div>
-          <div className='mt-5 flex justify-center align-center'>
-              <ShowPost settrigger={settrigger} trigger={trigger}uid={uid}/>
-            </div>
-        </Row>
-      </Content>
+        <Flex justify='space-between' align='center' style={{width: '100%'}}>
+          <Title level={4} className="text-violet-800 mb-0">
+            {!userstate.username ? userstate.displayName : userstate.username}
+          </Title>
+          {isowner && (
+            <EditOutlined
+              onClick={() => setIsModalVisible(true)}
+              className="text-violet-600 hover:text-violet-800 hover:scale-110 transition-all duration-300 text-lg cursor-pointer"
+            />
+          )}
+        </Flex>
+        <Flex gap={8} className="mt-2">
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center gap-2 bg-violet-50 px-3 py-1 rounded-full"
+          >
+            <FileImageOutlined className="text-violet-600" />
+            <Text className="text-violet-800 font-medium">{Posttotal} posts</Text>
+          </motion.div>
+          <motion.div
+            whileHover={{ scale: 1.05 }}
+            className="flex items-center gap-2 bg-violet-50 px-3 py-1 rounded-full"
+          >
+            <TeamOutlined className="text-violet-600" />
+            <Text className="text-violet-800 font-medium">{FriendsCount} friends</Text>
+          </motion.div>
+        </Flex>
+      </Space>
+    </motion.div>
+
+    {/* Second Card - User Details */}
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="bg-white rounded-xl shadow-md p-4 flex-1"
+    >
+      <Card.Meta
+        description={
+          <>
+            <ProfileSettings/>
+            <Title level={4} style={inputStyle}>{userstate.displayName.toUpperCase()}</Title>
+            <Input
+              ref={descriptionInputRef}
+              readOnly={!active}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              style={inputStyle}
+            />
+            <Mentions
+              readOnly={!active}
+              style={inputStyle}
+              placeholder="# to mention tag"
+              prefix={['@', '#']}
+              value={tags}
+              onChange={handleMentionsChange}
+              onSearch={onSearch}
+              options={(MOCK_DATA[prefix] || []).map((value) => ({
+                key: value,
+                value,
+                label: value,
+              }))}
+            />
+            <Flex gap={4} className="mt-4 justify-center">
+              {isowner ? (
+                <>
+                  <button
+                    onClick={() => active ? handleSave() : setActive(true)}
+                    className='bg-gradient-to-r from-violet-500 to-violet-600 text-white font-medium
+                              py-2 px-4 rounded-full text-sm
+                              transition-all duration-200 ease-in-out shadow-md
+                              hover:shadow-violet-200 hover:scale-105
+                              flex items-center justify-center gap-2'
+                  >
+                    <EditOutlined className='text-base' />
+                    <span>{active ? 'Save' : 'Edit'}</span>
+                  </button>
+                  <UploadPosts trigger={trigger} settrigger={settrigger} Uid={uid} />
+                </>
+              ) : (
+                <>
+                  <Follow
+                    uid1={userstate.uid}
+                    username1={userstate.displayName}
+                    userurl1={userstate.photoURL}
+                  />
+                  <button
+                    className='bg-gradient-to-r from-violet-400 to-purple-500 text-white font-medium
+                              py-2 px-4 rounded-full text-sm
+                              transition-all duration-200 ease-in-out shadow-md
+                              hover:shadow-violet-200 hover:scale-105
+                              flex items-center justify-center gap-2'
+                    onClick={Navigatedm}
+                  >
+                    <MessageOutlined className='text-base' />
+                    <span>Message</span>
+                  </button>
+                </>
+              )}
+            </Flex>
+          </>
+        }
+      />
+    </motion.div>
+  </div>
+
+      {/* Bio Section */}
+     
+
+      {/* Highlights Section */}
+      <div className="mb-6">
+        <Space
+          direction="vertical"
+          size="large"
+          className="w-full border-2 border-violet-200 rounded-xl p-6 bg-white"
+        >
+          <Flex align="center" className="mb-4 border-b-2 border-violet-100 pb-3">
+            <StarOutlined className="text-violet-600 text-xl mr-2" />
+            <Title level={4} className="text-violet-800 m-0">Highlights</Title>
+          </Flex>
+          {highlights.length > 0 ? (
+            <Row gutter={[16, 16]} className="w-full m-0">
+              {highlights.map((highlight) => (
+                <Col xs={12} sm={8} md={6} lg={4} key={highlight.id}>
+                  <motion.div whileHover={{ scale: 1.05 }} className="group">
+                    <Flex vertical align="center" className="p-3">
+                      <Avatar
+                        shape="circle"
+                        size={64}
+                        src={highlight.mediaUrl}
+                        className="border-4 border-violet-300 group-hover:border-violet-500 transition-all duration-300"
+                      />
+                      <Text className="mt-2 font-medium text-violet-700 group-hover:text-violet-900">
+                        {highlight.title}
+                      </Text>
+                    </Flex>
+                  </motion.div>
+                </Col>
+              ))}
+            </Row>
+          ) : (
+            <Empty
+              image={Empty.PRESENTED_IMAGE_SIMPLE}
+              description={<Text className="text-violet-600">No highlights yet</Text>}
+            />
+          )}
+        </Space>
+      </div>
+
+      {/* Posts Section */}
+      <div>
+        <Typography.Title level={3}>Posts</Typography.Title>
+        <div className="mt-5">
+          <ShowPost settrigger={settrigger} trigger={trigger} uid={uid}/>
+        </div>
+      </div>
+    </Content>
     </Layout>
   );
+  
 };
 
 export default ProfilePage;

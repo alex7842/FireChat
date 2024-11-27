@@ -108,7 +108,7 @@ const ChatDm = () => {
     <SideBar showChat={showChat}/>
     {contextHolder}
     
-    <Layout>
+    <Layout className="md:ml-[220px]">
       <Layout.Content>
         <div className="md:hidden">
           {/* Mobile View */}
@@ -258,9 +258,9 @@ const ChatDm = () => {
       </div>
 
       {/* List Content */}
-      <div className="animate-fadeIn">
-        {activetab === 'msg' ? <UserList /> : <CommunityGroup />}
-      </div>
+      <div className="animate-fadeIn h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-violet-200 scrollbar-track-transparent">
+  {activetab === 'msg' ? <UserList /> : <CommunityGroup />}
+</div>
     </div>
 
     {/* Chat Area */}
