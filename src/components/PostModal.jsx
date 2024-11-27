@@ -392,22 +392,22 @@ export const PostModal = ({ setpostData, postData }) => {
   return (
     <>
       {selectedPost && (
-       <div className="flex flex-col md:flex-row max-h-[85vh] md:max-h-[90vh]">
+       <div className="flex flex-col md:flex-row h-[85vh] md:max-h-[90vh]">
 
           {/* Left Side - Media Display */}
-          <div className="w-full md:w-3/5 relative bg-black">
+          <div className="w-full md:w-3/5 h-[40vh] md:h-auto relative bg-black">
             <div className="flex items-center justify-center h-full">
               {selectedPost.type === "video" ? (
                 <video
                   src={selectedPost.mediaUrl}
                   controls
-                  className="max-h-[50vh] md:max-h-[90vh] w-full object-contain"
+                  className="max-h-[40vh] md:max-h-[90vh] w-full object-contain"
                 />
               ) : (
                 <img
                   src={selectedPost.mediaUrl}
                   alt={selectedPost.caption}
-                  className="max-h-[50vh] md:max-h-[90vh] w-full object-contain"
+                  className="max-h-[40vh] md:max-h-[90vh] w-full object-contain"
                 />
               )}
             </div>
@@ -467,9 +467,9 @@ export const PostModal = ({ setpostData, postData }) => {
           </div>
 
           {/* Right Side - Comments and Info */}
-          <div className="w-full md:w-2/5 flex flex-col bg-white h-[40vh] md:h-[90vh]">
+          <div className="w-full md:w-2/5 flex flex-col bg-white h-[50vh] md:h-auto ">
             {/* Post Info */}
-            <div className="p-3 md:p-4 border-b">
+            <div className="p-3 md:p-4 border-b flex-shrink-0 max-h-[30vh] overflow-y-auto">
               <div className="flex items-center space-x-3 mb-2">
                 <Avatar
                   src={user.photoURL}
@@ -495,8 +495,8 @@ export const PostModal = ({ setpostData, postData }) => {
             </div>
 
             {/* Comments Section */}
-            <div className="flex flex-col h-full">
-  <div className="flex-1 overflow-y-auto pb-16 md:pb-0"> {/* Added bottom padding for mobile */}
+            <div className="flex-1 overflow-y-auto">
+            <div className="pb-16 md:pb-0"> {/* Added padding for mobile comment input */} {/* Added bottom padding for mobile */}
     {selectedPost.isNews ? (
       newsComments[selectedPost.id]?.length > 0 ? (
         newsComments[selectedPost.id].map((comment, index) => (
@@ -550,10 +550,10 @@ export const PostModal = ({ setpostData, postData }) => {
             </div>
 
             {/* Comment Input */}
-            <div className="border-t fixed bottom-0 left-0 right-0 md:relative bg-white">
-    <div className="p-2 md:p-3">
-      <div className="flex flex-col md:flex-row space-y-2 md:space-y-0 md:space-x-2">
-        <Input.TextArea
+            <div className="border-t sticky bottom-0 left-0 right-0 bg-white mt-auto">
+            <div className="p-2 md:p-3">
+              <div className="flex items-center space-x-2">
+                <Input.TextArea
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="Add a comment..."
