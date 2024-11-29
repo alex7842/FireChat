@@ -511,6 +511,7 @@
   min-height: 20px;
 }
 
+
 @media (max-width: 768px) {
   .chat-header {
     padding: 8px;
@@ -571,9 +572,7 @@
     padding: 0 !important;
   }
   
-  .stories-carousel {
-    padding: 8px 0;
-  }
+ 
 }
 
 @media (max-width: 768px) {

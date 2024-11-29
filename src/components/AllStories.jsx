@@ -56,7 +56,7 @@ export const AllStories = () => {
   <StoryView selectedStory={selectedStory} onclose={setStoryViewModal} />
 </Modal>
      {stories?.map((story,index) => (
-        <div key={story.id} className="px-2">
+        <div key={story.id} className="px-2 inline-block">
           <div className="flex flex-col items-center justify-center">
            
             <button 

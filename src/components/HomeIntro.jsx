@@ -490,6 +490,40 @@ const isValidImageUrl = (url) => {
         </div>
       </div>
     );  
+    const [stories,setStories]=useState([])
+
+    const {storytrigger,setstorytrigger}=useContext(ChatContext)
+    useEffect(() => {
+        const fetchstories = async () => {
+          const storyref = collection(db, 'stories');
+          const storydata = await getDocs(storyref);
+          
+          const currentTime = Timestamp.now();
+          
+          const stories = storydata.docs
+            .map((doc) => ({
+              id: doc.id,
+              ...doc.data(),
+            }))
+            .filter(story => {
+              if (story.expiryTime.toDate() > currentTime.toDate()) {
+                return true;
+              } else {
+                // Update the story document to mark it as expired
+                updateDoc(doc(db, 'stories', story.id), {
+                  expired: true
+                });
+                return false;
+              }
+            });
+      
+          setStories(stories);
+          console.log(stories);
+        }
+      
+        fetchstories();
+      }, [user])
+      
   
     return (
       <div className="min-h-screen bg-gray-50 pb-16 md:pb-0">
@@ -555,11 +589,21 @@ const isValidImageUrl = (url) => {
                     <HeartFilled className="text-4xl md:text-6xl text-violet-500 animate-like-heart" />
                 </div>
             )}
-
+<Modal
+  open={storyViewModal}
+  onCancel={() => setStoryViewModal(false)}
+  footer={null}
+  width={600}
+  centered
+  className="story-view-modal"
+>
+    
+  <StoryView selectedStory={selectedStory} onclose={setStoryViewModal} />
+</Modal>
   <div className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 py-4">
     <Carousel
       arrows={true}
-      dots={false}
+      dots={true}
       slidesToShow={3}
       slidesToScroll={1}
       infinite={false}
@@ -567,22 +611,32 @@ const isValidImageUrl = (url) => {
         {
           breakpoint: 640,
           settings: {
-            slidesToShow: 3,
+            slidesToShow:2,
             slidesToScroll: 1,
-            arrows: false
+            arrows: false,
+           
+           
           }
         },
         {
           breakpoint: 768,
           settings: {
-            slidesToShow: 3,
-            slidesToScroll: 1
+            slidesToShow: 2,
+            slidesToScroll: 1,
+            
           }
         },
         {
           breakpoint: 1024,
           settings: {
             slidesToShow: 3,
+            slidesToScroll: 1
+          }
+        },
+        {
+          breakpoint: 1536,
+          settings: {
+            slidesToShow: 4,
             slidesToScroll: 1
           }
         }
@@ -616,7 +670,34 @@ const isValidImageUrl = (url) => {
       </div>
     </div>
   </div>
-      <AllStories/>
+  {stories?.map((story,index) => (
+        <div key={story.id} className="px-2 inline-block">
+          <div className="flex flex-col items-center justify-center">
+           
+            <button 
+             onClick={() => {
+                setSelectedStory(story);
+                setStoryViewModal(true);
+              }}
+            className="block focus:outline-none">
+              <div className="story-ring p-[2px] rounded-full bg-gradient-to-tr from-yellow-400 to-fuchsia-600">
+                <div className="bg-white p-[2px] rounded-full flex items-center justify-center">
+                  <Avatar
+                    size={48}
+                    src={story.mediaUrl || '/default-avatar.png'}
+                    alt={story.displayName}
+                    className="story-avatar"
+                  />
+                </div>
+              </div>
+              <p className="text-white text-xs mt-2 truncate w-14 text-center">
+                {story.displayName}
+              </p>
+            </button>
+
+          </div>
+        </div>
+      ))}
     </Carousel>
   </div>
 </div>
