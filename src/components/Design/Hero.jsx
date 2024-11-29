@@ -449,11 +449,11 @@ const RESPONSIVE_WIDTH = 1024;
 
                                     <div class="tw-flex tw-gap-1 tw-place-items-center">
                                         <div class="tw-flex tw--space-x-4">
-                                            <img class="tw-z-10 tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="assets/images/people/man.jpg" alt="Avatar 1"/>
-                                            <img class="tw-z-[4] tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="assets/images/people/women.jpg" alt="Avatar 2"/>
-                                            <img class="tw-z-[3] tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="assets/images/people/man2.jpg" alt="Avatar 3"/>
+                                            <img class="tw-z-10 tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="/assets/images/people/man.jpg" alt="Avatar 1"/>
+                                            <img class="tw-z-[4] tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="/assets/images/people/women.jpg" alt="Avatar 2"/>
+                                            <img class="tw-z-[3] tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="/assets/images/people/man2.jpg" alt="Avatar 3"/>
                                             <img class="tw-z-[2] tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="assets/images/people/man.jpg" alt="Avatar 4"/>
-                                            <img class="tw-z-[1] tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="assets/images/people/women.jpg" alt="Avatar 5"/>
+                                            <img class="tw-z-[1] tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="/assets/images/people/women.jpg" alt="Avatar 5"/>
                                         </div>
                                         <p class="dark:tw-text-white">+2000</p>
                                     </div>
@@ -614,7 +614,7 @@ const RESPONSIVE_WIDTH = 1024;
                     
                     <div class="carousel-img tw-h-[30px] tw-w-[150px]">
                         <img
-                            src="./assets/images/brand-logos/google.svg"
+                            src="/assets/images/brand-logos/google.svg"
                             alt="Google"
                             class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
                             srcset=""
@@ -622,7 +622,7 @@ const RESPONSIVE_WIDTH = 1024;
                     </div>
                     <div class="carousel-img tw-h-[30px] tw-w-[150px]">
                         <img
-                            src="./assets/images/brand-logos/microsoft.svg"
+                            src="/assets/images/brand-logos/microsoft.svg"
                             alt="Microsoft"
                             class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
                             srcset=""
@@ -638,7 +638,7 @@ const RESPONSIVE_WIDTH = 1024;
                     </div>
                     <div class="carousel-img tw-h-[30px] tw-w-[150px]">
                         <img
-                            src="./assets/images/brand-logos/airbnb.svg"
+                            src="/assets/images/brand-logos/airbnb.svg"
                             alt="Airbnb"
                             class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
                             srcset=""
@@ -646,7 +646,7 @@ const RESPONSIVE_WIDTH = 1024;
                     </div>
                     <div class="carousel-img tw-h-[30px] tw-w-[150px]">
                         <img
-                            src="./assets/images/brand-logos/stripe.svg"
+                            src="/assets/images/brand-logos/stripe.svg"
                             alt="Stripe"
                             class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
                             srcset=""
@@ -654,7 +654,7 @@ const RESPONSIVE_WIDTH = 1024;
                     </div>
                     <div class="carousel-img tw-h-[30px] tw-w-[150px]">
                         <img
-                            src="./assets/images/brand-logos/reddit.svg"
+                            src="/assets/images/brand-logos/reddit.svg"
                             alt="Reddit"
                             class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
                             srcset=""
@@ -720,7 +720,7 @@ const RESPONSIVE_WIDTH = 1024;
                                 tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                                 hover:tw-scale-[1.02]">
                                 <div class="tw-overflow-hidden tw-w-full tw-min-h-[180px] tw-h-[180px]">
-                                    <img src="./assets/images/home/api.png" class="tw-w-full tw-object-contain tw-h-auto" 
+                                    <img src="/assets/images/home/api.png" class="tw-w-full tw-object-contain tw-h-auto" 
                                         alt="unified interface"/>
                                    
                                 </div>
@@ -741,7 +741,7 @@ const RESPONSIVE_WIDTH = 1024;
                                 tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                                 hover:tw-scale-[1.02]">
                                 <div class="tw-w-full tw-min-h-[180px] tw-h-[180px] tw-overflow-hidden">
-                                    <img src="./assets/images/home/api.png" 
+                                    <img src="/assets/images/home/api.png" 
                                         alt="API" class="tw-w-full tw-h-auto tw-object-contain"/>
                                     
                                 </div>
@@ -762,7 +762,7 @@ const RESPONSIVE_WIDTH = 1024;
                                 tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                                 hover:tw-scale-[1.02]">
                                 <div class="tw-w-full tw-flex tw-place-contet-center tw-min-h-[180px] tw-h-[180px] tw-rounded-xl tw-overflow-hidden">
-                                    <img src="./assets/images/home/integrations1.png" class="tw-w-full tw-h-auto tw-object-contain" 
+                                    <img src="/assets/images/home/integrations1.png" class="tw-w-full tw-h-auto tw-object-contain" 
                                             alt="Prebuilt integrations"/>
                                 </div>
                                 <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Smart Media Tools</h2>
@@ -782,7 +782,7 @@ const RESPONSIVE_WIDTH = 1024;
                             max-md:tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                             hover:tw-scale-[1.02]">
                             <div class="tw-text-6xl tw-overflow-hidden tw-rounded-xl tw-w-full tw-h-full max-md:tw-h-[180px]">
-                                <img src="./assets/images/home/ai-models.png" class="tw-w-full tw-object-contain tw-h-full" 
+                                <img src="/assets/images/home/ai-models.png" class="tw-w-full tw-object-contain tw-h-full" 
                                     alt="AI models"/>
                              
                             </div>
@@ -1030,7 +1030,7 @@ const RESPONSIVE_WIDTH = 1024;
                                     tw-rounded-xl 
                                      tw-backdrop-blur-2xl
                                      tw-overflow-hidden tw-flex tw-place-content-center">
-                            <img src="./assets/images/home/prompts2.png" 
+                            <img src="/assets/images/home/prompts2.png" 
                                     alt="Prompt library" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
@@ -1049,7 +1049,7 @@ const RESPONSIVE_WIDTH = 1024;
                                     tw-rounded-xl 
                                      tw-backdrop-blur-2xl
                                      tw-overflow-hidden tw-flex tw-place-content-center">
-                            <img src="./assets/images/home/search.png" 
+                            <img src="/assets/images/home/search.png" 
                                     alt="Web search" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
@@ -1068,7 +1068,7 @@ const RESPONSIVE_WIDTH = 1024;
                                     tw-rounded-xl 
                                      tw-backdrop-blur-2xl
                                      tw-overflow-hidden tw-flex tw-place-content-center">
-                            <img src="./assets/images/home/image.png" 
+                            <img src="/assets/images/home/image.png" 
                                     alt="Image generation" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
@@ -1087,7 +1087,7 @@ const RESPONSIVE_WIDTH = 1024;
                                      tw-rounded-xl 
                                      tw-backdrop-blur-2xl
                                      tw-overflow-hidden tw-flex tw-place-content-center">
-                            <img src="./assets/images/home/history.png" 
+                            <img src="/assets/images/home/history.png" 
                                     alt="History" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
@@ -1107,7 +1107,7 @@ const RESPONSIVE_WIDTH = 1024;
                                     tw-rounded-xl 
                                      tw-backdrop-blur-2xl
                                      tw-overflow-hidden tw-flex tw-place-content-center">
-                            <img src="./assets/images/home/import.png" 
+                            <img src="/assets/images/home/import.png" 
                                     alt="Import content" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
@@ -1126,7 +1126,7 @@ const RESPONSIVE_WIDTH = 1024;
                                     tw-rounded-xl 
                                      tw-backdrop-blur-2xl
                                      tw-overflow-hidden tw-flex tw-place-content-center">
-                            <img src="./assets/images/home/multilingual.png" 
+                            <img src="/assets/images/home/multilingual.png" 
                                     alt="Multilingual" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
@@ -1167,7 +1167,7 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="./assets/images/people/man2.jpg"
+                                src="/assets/images/people/man2.jpg"
                                 class="tw-h-full tw-w-full tw-object-cover"
                                 alt="man"
                             />
@@ -1194,7 +1194,7 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="./assets/images/people/women.jpg"
+                                src="/assets/images/people/women.jpg"
                                 class="tw-h-full tw-w-full tw-object-cover"
                                 alt="women"
                             />
@@ -1221,7 +1221,7 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="./assets/images/people/man.jpg"
+                                src="/assets/images/people/man.jpg"
                                 class="tw-h-full tw-w-full tw-object-cover"
                                 alt="man"
                             />
@@ -1248,7 +1248,7 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="./assets/images/people/man2.jpg"
+                                src="/assets/images/people/man2.jpg"
                                 class="tw-h-full tw-w-full tw-object-cover"
                                 alt="man"
                             />
@@ -1275,7 +1275,7 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="./assets/images/people/women.jpg"
+                                src="/assets/images/people/women.jpg"
                                 class="tw-h-full tw-w-full tw-object-cover"
                                 alt="women"
                             />
@@ -1302,7 +1302,7 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="./assets/images/people/man.jpg"
+                                src="/assets/images/people/man.jpg"
                                 class="tw-h-full tw-w-full tw-object-cover"
                                 alt="man"
                             />
@@ -1505,7 +1505,7 @@ const RESPONSIVE_WIDTH = 1024;
                         class="tw-h-[350px] tw-min-h-[350px] tw-w-full tw-overflow-hidden tw-rounded-2xl"
                     >
                         <img
-                            src="./assets/images/home/article1.png"
+                            src="/assets/images/home/article1.png"
                             alt="article image"
                             class="tw-h-full tw-w-full tw-object-cover tw-transition-transform tw-duration-700 hover:tw-scale-[1.3]"
                             srcset=""
@@ -1536,7 +1536,7 @@ const RESPONSIVE_WIDTH = 1024;
                         class="tw-h-[350px] tw-min-h-[350px] tw-w-full tw-overflow-hidden tw-rounded-2xl"
                     >
                         <img
-                            src="./assets/images/home/article2.jpg"
+                            src="/assets/images/home/article2.jpg"
                             alt="article image"
                             class="tw-h-full tw-w-full tw-object-cover tw-transition-transform tw-duration-700 hover:tw-scale-[1.3]"
                             srcset=""
@@ -1567,7 +1567,7 @@ const RESPONSIVE_WIDTH = 1024;
                         class="tw-h-[350px] tw-min-h-[350px] tw-w-full tw-overflow-hidden tw-rounded-2xl"
                     >
                         <img
-                            src="./assets/images/home/article3.png"
+                            src="/assets/images/home/article3.png"
                             alt="article image"
                             class="tw-h-full tw-w-full tw-object-cover tw-transition-transform tw-duration-700 hover:tw-scale-[1.3]"
                             srcset=""
