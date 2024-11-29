@@ -33,6 +33,7 @@ import { AllStories } from './AllStories';
 import PersonalizedFeed from './PersonalFeed';
 import ShinyButton from './ui/shiny-button';
 import ShimmerButton from './ui/shimmer-button';
+import internal from 'stream';
 const HomeIntro = () => {
   const [postData,setpostData]=useState([]);
   const[loading,setLoading]=useState(false);
@@ -113,11 +114,13 @@ const getLastThreeDays = () => {
   
   return `${formatDate(start)},${formatDate(end)}`;
 };
-const interest=()=>{
-  const d=localStorage.getItem('userInterests');
-  return d?d:"technology + Aritificial Intelligence"
-}
+const interest = () => {
+  const d = localStorage.getItem('userInterests');
+  return d ? d.split(" ").join(",") : "technology";
+};
 
+
+//console.log("interseti",interest())
 useEffect(() => {
   const fetchData = async () => {
     setLoading(true);
@@ -162,8 +165,8 @@ useEffect(() => {
     setpostData(allPosts);
     setLoading(false);
     // Fetch news in parallel
-   
-    fetch('https://api.mediastack.com/v1/news?access_key=6e434e5f81bc0a97106429f99493052b&countries=us,in&categories='+ interest() +'&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
+    const inter=interest();
+    fetch(`https://api.mediastack.com/v1/news?access_key=6e434e5f81bc0a97106429f99493052b&countries=us,in&categories=${interest()}&languages=en&limit=95&date=${getLastThreeDays()}&sort=published_desc`)
 
       .then(response => response.json())
       .then(newsData => {
