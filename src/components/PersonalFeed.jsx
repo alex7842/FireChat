@@ -6,18 +6,18 @@ const PersonalizedFeed = ({setpersonal}) => {
   const [selectedTopics, setSelectedTopics] = useState([]);
   const {homereload,sethomereload}=useContext(ChatContext)
   const topics = [
-    { id: 'education', label: 'Education & Learning', icon: '🎓' },
-    { id: 'cricket', label: 'Cricket', icon: '🏏' },
-    { id: 'history', label: 'History', icon: '📚' },
-    { id: 'stocks', label: 'Stocks', icon: '📈' },
-    { id: 'microsoft', label: 'Microsoft', icon: '💻' },
-    { id: 'books', label: 'Books and Literature', icon: '📖' },
+    { id: 'general', label: ' Uncategorized News', icon: '🎓' },
+   
+   
+   
+    { id: 'technology', label: 'Tech News', icon: '💻' },
+   
     { id: 'health', label: 'Health & Fitness', icon: '💪' },
-    { id: 'music', label: 'Music', icon: '🎵' },
+    
     { id: 'business', label: 'Business & Finance', icon: '💼' },
-    { id: 'movies', label: 'Movies', icon: '🎬' },
-    { id: 'nasa', label: 'NASA', icon: '🚀' },
-    { id: 'physics', label: 'Physics', icon: '⚛️' },
+    { id: 'entertainment', label: 'Entertainment', icon: '🎬' },
+    { id: 'sports', label: 'Sports', icon: '🚀' },
+    { id: 'science', label: 'Science', icon: '⚛️' },
   ];
 
   const handleTopicSelect = (topicId) => {
@@ -31,7 +31,7 @@ const PersonalizedFeed = ({setpersonal}) => {
   const handleSubmit = () => {
     if (selectedTopics.length === 2) {
         // Combine topics with +
-        const combinedTopics = selectedTopics.join('+');
+        const combinedTopics = selectedTopics.join(',');
         
         // Store in localStorage
         localStorage.setItem('userInterests', combinedTopics);

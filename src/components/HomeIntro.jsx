@@ -116,7 +116,7 @@ const getLastThreeDays = () => {
 };
 const interest = () => {
   const d = localStorage.getItem('userInterests');
-  return d ? d.split(" ").join(",") : "technology";
+  return d ? d.split(' ').join(',') : "technology";
 };
 
 
@@ -166,7 +166,7 @@ useEffect(() => {
     setLoading(false);
     // Fetch news in parallel
     const inter=interest();
-    fetch(`https://api.mediastack.com/v1/news?access_key=6e434e5f81bc0a97106429f99493052b&countries=us,in&categories=${interest()}&languages=en&limit=95&date=${getLastThreeDays()}&sort=published_desc`)
+    fetch(`https://api.mediastack.com/v1/news?access_key=129a7a5765ffe261abc9093f895d9b51&countries=us,in&categories=${interest()}&languages=en&limit=95&date=${getLastThreeDays()}&sort=published_desc`)
 
       .then(response => response.json())
       .then(newsData => {
@@ -915,9 +915,15 @@ className="text-6xl text-red-500 animate-like-heart"
     title={
         <div className="flex flex-col gap-3">
             <span>{`Suggestions for you ${user.displayName}`}</span>
-            <Button className='w-21 p-2 text-violet-500' color="default" 
-             onClick={() => setpersonal(true)}
-             > <WandSparkles className="text-violet-500" size={16} /> Feed</Button>
+            <Button
+    className='flex items-center gap-2 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 hover:from-violet-500/20 hover:to-fuchsia-500/20 border-violet-500/20 rounded-full px-4 py-2 transition-all duration-300 ease-in-out transform hover:scale-105'
+    onClick={() => setpersonal(true)}
+>
+    <WandSparkles className="text-violet-500 animate-pulse" size={16} />
+    <span className="font-medium bg-gradient-to-r from-violet-500 to-fuchsia-500 text-transparent bg-clip-text">
+        Feed
+    </span>
+</Button>
           
         </div>
     }
