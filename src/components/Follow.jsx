@@ -83,7 +83,7 @@ export const Follow = ({uid1,username1,userurl1}) => {
         timestamp: new Date(),
         message: `${user.displayName} sent you a friend request`
     });
-    settrack("Requested")
+    settrack("Request Sent")
     const recipientDoc = await getDoc(doc(db, "users", uid1));
     const recipientFcmToken = recipientDoc.data().fcmToken;
     console.log(" sharing user recipientFcmToken",recipientFcmToken);
@@ -114,7 +114,7 @@ export const Follow = ({uid1,username1,userurl1}) => {
         <CheckCircleIcon className="w-4 h-4" />
         <span>Following</span>
       </>
-    ) : track === "Requested" ? (
+    ) : track === "Request Sent" ? (
       <>
         <ClockIcon className="w-4 h-4 animate-pulse" />
         <span>Requested</span>

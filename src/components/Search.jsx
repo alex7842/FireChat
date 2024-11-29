@@ -12,6 +12,7 @@ import { CircleChevronRight } from 'lucide-react';
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { Popover } from 'antd';
+import { useNavigate } from 'react-router-dom';
 export const Search = () => {
     const inp=useRef();
     const {users,setUsers,loading, setLoading}=useContext(GroupContext)
@@ -80,7 +81,7 @@ export const Search = () => {
         return isToday && isWithinTwoMinutes;
       };
      // console.log(users);
- 
+   const navigate=useNavigate();
      return (
       <div className="flex min-h-screen bg-gray-50 md:ml-[220px]">
           <SideBar />
@@ -137,7 +138,7 @@ export const Search = () => {
                                           whileHover={{ scale: 1.02 }}
                                           layout
                                       >
-                                          <div className="flex items-center justify-between">
+                                          <div className="flex items-center justify-between cursor-pointer" onClick={()=>navigate(`/Profilepage/${user1.uid}`)}>
                                               <div className="flex items-center gap-4">
                                                   <div className="relative">
                                                       <motion.img

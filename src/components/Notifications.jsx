@@ -1,10 +1,12 @@
 import React, { useContext, useState, useEffect } from 'react'
 import UserContext from './context/context';
 import { db } from '../config/firebase';
-import { collection, getDocs, doc, updateDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, query, where,getDoc } from 'firebase/firestore';
 import { SideBar } from './SideBar';
 import { Layout } from 'antd';
 import { AnimatedList } from './ui/animated-list';
+import { CheckCircle, XCircle, Clock } from 'lucide-react';
+import { sendNotification } from '@/utils/notificationUtils';
 export const Notifications = () => {
     const { user } = useContext(UserContext);
     const [notifications, setNotifications] = useState([]);
@@ -30,7 +32,7 @@ export const Notifications = () => {
     }, [user.uid]);
     
 
-    const handleRequest = async (notificationId, status) => {
+    const handleRequest = async (notificationId, status,senderId) => {
         const notificationRef = doc(db, "users", user.uid, "notifications", notificationId);
         await updateDoc(notificationRef, {
             status: status
@@ -42,6 +44,13 @@ export const Notifications = () => {
                 ? {...notification, status: status}
                 : notification
         ));
+        const recipientDoc = await getDoc(doc(db, "users", senderId));
+        const recipientFcmToken = recipientDoc.data().fcmToken;
+        console.log(" sharing user recipientFcmToken",recipientFcmToken);
+        // Send notification
+        if (recipientFcmToken) {
+          await sendNotification(recipientFcmToken, `${user.displayName}: has ${status}  your friend request`,user.uid,user.displayName,user.photoURL);
+        }
     };
     return (
         <Layout style={{ minHeight: '100vh', backgroundColor: '#fff' }}>
@@ -65,40 +74,50 @@ export const Notifications = () => {
                 ) : (
                     <AnimatedList delay={800} className="space-y-4" key="notification-list">
                         {notifications.map((notification) => (
-                            <div 
-                                key={notification.id}
-                                className="bg-gradient-to-r from-violet-50 to-fuchsia-50 p-4 rounded-lg shadow-md flex items-center justify-between border border-violet-100 hover:shadow-lg transition-shadow"
-                            >
-                                <div className="flex items-center space-x-4">
-                                    <img
-                                        src={notification.senderPhoto}
-                                        alt="sender"
-                                        className="w-12 h-12 rounded-full border-2 border-violet-200"
-                                    />
-                                    <div>
-                                        <p className="font-semibold text-gray-800">{notification.message}</p>
-                                        <p className="text-sm text-violet-600">
-                                            {notification.status}
-                                        </p>
-                                    </div>
-                                </div>
-                                
-                                {notification.status === 'pending' && (
-                                    <div className="flex space-x-2">
-                                        <button
-                                            onClick={() => handleRequest(notification.id, 'accepted')}
-                                            className="bg-gradient-to-r from-violet-500 to-violet-600 text-white px-4 py-2 rounded-md hover:from-violet-600 hover:to-violet-700 transition-all"
-                                        >
-                                            Accept
-                                        </button>
-                                        <button
-                                            onClick={() => handleRequest(notification.id, 'rejected')}
-                                            className="bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2 rounded-md hover:from-red-600 hover:to-red-700 transition-all"
-                                        >
-                                            Reject
-                                        </button>
-                                    </div>
-                                )}
+                           <div
+                           key={notification.id}
+                           className="bg-gradient-to-r from-violet-50 to-fuchsia-50 p-4 md:p-5 rounded-xl shadow-md hover:shadow-xl transition-all duration-300 border border-violet-100 flex flex-col md:flex-row md:items-center md:justify-between gap-4 max-w-3xl mx-auto"
+                       >
+                           <div className="flex items-start md:items-center space-x-4">
+                               <img
+                                   src={notification.senderPhoto}
+                                   alt="sender"
+                                   className="w-12 h-12 md:w-14 md:h-14 rounded-full border-2 border-violet-200 object-cover shadow-sm"
+                               />
+                               <div className="flex-1">
+                                   <p className="font-semibold text-gray-800 text-sm md:text-base mb-1">
+                                       {notification.message}
+                                   </p>
+                                   <p className="text-sm text-violet-600 font-medium mb-1">
+                                       {notification.status}
+                                   </p>
+                                   <p className="text-xs text-gray-500 flex items-center">
+                                     
+                                       {notification.timestamp?.toDate?.()
+                    ? notification.timestamp.toDate().toLocaleString()
+                    : new Date().toLocaleString()}
+                                   </p>
+                               </div>
+                           </div>
+                           {notification.status === 'pending' && (
+        <div className="flex flex-row md:flex-row space-y-2 md:space-y-0 space-x-2 justify-end">
+            <button
+                onClick={() => handleRequest(notification.id, 'accepted', notification.senderId)}
+                className="flex items-center justify-center space-x-2 bg-gradient-to-r from-violet-500 to-violet-600 text-white px-4 py-2.5 rounded-lg hover:from-violet-600 hover:to-violet-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg group"
+            >
+                <CheckCircle className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                <span className="font-medium">Accept</span>
+            </button>
+            <button
+                onClick={() => handleRequest(notification.id, 'rejected', notification.senderId)}
+                className="flex items-center justify-center space-x-2 bg-gradient-to-r from-red-500 to-red-600 text-white px-4 py-2.5 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-300 transform hover:scale-105 shadow-md hover:shadow-lg group"
+            >
+                <XCircle className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                <span className="font-medium">Reject</span>
+            </button>
+        </div>
+    )}
+
                             </div>
                         ))}
                     </AnimatedList>
