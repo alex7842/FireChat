@@ -145,7 +145,7 @@ const ProfilePage = () => {
 
  
   
-  console.log(suggestions)
+ // console.log(suggestions)
 
   const handleSave = async () => {
     

@@ -6,14 +6,15 @@ import { ref, uploadBytes, getDownloadURL,getStorage } from 'firebase/storage'
 import { doc, setDoc, Timestamp } from 'firebase/firestore'
 import { useContext } from 'react'
 import UserContext from './context/context'
-
+import { WandSparkles } from 'lucide-react'
+import ai from '@/hooks/ai'
 export const Story = ({ onclose }) => {
   const [fileList, setFileList] = useState([])
   const [previewUrl, setPreviewUrl] = useState('')
-  const [caption, setCaption] = useState('')
+  const [caption, setCaption] = useState("")
   const [uploading, setUploading] = useState(false)
   const { user } = useContext(UserContext)
-
+  const { suggestions, loading, error, fetchSuggestions,setSuggestions } = ai();
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj)
@@ -30,6 +31,29 @@ export const Story = ({ onclose }) => {
     }
   }
 
+  const handleIconClick = async() => {
+    console.log("Icon clicked! Caption:", caption);
+   
+   fetchSuggestions(
+      `Transform this text into a two-line Instagram story caption with emojis:
+${caption}
+
+Format exactly like this:
+[First line with relevant emojis]
+[Second line with relevant emojis]`
+,
+      0.1,
+      16384,
+      "llama-v3p1-405b-instruct",
+      "chat"
+    );
+    setCaption("");
+    console.log("for caption",suggestions);
+    setCaption(suggestions);
+    setSuggestions([]);
+  
+    // Add your logic here (e.g., sending the caption)
+  };
   const getBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
@@ -114,14 +138,27 @@ export const Story = ({ onclose }) => {
           </div>
         )}
       </Upload.Dragger>
-
-      <Input.TextArea
-        placeholder="Write a caption..."
-        value={caption}
-        onChange={(e) => setCaption(e.target.value)}
-        className="mb-4"
-        rows={3}
-      />
+      <div style={{ position: "relative", marginTop: 16 }}>
+  <Input.TextArea
+    placeholder="Write a caption..."
+    value={caption}
+    onChange={(e) => setCaption(e.target.value)}
+    className="mb-4"
+    rows={3}
+    style={{ paddingRight: 40 }} // Added padding to prevent text overlap with icon
+  />
+  <WandSparkles
+    onClick={caption ? handleIconClick : null}
+    style={{
+      position: "absolute",
+      bottom: 27, // Added bottom positioning to align with text area
+      right: 8,
+      fontSize: 20,
+      cursor: caption ? "pointer" : "not-allowed",
+      color: caption ? "#7f07cf" : "gray",
+    }}
+  />
+</div>
 
       <Button 
        

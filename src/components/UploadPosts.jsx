@@ -7,17 +7,39 @@ import { collection, addDoc } from 'firebase/firestore';
 import { useContext } from 'react';
 import UserContext from './context/context';
 import ChatContext from './context/ChatContext';
-
+import { SendOutlined } from '@ant-design/icons';
+import { WandSparkles } from 'lucide-react';
+import ai from '@/hooks/ai';
 export const UploadPosts = ({uid,settrigger}) => {
   // Move all state declarations to the top level of the component
   const [modalVisible, setModalVisible] = useState(false);
   const [fileList, setFileList] = useState([]);
-  const [caption, setCaption] = useState('');
+  const [caption, setCaption] = useState("");
   const [uploading, setUploading] = useState(false);
   const {user} = useContext(UserContext);
   const {sethomereload} =useContext(ChatContext);
- 
+  const { suggestions, loading, error, fetchSuggestions,setSuggestions } = ai();
+  const handleIconClick = () => {
+    console.log("Icon clicked! Caption:", caption);
+    fetchSuggestions(
+      `Transform this text into a two-line Instagram caption with emojis:
+${caption}
 
+Format exactly like this:
+[First line with relevant emojis]
+[Second line with relevant emojis]`
+,
+      0.1,
+      16384,
+      "llama-v3p1-405b-instruct",
+      "chat"
+    );
+    console.log("for caption",suggestions);
+    setCaption(suggestions);
+    setSuggestions([]);
+  
+    // Add your logic here (e.g., sending the caption)
+  };
   const handlePost = async () => {
     setUploading(true);
     try {
@@ -66,7 +88,7 @@ export const UploadPosts = ({uid,settrigger}) => {
           </Button>,
           <Button
             key="post"
-            type="primary"
+            className='bg-violet-500 hover:bg-violet-600 text-white'
             onClick={handlePost}
             loading={uploading}
           >
@@ -74,6 +96,8 @@ export const UploadPosts = ({uid,settrigger}) => {
           </Button>
         ]}
       >
+        <div className='flex flex-col items-center justify-center w-full min-h-[300px]'> 
+          <div className='w-full max-w-md'>
         <Upload
           listType="picture-card"
           fileList={fileList}
@@ -88,13 +112,28 @@ export const UploadPosts = ({uid,settrigger}) => {
             </div>
           )}
         </Upload >
-        <Input.TextArea
-          placeholder="Write a caption..."
-          value={caption}
-          onChange={(e) => setCaption(e.target.value)}
-          rows={4}
-          style={{ marginTop: 16 }}
-        />
+        <div style={{ position: "relative", marginTop: 16 }}>
+      <Input.TextArea
+        placeholder="Write caption using AI"
+        value={caption}
+        onChange={(e) => setCaption(e.target.value)}
+        rows={4}
+        style={{ paddingRight: 40 }} // Add space for the icon
+      />
+      <WandSparkles
+        onClick={caption? handleIconClick : null}
+        style={{
+          position: "absolute",
+          bottom: 8,
+          right: 8,
+          fontSize: 20,
+          cursor: caption? "pointer" : "not-allowed",
+          color: caption? "#7f07cf" : "gray",
+        }}
+      />
+    </div>
+    </div>
+    </div>
       </Modal>
       <button 
        className='bg-gradient-to-r from-violet-400 to-purple-500 text-white font-medium

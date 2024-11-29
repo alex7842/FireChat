@@ -10,7 +10,7 @@ import { collection,getDocs,query,doc,getDoc,setDoc,deleteDoc,Timestamp,updateDo
 import { db,messaging } from '../config/firebase';
 import { Report } from './Report';
 import { ShowPost } from './ShowPost';
-
+import {WandSparkles} from "lucide-react";
 const { Header, Content, Sider } = Layout;
 import UserContext from './context/context';
 import ChatContext from './context/ChatContext';
@@ -31,6 +31,8 @@ import { StoryView } from './StoryView';
 import { StoryUpload } from './StoryUpload';
 import { AllStories } from './AllStories';
 import PersonalizedFeed from './PersonalFeed';
+import ShinyButton from './ui/shiny-button';
+import ShimmerButton from './ui/shimmer-button';
 const HomeIntro = () => {
   const [postData,setpostData]=useState([]);
   const[loading,setLoading]=useState(false);
@@ -111,6 +113,10 @@ const getLastThreeDays = () => {
   
   return `${formatDate(start)},${formatDate(end)}`;
 };
+const interest=()=>{
+  const d=localStorage.getItem('userInterests');
+  return d?d:"technology + Aritificial Intelligence"
+}
 
 useEffect(() => {
   const fetchData = async () => {
@@ -157,7 +163,7 @@ useEffect(() => {
     setLoading(false);
     // Fetch news in parallel
    
-    // fetch('https://api.mediastack.com/v1/news?access_key=6e434e5f81bc0a97106429f99493052b&countries=us,in&categories=technology&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
+    // fetch('https://api.mediastack.com/v1/news?access_key=6e434e5f81bc0a97106429f99493052b&countries=us,in&categories='+ + interest() +'&languages=en&limit=95&date=' + getLastThreeDays() + '&sort=published_desc')
 
     //   .then(response => response.json())
     //   .then(newsData => {
@@ -174,7 +180,7 @@ useEffect(() => {
     //       isNews: true
     //     }));
     fetch('https://newsapi.org/v2/everything?' +
-      'q=technology OR artificial intelligence OR science' +
+      'q='+ interest() +
       '&language=en' +
       '&pageSize=60' +
       '&sortBy=publishedAt' +
@@ -559,7 +565,7 @@ const isValidImageUrl = (url) => {
         className=""
         style={{ top: 20 }}
       >
-        <PersonalizedFeed  />
+        <PersonalizedFeed  setpersonal={setpersonal} />
       </Modal>
       <Modal 
         open={Sharemodel}
@@ -603,7 +609,7 @@ const isValidImageUrl = (url) => {
   <div className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 py-4">
     <Carousel
       arrows={true}
-      dots={true}
+      dots={false}
       slidesToShow={3}
       slidesToScroll={1}
       infinite={false}
@@ -611,7 +617,7 @@ const isValidImageUrl = (url) => {
         {
           breakpoint: 640,
           settings: {
-            slidesToShow:2,
+            slidesToShow:3,
             slidesToScroll: 1,
             arrows: false,
            
@@ -621,7 +627,7 @@ const isValidImageUrl = (url) => {
         {
           breakpoint: 768,
           settings: {
-            slidesToShow: 2,
+            slidesToShow: 3,
             slidesToScroll: 1,
             
           }
@@ -636,7 +642,7 @@ const isValidImageUrl = (url) => {
         {
           breakpoint: 1536,
           settings: {
-            slidesToShow: 4,
+            slidesToShow: 3,
             slidesToScroll: 1
           }
         }
@@ -732,7 +738,7 @@ const isValidImageUrl = (url) => {
                     >
                       <List
                         itemLayout="vertical"
-                        dataSource={postData.filter(item => {
+                        dataSource={postData.filter((item,index) => {
                           
                           if (!item.mediaUrl || !item.author) return false;
                           return isValidImageUrl(item.mediaUrl);
@@ -781,6 +787,16 @@ className="text-6xl text-red-500 animate-like-heart"
                                       : formatRelativeDate(item.timestamp)
                                     }
                                   </span>
+                                  {index === 0 && (
+                <Button 
+                    className='md:hidden w-21 p-2 text-violet-500' 
+                    color="default"
+                    onClick={() => setpersonal(true)}
+                > 
+                    <WandSparkles className="text-violet-500" size={16} /> 
+                    Feed
+                </Button>
+            )}
                                 </div>
                               </div>
                               <Popover
@@ -892,18 +908,17 @@ className="text-6xl text-red-500 animate-like-heart"
                 {/* Suggestions Sidebar */}
                 <div className="hidden md:block w-[320px] flex-shrink-0">
                   <div className="sticky top-4">
-                    <Card title={`Suggestions for you ${user.displayName}` }
-                    extra={
-                      <button 
-                      onClick={()=>{
-                        setpersonal(true);
-                      }}
-                      className="px-2 py-1.5 bg-violet-500 text-white rounded-full text-sm font-medium hover:bg-violet-600 transition-all duration-300 flex items-center gap-2">
-                        <UserIcon size={16} />
-                        Personalize
-                      </button>
-                    }
-                     className="rounded-lg">
+                  <Card 
+    title={
+        <div className="flex flex-col gap-3">
+            <span>{`Suggestions for you ${user.displayName}`}</span>
+            <Button className='w-21 p-2 text-violet-500' color="default" 
+             onClick={() => setpersonal(true)}
+             > <WandSparkles className="text-violet-500" size={16} /> Feed</Button>
+          
+        </div>
+    }
+>
                       {suggestedUsers.length === 0 ? (
                         <List
                           itemLayout="horizontal"

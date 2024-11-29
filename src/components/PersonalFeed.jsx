@@ -1,81 +1,99 @@
-import React, { useState } from 'react';
-
-const PersonalizedFeed = () => {
+import React, { useState,useContext } from 'react';
+import { Hash, CheckCircle, ArrowRight, Sparkles } from 'lucide-react';
+import {message} from "antd"
+import ChatContext from './context/ChatContext';
+const PersonalizedFeed = ({setpersonal}) => {
   const [selectedTopics, setSelectedTopics] = useState([]);
-
+  const {homereload,sethomereload}=useContext(ChatContext)
   const topics = [
-    { id: 'education', label: 'Education & Learning' },
-    { id: 'cricket', label: 'Cricket' },
-    { id: 'history', label: 'History' },
-    { id: 'stocks', label: 'Stocks' },
-    { id: 'microsoft', label: 'Microsoft' },
-    { id: 'books', label: 'Books and Literature' },
-    { id: 'health', label: 'Health & Fitness' },
-    { id: 'music', label: 'Music' },
-    { id: 'business', label: 'Business & Finance' },
-    { id: 'movies', label: 'Movies' },
-    { id: 'nasa', label: 'NASA' },
-    { id: 'physics', label: 'Physics' },
+    { id: 'education', label: 'Education & Learning', icon: '🎓' },
+    { id: 'cricket', label: 'Cricket', icon: '🏏' },
+    { id: 'history', label: 'History', icon: '📚' },
+    { id: 'stocks', label: 'Stocks', icon: '📈' },
+    { id: 'microsoft', label: 'Microsoft', icon: '💻' },
+    { id: 'books', label: 'Books and Literature', icon: '📖' },
+    { id: 'health', label: 'Health & Fitness', icon: '💪' },
+    { id: 'music', label: 'Music', icon: '🎵' },
+    { id: 'business', label: 'Business & Finance', icon: '💼' },
+    { id: 'movies', label: 'Movies', icon: '🎬' },
+    { id: 'nasa', label: 'NASA', icon: '🚀' },
+    { id: 'physics', label: 'Physics', icon: '⚛️' },
   ];
 
   const handleTopicSelect = (topicId) => {
     if (selectedTopics.includes(topicId)) {
       setSelectedTopics(selectedTopics.filter((id) => id !== topicId));
-    } else {
+    } else if (selectedTopics.length < 2) {
       setSelectedTopics([...selectedTopics, topicId]);
     }
   };
 
   const handleSubmit = () => {
-    // Implement logic to create personalized feed based on selected topics
-    console.log('Selected topics:', selectedTopics);
-  };
+    if (selectedTopics.length === 2) {
+        // Combine topics with +
+        const combinedTopics = selectedTopics.join('+');
+        
+        // Store in localStorage
+        localStorage.setItem('userInterests', combinedTopics);
+        
+        // Show success message
+        message.success("Feed updated successfully!");
+        sethomereload(prev => prev + 1);  // I
+        // Optional: Close the modal or redirect
+        setpersonal(false);
+    }
+};
 
   return (
-    <div
-      style={{
-        background: '#8B5CF6',
-        padding: '2rem',
-        borderRadius: '1rem',
-        color: 'white',
-      }}
-    >
-      <h2>Discover</h2>
-      <p>Find channels to follow for a personalized feed.</p>
-      <div style={{ marginBottom: '1rem' }}>
+    <div className="bg-gradient-to-br from-violet-500 to-violet-600 p-8 rounded-2xl shadow-xl max-w-3xl mx-auto">
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
+          <Hash className="w-6 h-6" />
+          Discover Your Interests
+        </h2>
+        <p className="text-violet-100">
+          Select 2 topics to personalize your feed ({selectedTopics.length}/2)
+        </p>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
         {topics.map((topic) => (
           <button
             key={topic.id}
             onClick={() => handleTopicSelect(topic.id)}
-            style={{
-              backgroundColor: selectedTopics.includes(topic.id)
-                ? '#A78BFA'
-                : '#8B5CF6',
-              border: 'none',
-              color: 'white',
-              padding: '0.5rem 1rem',
-              margin: '0.5rem',
-              borderRadius: '0.5rem',
-              cursor: 'pointer',
-            }}
+            disabled={!selectedTopics.includes(topic.id) && selectedTopics.length >= 3}
+            className={`
+              flex items-center gap-2 p-3 rounded-lg transition-all duration-300
+              ${selectedTopics.includes(topic.id)
+                ? 'bg-white text-violet-600 shadow-lg scale-105'
+                : 'bg-violet-400/20 text-white hover:bg-violet-400/30'}
+              ${!selectedTopics.includes(topic.id) && selectedTopics.length >= 2
+                ? 'opacity-50 cursor-not-allowed'
+                : 'cursor-pointer'}
+            `}
           >
-            {topic.label}
+            <span>{topic.icon}</span>
+            <span className="font-medium">{topic.label}</span>
+            {selectedTopics.includes(topic.id) && (
+              <CheckCircle className="w-5 h-5 ml-auto text-violet-600" />
+            )}
           </button>
         ))}
       </div>
+
       <button
         onClick={handleSubmit}
-        style={{
-          backgroundColor: '#C4B5FD',
-          border: 'none',
-          color: '#8B5CF6',
-          padding: '0.75rem 1.5rem',
-          borderRadius: '0.5rem',
-          cursor: 'pointer',
-          fontWeight: 'bold',
-        }}
+        disabled={selectedTopics.length !== 2}
+        className={`
+          flex items-center justify-center gap-2 w-full md:w-auto px-6 py-3 rounded-lg
+          font-semibold transition-all duration-300
+          ${selectedTopics.length === 2
+            ? 'bg-white text-violet-600 hover:shadow-lg hover:scale-105'
+            : 'bg-violet-400/20 text-violet-200 cursor-not-allowed'}
+        `}
       >
-        Submit
+        Continue
+        <ArrowRight className="w-5 h-5" />
       </button>
     </div>
   );

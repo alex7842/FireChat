@@ -122,16 +122,16 @@ useEffect(() => {
 }, [chats,group,groupid]);
 useEffect(() => {
   const auto=()=>{
-//     const timer = setTimeout(() => {
-//       if (text) {
-//       fetchSuggestions(`Complete the following text with 4-5 additional words:
-// "${text}"
-// Completion:`,0.5,10,"llama-v3p1-405b-instruct","completion");
-//       } else {
-//         setSuggestions('');
-//       }
-//     }, 300);
-//     return () => clearTimeout(timer);
+    const timer = setTimeout(() => {
+      if (text) {
+      fetchSuggestions(`Complete the following text with 4-5 additional words:
+"${text}"
+Completion:`,0.5,10,"llama-v3p1-405b-instruct","completion");
+      } else {
+        setSuggestions('');
+      }
+    }, 300);
+    return () => clearTimeout(timer);
   }
   const up = async () => {
     if (user && user.uid) {
