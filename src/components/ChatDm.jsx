@@ -258,7 +258,9 @@ const ChatDm = () => {
       </div>
 
       {/* List Content */}
-      <div className="animate-fadeIn h-[calc(100vh-200px)] overflow-y-auto scrollbar-thin scrollbar-thumb-violet-200 scrollbar-track-transparent">
+      <div className="animate-fadeIn h-[calc(100vh-200px)] md:h-[calc(100vh-150px)] flex flex-col">
+
+
   {activetab === 'msg' ? <UserList /> : <CommunityGroup />}
 </div>
     </div>

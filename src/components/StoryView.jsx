@@ -59,7 +59,7 @@ export const StoryView = ({ onclose, selectedStory,owner }) => {
         className="absolute top-4 left-4 z-10 flex items-center space-x-3 bg-black/30 p-2 rounded-full"
       >
         <Avatar
-          src={owner=="firechat"?"/newslogo.png":selectedStory?.photoURL}
+          src={owner=="firechat"?"/logo3.png":selectedStory?.photoURL}
           size={40}
           className="border-2 border-white"
         />
@@ -82,7 +82,7 @@ export const StoryView = ({ onclose, selectedStory,owner }) => {
           />
         ) : (
           <img
-            src={owner=="firechat"? "/newslogo.png" :selectedStory?.mediaUrl}
+            src={owner=="firechat"? "/logo3.png" :selectedStory?.mediaUrl}
             alt={selectedStory?.displayName}
             className="w-full h-full object-contain"
           />

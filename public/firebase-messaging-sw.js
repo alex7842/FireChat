@@ -34,7 +34,7 @@ messaging.onBackgroundMessage(function(payload) {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
     body: payload.notification.body,
-    icon: '/newslogo.png',
+    icon: '/logo3.png',
     data: payload.data,
     requireInteraction: true, // Makes the notification stay until user interacts with it
     click_action: '/' // Specifies the URL to open on click

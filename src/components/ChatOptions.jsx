@@ -1,5 +1,5 @@
 import React from 'react';
-import { Popover, Button } from 'antd';
+import { Popover, Button,Tooltip } from 'antd';
 import { MoreVertical, Trash2, Settings, Flag } from 'lucide-react';
 
 
@@ -41,7 +41,9 @@ export const ChatOptions = ({ onDelete, onSettings, onReport }) => {
       trigger="click"
       placement="bottomRight"
     >
+        <Tooltip title="Options" placement="top">
       <MoreVertical className="cursor-pointer hover:text-blue-500 transition-colors" />
+      </Tooltip>
     </Popover>
   );
 };

@@ -121,7 +121,7 @@ console.log("Error",e)
 }
 
   return (
-    <div className="p-4 max-w-3xl mx-auto">
+    <div className="p-4 max-w-3xl mx-auto custom-scroll">
     {/* Create Group Modal */}
     <Modal 
       title="Create New Group" 
@@ -218,7 +218,7 @@ console.log("Error",e)
     </div>
   
     {/* Groups Section */}
-    <div className="bg-white rounded-xl p-6 shadow-md">
+    <div className="bg-white rounded-xl p-6 shadow-md ">
       <div className="flex justify-between items-center mb-6">
         <h3 className="text-xl font-semibold text-gray-800">Your Groups</h3>
         <button 
@@ -231,7 +231,7 @@ console.log("Error",e)
         </button>
       </div>
   
-      <div className="space-y-3">
+      <div className="space-y-3 ">
         {grpmessage
           .filter(user1 => user1.members.includes(user.displayName))
           .map((user1, i) => (

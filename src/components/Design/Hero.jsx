@@ -2,7 +2,8 @@ import React from 'react'
 import { useState,useContext, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import { signInWithPopup } from 'firebase/auth'
-
+//import { openVideo } from '../../scripts/index.js';
+import NumberTicker from '../ui/number-ticker'
 import { Timestamp } from 'firebase/firestore';
 import { addDoc, collection,query, where, getDocs, setDoc,doc} from 'firebase/firestore';
 import { Link,useNavigate } from "react-router-dom";
@@ -12,15 +13,17 @@ import ChatContext from '../context/ChatContext';
 import '../../../src/tailwind-build.css';
 import '../../../src/index.css';
 
+// import './../../../index.js'
 import { Helmet } from 'react-helmet';
 import { Button } from 'antd';
-
 
 
 
 export const Hero = () => {
     const { user, setuser } = useContext(UserContext);
   const {homereload,sethomereload}=useContext(ChatContext);
+ 
+
   const date = new Date();
   const messageref=collection(db,"users")
   const navigate = useNavigate();
@@ -63,36 +66,104 @@ export const Hero = () => {
       console.error("Error during sign-in:", error);
     }
   };
-  useEffect(() => {
-    // Load GSAP and ScrollTrigger dynamically
-    const loadScripts = async () => {
-      await import('gsap');
-      await import('gsap/ScrollTrigger');
-      await import('typed.js');
-      
-      // Import your local scripts
-      await import('../../../scripts/components.js');
-    await import('../../../index.js');
+
+useEffect(() => {
+    const loadExternalScripts = async () => {
+      // Load GSAP
+      const { gsap } = await import('gsap');
+      const { ScrollTrigger } = await import('gsap/ScrollTrigger');
+      gsap.registerPlugin(ScrollTrigger);
+  
+      // Load Typed.js
+     
+  
+      // Import your custom scripts
+      await import('../../scripts/components.js');
+      await import('../../scripts/index.js');
+  
+   
     };
-    
-    loadScripts();
+  
+    loadExternalScripts();
   }, []);
+  
+  
+  
+const videoBg = document.querySelector("#video-container-bg")
+const videoContainer = document.querySelector("#video-container")
+
+
+
+ function openVideo(){
+    videoBg.classList.remove("tw-scale-0", "tw-opacity-0")
+    videoBg.classList.add("tw-scale-100", "tw-opacity-100")
+    videoContainer.classList.remove("tw-scale-0")
+    videoContainer.classList.add("tw-scale-100")
+
+    document.body.classList.add("modal-open")
+}
+
+ function closeVideo(){
+    videoContainer.classList.add("tw-scale-0")
+    videoContainer.classList.remove("tw-scale-100")
+
+    setTimeout(() => {
+        videoBg.classList.remove("tw-scale-100", "tw-opacity-100")
+        videoBg.classList.add("tw-scale-0", "tw-opacity-0")
+    }, 400)
+   
+
+    document.body.classList.remove("modal-open")
+
+}
+const RESPONSIVE_WIDTH = 1024;
+  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(window.innerWidth < RESPONSIVE_WIDTH);
+
+  const toggleHeader = () => {
+    const collapseBtn = document.getElementById("collapse-btn");
+    const collapseHeaderItems = document.getElementById("collapsed-header-items");
+    
+    if (!collapseHeaderItems || !collapseBtn) return;
+
+    if (isHeaderCollapsed) {
+      collapseHeaderItems.classList.add("max-lg:!tw-opacity-100", "tw-min-h-[90vh]");
+      collapseHeaderItems.style.height = "90vh";
+      collapseBtn.classList.remove("bi-list");
+      collapseBtn.classList.add("bi-x", "max-lg:tw-fixed");
+      setIsHeaderCollapsed(false);
+      document.body.classList.add("modal-open");
+    } else {
+      collapseHeaderItems.classList.remove("max-lg:!tw-opacity-100", "tw-min-h-[90vh]");
+      collapseHeaderItems.style.height = "0vh";
+      collapseBtn.classList.remove("bi-x", "max-lg:tw-fixed");
+      collapseBtn.classList.add("bi-list");
+      document.body.classList.remove("modal-open");
+      setIsHeaderCollapsed(true);
+    }
+  };
+
+
   return (
     <>
-    <div>Sign in with firechat</div>
-    <Button onClick={signin}>Sign in</Button>
-    {
-    /* <Helmet>
-        <html lang="en" className="tw-dark" />
-        <title>All your AI models in one place - Try Pixa Playground</title>
-        <meta name="description" content="Get all your AI models and tools in one place" />
-        <link rel="shortcut icon" href="./assets/logo/logo.png" type="image/x-icon" />
-        
-       
-        <meta property="og:title" content="All your AI models in one place - Try Pixa Playground" />
-        <meta property="og:description" content="Get all your AI models and tools in one place" />
+    {/* <div>Sign in with firechat</div>
+    <Button onClick={signin}>Sign in</Button> */}
+     <Helmet>
+        <html lang="en" className="" />
+        <title>FireChat - Connect, Collaborate & Chat with Professionals Worldwide</title>
+<meta name="description" content="Experience real-time conversations, AI-powered networking, and personalized content. Join professionals worldwide for instant messaging, video calls, and trending discussions." />
+
+        <link rel="shortcut icon" href="/logo3.png" type="image/x-icon" />
+        {/* <script src="./../../../index.js"/> */}
+        <link 
+  rel="stylesheet" 
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+/>
+
+
+        <meta property="og:title" content="FireChat - Connect, Collaborate & Chat with Professionals Worldwide" />
+        <meta property="og:description" content="Experience real-time conversations, AI-powered networking, and personalized content. Join professionals worldwide for instant messaging, video calls, and trending discussions." />
         <meta property="og:type" content="website" />
-        <meta property="og:url" content="https://github.com/PaulleDemon" />
+        <meta property="og:url" content="https://github.com/alex7842" />
         <meta property="og:image" content="" />
 
         <link
@@ -113,6 +184,23 @@ export const Hero = () => {
             gtag('config', 'G-');
           `}
         </script>
+        <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/gsap.min.js"
+        integrity="sha512-B1lby8cGcAUU3GR+Fd809/ZxgHbfwJMp0jLTVfHiArTuUt++VqSlJpaJvhNtRf3NERaxDNmmxkdx2o+aHd4bvw=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    ></script>
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.0/ScrollTrigger.min.js"
+        integrity="sha512-AY2+JxnBETJ0wcXnLPCcZJIJx0eimyhz3OJ55k2Jx4RtYC+XdIi2VtJQ+tP3BaTst4otlGG1TtPJ9fKrAUnRdQ=="
+        crossorigin="anonymous"
+        referrerpolicy="no-referrer"
+    ></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.10/typed.min.js" integrity="sha512-hIlMpy2enepx9maXZF1gn0hsvPLerXoLHdb095CmRY5HG3bZfN7XPBZ14g+TUDH1aGgfLyPHmY9/zuU53smuMw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+    <script src="../../../scripts/component.js"></script>
+    <script src="../../../index.js"></script>
       </Helmet>
     <body>
           <header
@@ -125,12 +213,12 @@ export const Hero = () => {
 
                 <div class="tw-h-[30px] tw-max-w-[100px]">
                     <img
-                        src="./assets/logo/logo.png"
+                        src="/logo3.png"
                         alt="logo"
                         class="tw-object-contain tw-h-full tw-w-full dark:tw-invert"
                     />
                 </div>
-                <span class="tw-uppercase tw-text-base tw-font-medium">Pixa</span>
+                <span class="tw-uppercase tw-text-base tw-font-medium">FireChat</span>
             </a>
             <div
                 class="collapsible-header animated-collapse max-lg:tw-shadow-md"
@@ -140,9 +228,9 @@ export const Hero = () => {
                     class="tw-relative tw-flex tw-h-full max-lg:tw-h-max tw-w-max tw-gap-5 tw-text-base max-lg:tw-mt-[30px] max-lg:tw-flex-col 
                                 max-lg:tw-gap-5 lg:tw-mx-auto tw-place-items-center"
                 >
-                    <a class="header-links" href="#"> API </a>
+                    <a class="header-links" href="#"> Chat</a>
                     <a class="header-links" href="#"> Blog </a>
-                    <a class="header-links" href="#"> Solutions </a>
+                    <a class="header-links" href="#"> Contact </a>
                    
                     <div class="tw-relative tw-flex tw-flex-col tw-place-items-center">
                         <div id="nav-dropdown-toggle-0" class="max-lg:tw-max-w-fit tw-flex header-links tw-gap-1  tw-place-items-center">
@@ -162,8 +250,8 @@ export const Hero = () => {
                                         <i class="bi bi-list-columns-reverse"></i>
                                     </div>
                                     <div class="tw-flex tw-flex-col tw-gap-2">
-                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Prompt library </div>
-                                        <p>Comes packed with pre-made prompt templates</p>
+                                    <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Communities</div>
+                                    <p>Join professional groups worldwide</p>
                                     </div> 
                                 </a>
 
@@ -172,8 +260,8 @@ export const Hero = () => {
                                         <i class="bi bi-grid-1x2-fill"></i>
                                     </div>
                                     <div class="tw-flex tw-flex-col tw-gap-2">
-                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Unified Interface </div>
-                                        <p class="">Test multiple AI models in one interface</p>
+                                    <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Real-time Chat</div>
+                                    <p>Instant messaging with professionals</p>
                                     </div> 
                                 </a>
 
@@ -192,10 +280,9 @@ export const Hero = () => {
                                         <i class="bi bi-image-fill"></i>
                                     </div>
                                     <div class="tw-flex tw-flex-col tw-gap-2">
-                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">
-                                            Image generation
-                                        </div>
-                                        <p class="">Generate images from prompts</p>
+                                    <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">News Feed</div>
+        <p>AI-powered personalized content</p>
+
                                     </div> 
                                 </a>
 
@@ -204,10 +291,8 @@ export const Hero = () => {
                                         <i class="bi bi-calendar-range"></i>
                                     </div>
                                     <div class="tw-flex tw-flex-col tw-gap-2">
-                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">
-                                            History
-                                        </div>
-                                        <p class="">Continue from where you left off</p>
+                                    <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Video Calls</div>
+                                    <p>Face-to-face conversations globally</p>
                                     </div> 
                                 </a>
 
@@ -216,40 +301,38 @@ export const Hero = () => {
                                         <i class="bi bi-translate"></i>
                                     </div>
                                     <div class="tw-flex tw-flex-col tw-gap-2">
-                                        <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">
-                                            Multilingual
-                                        </div>
-                                        <p class="">Converse in multiple languages</p>
+                                    <div class="tw-text-lg tw-text-black dark:tw-text-white tw-font-medium">Multilingual</div>
+                                    <p>Chat in multiple languages</p>
                                     </div> 
                                 </a>
                             </div>           
                         </nav>
                     </div>
-                    <a class="header-links" href="#pricing"> Pricing </a>
+                    <a class="header-links" id="toggle-mode-icon" href="#pricing"> Pricing </a>
                     
                 </nav>
                 <div
                     class="lg:tw-mx-4 tw-flex tw-place-items-center tw-gap-[20px] tw-text-base max-md:tw-w-full 
-                            max-md:tw-flex-col max-md:tw-place-content-center"
+                            max-md:tw-flex-col max-md:tw-place-content-center" onClick={signin}
                 >
-                    <button type="button" onclick="toggleMode()" class="header-links tw-text-gray-600 dark:tw-text-gray-300" title="toggle-theme" 
+                    {/* <button type="button"  class="header-links tw-text-gray-600 dark:tw-text-gray-300" title="toggle-theme" 
                             id="theme-toggle"> 
-                        <i class="bi bi-sun" id="toggle-mode-icon"></i>
-                    </button>
+                        <i class="bi bi-moon" id="toggle-mode-icon"></i>
+                    </button> */}
                     <a
                         href="#"
-                        aria-label="Try Pixa Playground"
+                        aria-label="Try FireChat Playground"
                         class="btn tw-flex tw-gap-3 tw-px-3 tw-py-2 tw-transition-transform 
                                     tw-duration-[0.3s] hover:tw-translate-x-2"
                     >
-                        <span>Try playground</span>
+                        <span>Join Now</span>
                         <i class="bi bi-arrow-right"></i>
                     </a>
                 </div>
             </div>
             <button
                 class="bi bi-list tw-absolute tw-right-3 tw-top-3 tw-z-50 tw-text-3xl tw-text-gray-500 lg:tw-hidden"
-                onclick="toggleHeader()"
+                onClick={toggleHeader}
                 aria-label="menu"
                 id="collapse-btn"
             ></button>
@@ -269,7 +352,7 @@ export const Hero = () => {
                             tw-h-[90vh] max-lg:tw-h-auto max-lg:tw-min-h-[400px] tw-bg-white dark:tw-bg-[#16171A] tw-max-h-full
                             " id="video-container">
                     <div class="tw-w-full tw-flex">
-                        <button type="button" onclick="closeVideo()" class="tw-ml-auto tw-text-xl" title="close">
+                        <button type="button" onClick={closeVideo} class="tw-ml-auto tw-text-xl" title="close">
                             <i class="bi bi-x-circle-fill"></i>
                         </button>
                     </div>
@@ -295,26 +378,22 @@ export const Hero = () => {
                 <div
                     class="tw-flex tw-flex-col tw-min-h-[60vh] tw-place-content-center tw-items-center"
                 >
-                    <h2
-                        class="reveal-up tw-text-center tw-text-7xl tw-font-semibold tw-uppercase tw-leading-[90px] max-lg:tw-text-4xl max-md:tw-leading-snug"
-                    >
-                        <span class=""> All your AI models </span>
-                        <br />
-                        <span class="tw-font-thin tw-font-serif"> in one place </span>
-                    </h2>
-                    <div
-                        class="reveal-up tw-mt-8 tw-max-w-[450px] tw-text-lg max-lg:tw-text-base tw-p-2 tw-text-center
-                         tw-text-gray-800 dark:tw-text-white max-lg:tw-max-w-full"
-                    >
+                   <h2 class="reveal-up tw-text-center tw-text-7xl tw-font-semibold tw-uppercase dark:tw-text-white tw-leading-[90px] max-lg:tw-text-4xl max-md:tw-leading-snug">
+    <span class="">AI-Enhanced Chats</span>
+    <br />
+    <span class="tw-font-thin tw-font-serif">Smarter Connections</span>
+</h2>
 
-                        Your all in one AI companion. generate Images, videos, codes, docs, debug your web apps all with Pixa's interface.
-                    </div>
+<div class="reveal-up tw-mt-8 tw-max-w-[450px] tw-text-lg max-lg:tw-text-base tw-p-2 tw-text-center tw-text-gray-800 dark:tw-text-white max-lg:tw-max-w-full">
+   Connect instantly, share ideas, make video calls, and stay updated with personalized news - all within FireChat's seamless interface.
+</div>
+
 
                     <div
                         class="reveal-up tw-mt-10 max-md:tw-flex-col tw-flex tw-place-items-center tw-gap-4"
                     >
 
-                        <button onclick="openVideo()"
+                        <button onClick={openVideo}
                             class="btn !tw-w-[170px] max-lg:!tw-w-[160px] !tw-rounded-xl !tw-py-4 max-lg:!tw-py-2 tw-flex tw-gap-2 tw-group !tw-bg-transparent !tw-text-black dark:!tw-text-white tw-transition-colors 
                                         tw-duration-[0.3s] tw-border-[1px] tw-border-black dark:tw-border-white"
                         >
@@ -329,7 +408,7 @@ export const Hero = () => {
 
                         <a
                             class="btn tw-group max-lg:!tw-w-[160px] tw-flex tw-gap-2 tw-shadow-lg !tw-w-[170px] !tw-rounded-xl !tw-py-4 max-lg:!tw-py-2 tw-transition-transform tw-duration-[0.3s] hover:tw-scale-x-[1.03]"
-                            href="#"
+                            onClick={signin}
                         >
                             <span>Get started</span>
                             <i class="bi bi-arrow-right group-hover:tw-translate-x-1 tw-duration-300"></i>
@@ -364,8 +443,8 @@ export const Hero = () => {
                                         id="signup-prompt"
                                         >
 
-                                    <h4 class="tw-mt-6 tw-text-3xl max-md:tw-text-xl">
-                                        Signup to continue your conversation
+                                    <h4 class="tw-mt-6 dark:tw-text-white tw-text-3xl max-md:tw-text-xl">
+                                        Signup to connect with real people
                                     </h4>
 
                                     <div class="tw-flex tw-gap-1 tw-place-items-center">
@@ -376,11 +455,11 @@ export const Hero = () => {
                                             <img class="tw-z-[2] tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="assets/images/people/man.jpg" alt="Avatar 4"/>
                                             <img class="tw-z-[1] tw-w-10 tw-h-10 tw-object-cover tw-rounded-full tw-border-2 tw-border-white" src="assets/images/people/women.jpg" alt="Avatar 5"/>
                                         </div>
-                                        <p>+20,000</p>
+                                        <p class="dark:tw-text-white">+2000</p>
                                     </div>
 
-                                    <div class="tw-mt-3 tw-text-lg">
-                                        Join Ben and 20,000+ users using Pixa
+                                    <div class="tw-mt-3 tw-text-lg dark:tw-text-white">
+                                        Join Alex and 2000+ users using FireChat
                                     </div>
 
                                     <a href="#" class="btn">
@@ -394,27 +473,27 @@ export const Hero = () => {
                                  
                                     <div class="tw-h-[30px] tw-w-fit tw-max-w-[100px]">
                                         <img
-                                            src="./assets/logo/logo.png"
+                                            src="/logo3.png"
                                             alt="logo"
                                             class="tw-object-contain tw-opacity-80 tw-h-full tw-w-full dark:tw-invert"
                                         />
                                     </div>
 
-                                    <div class="tw-flex tw-mt-2 tw-gap-2 tw-flex-col">
+                                    <div class="tw-flex tw-mt-2 dark:tw-text-white tw-gap-2 tw-flex-col">
                                         <a href="#link-to-img-gen" 
                                             class="tw-flex tw-rounded-sm tw-gap-2 tw-p-2 dark:hover:tw-bg-[#2d2d2ddb] hover:tw-bg-gray-200">
-                                            <i class="bi bi-image"></i>
-                                            <span>Image generator</span>
+                                            <i class="bi bi-people-fill"></i>
+                                            <span class="dark:tw-text-white">Communities</span>
                                         </a>
                                         <a href="#link-to-pdf-gen" 
                                             class="tw-flex tw-rounded-sm tw-gap-2 tw-p-2 dark:hover:tw-bg-[#2d2d2ddb] hover:tw-bg-gray-200">
-                                            <i class="bi bi-file-pdf"></i>
-                                            <span>Pdf generator</span>
+                                            <i class="bi bi-chat"></i>
+                                            <span>Groups</span>
                                         </a>
                                         <a href="#link-to-code-gen" 
                                             class="tw-flex tw-rounded-sm tw-gap-2 tw-p-2 dark:hover:tw-bg-[#2d2d2ddb] hover:tw-bg-gray-200">
-                                            <i class="bi bi-code-square"></i>
-                                            <span>Code generator</span>
+                                            <i class="bi bi-person-circle"></i>
+                                            <span>Profile</span>
                                         </a>
                                         <a href="#" 
                                             class="tw-flex tw-rounded-sm tw-group tw-gap-2 tw-p-2 dark:hover:tw-bg-[#2d2d2ddb] hover:tw-bg-gray-200">
@@ -439,14 +518,14 @@ export const Hero = () => {
                                 <div class="tw-flex tw-w-full tw-p-4 tw-bg-white dark:tw-bg-black tw-h-full tw-flex-col" id="pixa-playground">
                                     <div class="tw-relative tw-w-full tw-flex tw-place-content-center tw-h-full">
                                         <div class="tw-absolute tw-top-[20%] max-lg:tw-top-[30%] tw-left-1/2 tw--translate-x-1/2  tw-w-[150px] tw-h-[150px]">
-                                            <img src="./assets/logo/logo.png" class="tw-w-full tw-h-full dark:tw-invert tw-object-contain tw-opacity-20"
-                                                alt="Pixa logo"/>
+                                            <img src="/logo3.png" class="tw-w-full tw-h-full dark:tw-invert tw-object-contain tw-opacity-20"
+                                                alt="Firechat logo"/>
                                         </div>
                                         <div class="prompt-container tw-overflow-y-auto tw-px-[5%] max-lg:tw-px-2 scrollbar max-lg:tw-max-h-[80%] tw-max-h-[550px] 
                                                     max-lg:tw-mt-12 tw-w-full tw-h-full tw-z-10 tw-flex tw-flex-col" id="prompt-container">
                                             <div class="tw-w-full tw-flex tw-text-center tw-flex-col tw-place-content-center">
                                                 <h2 class="tw-text-4xl max-md:tw-text-2xl max-md:tw-mt-3 tw-opacity-80">
-                                                    Try Prompts
+                                                    Chat Now
                                                 </h2>
                                                 <div class="tw-inline tw-mt-6 max-md:tw-mt-3">
                                                     <span id="prompts-sample" ></span>
@@ -456,7 +535,7 @@ export const Hero = () => {
                                         
                                     </div>
 
-                                    <form action="" id="prompt-form" onsubmit="return false;" 
+                                    <form action="" id="prompt-form" onSubmit="return false;" 
                                         class="tw-place-content-center tw-mt-auto tw-h-[50px] tw-p-1 tw-place-items-center 
                                                 tw-justify-around tw-flex tw-gap-1 tw-bottom-2 tw-w-full tw-rounded-md tw-bg-[#f3f4f6] dark:tw-bg-[#171717]">
                                         <div class="tw-min-w-[140px] tw-min-h-[80px] max-lg:tw-absolute tw-z-10 tw-top-1 tw-left-1/2 max-lg:tw--translate-x-1/2 
@@ -470,10 +549,11 @@ export const Hero = () => {
                                                 >
                                                     <span class="tw-flex tw-w-fit tw-gap-2 tw-place-items-center">
                                                         <div class="tw-w-[20px] tw-h-[20px]">
-                                                            <img src="./assets/images/brand-logos/openai.svg" 
-                                                                alt="Gpt3.5" class="dropdown-select-icon dark:tw-invert"/>
+                                                        <i class="bi bi-paperclip dropdown-select-icon dark:tw-invert " style={{fontSize:"22px"}}></i>
+                                                            {/* <img src="./assets/images/brand-logos/openai.svg" 
+                                                                alt="Gpt3.5" class="dropdown-select-icon dark:tw-invert"/> */}
                                                         </div>
-                                                        <span class="dropdown-select-text">GPT 4o</span>
+                                                        <span class="dropdown-select-text">Attach</span>
                                                     </span>
                                                     <i class="bi bi-chevron-down tw-ml-auto lg:tw-hidden"
                                                         ></i>
@@ -481,43 +561,33 @@ export const Hero = () => {
                                                         ></i>
                                                 </button>
                                                 <ul class="dropdown-menu tw-shadow-md tw-bottom-[50px] max-lg:tw-top-[105%] max-lg:tw-bottom-[unset]">
+                                                  
                                                     <li class="tw-flex tw-gap-2 tw-place-items-center">
                                                         <div class="tw-w-[20px] tw-h-[20px]">
-                                                            <img src="./assets/images/brand-logos/openai.svg" alt="Gpt-4o" 
-                                                                    class="dropdown-menu-icon dark:tw-invert"/>
+                                                        <i class="bi  bi-file-earmark-pdf dropdown-menu-icon" style={{fontSize:"20px"}}></i>
                                                         </div>
-                                                        <span class="dropdown-text">GPT 4o</span>
-                                                    </li>
-                                                    
-                                                    <li class="tw-flex tw-gap-2 tw-place-items-center">
-                                                        <div class="tw-w-[20px] tw-h-[20px]">
-                                                            <img src="./assets/images/brand-logos/googlegemini.svg" alt="Gemini" 
-                                                            class="dropdown-menu-icon dark:tw-invert"/>
-                                                        </div>
-                                                        <span class="dropdown-text">Gemini</span>
+                                                        <span class="dropdown-text">Pdf</span>
                                                     </li>
                                                     <li class="tw-flex tw-gap-2 tw-place-items-center">
                                                         <div class="tw-w-[20px] tw-h-[20px]">
-                                                            <img src="./assets/images/brand-logos/meta.svg" alt="Llama" 
-                                                                    class="dropdown-menu-icon dark:tw-invert"/>
+                                                        <i class="bi bi-image dropdown-menu-icon" style={{fontSize:"20px"}}></i>
                                                         </div>
-                                                        <span class="dropdown-text">Llama 3</span>
+                                                        <span class="dropdown-text">Image</span>
                                                     </li>
                                                     <li class="tw-flex tw-gap-2 tw-place-items-center">
                                                         <div class="tw-w-[20px] tw-h-[20px]">
-                                                            <img src="./assets/images/brand-logos/claude.svg" alt="Perplexity" 
-                                                                class="dropdown-menu-icon dark:tw-invert"/>
+                                                        <i class="bi bi-file-earmark-code dropdown-menu-icon" style={{fontSize:"20px"}}></i>
                                                         </div>
-                                                        <span class="dropdown-text">Claude</span>
+                                                        <span class="dropdown-text">Doc</span>
                                                     </li>
                                                 </ul>
                                             </div>
                                         </div>
-                                        <input placeholder="How to develop a saas app?" 
+                                        <input placeholder="Start a secure, end-to-end encrypted conversation..."  
                                                 type="text" class="tw-p-2 !tw-outline-none tw-bg-transparent tw-border-none tw-w-full tw-placehoder-gray-500
                                                                     dark:tw-placeholder-opacity-60 dark:tw-placeholder-gray-300 tw-max-w-[80%] tw-h-full" 
                                                 name="prompt" />
-                                        <button type="submit" class="btn !tw-bg-[#6366f1] !tw-p-2 !tw-px-3 !tw-text-white" title="submit">
+                                        <button type="submit" class="btn !tw-bg-[#7f07cf] !tw-p-2 !tw-px-3 !tw-text-white" title="submit">
                                             <i class="bi bi-arrow-up"></i>
                                         </button>
                                     </form>
@@ -604,13 +674,12 @@ export const Hero = () => {
                 ></div>
                 <h2 class="reveal-up tw-text-6xl max-lg:tw-text-4xl tw-text-center tw-leading-normal tw-uppercase">
                     
-                    <span class="tw-font-semibold">Build your own AI Apps </span>
+                    <span class="tw-font-semibold">Connect Globally </span>
                     <br/>
-                    <span class="tw-font-serif">on top of Pixa APIs</span>
+                    <span class="tw-font-serif">with Secure Messaging</span>
                 </h2>
                 <p class="reveal-up tw-mt-8 tw-max-w-[650px] tw-text-gray-900 dark:tw-text-gray-200 tw-text-center max-md:tw-text-sm">   
-                    Pixa's Playground is powered by Pixa's cutting-edge LLM API endpoints. Our powerful models simplify task automation, offering 
-                    advanced capabilities in summarization, text generation, and Q&A handling. 
+                Experience real-time communication with end-to-end encryption. Join thriving professional communities, make video calls, and stay updated with personalized news feeds - all in one secure platform.
                 </p>
                 <div class="reveal-up tw-flex tw-mt-8">
                     <a href="#" 
@@ -618,7 +687,7 @@ export const Hero = () => {
                         rel="noopener"
                         class="tw-shadow-md hover:tw-shadow-xl dark:tw-shadow-gray-800 tw-transition-all tw-duration-300 
                                         tw-border-[1px] tw-p-3 tw-px-4 tw-border-black dark:tw-border-white tw-rounded-md">
-                        Check Pixa APIs
+                       Start Chatting Now
                     </a>
                 </div>
             </div>
@@ -641,13 +710,11 @@ export const Hero = () => {
                         Experience all the benefits of AI
                     </h2>
                 </div>
-                <div
-                    class="tw-mt-6 tw-flex tw-flex-col tw-max-w-[1150px] max-lg:tw-max-w-full tw-h-full 
-                            tw-p-4 max-lg:tw-place-content-center tw-gap-8 "
-                >   
+                <div class="mt-6 flex flex-col max-w-[1150px] max-lg:max-w-full h-full p-4 max-lg:place-content-center gap-8">
+    <div class="flex flex-col lg:flex-row gap-8 place-items-center place-content-center">
 
-                    <div class="max-xl:tw-flex max-xl:tw-flex-col tw-place-items-center tw-grid tw-grid-cols-3 tw-gap-8 
-                                tw-place-content-center tw-auto-rows-auto">
+
+
                         <div class="reveal-up tw-w-[350px] tw-h-[540px] tw-flex max-md:tw-w-full">
                             <a href="#" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
                                 tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
@@ -657,9 +724,9 @@ export const Hero = () => {
                                         alt="unified interface"/>
                                    
                                 </div>
-                                <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Unified interface</h2>
+                                <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Smart Messaging</h2>
                                 <p class="tw-text-base tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                    Our's is the only unified AI Interface tool brings together all your favorite chat models into one seamless platform. No more juggling between different AI systems—easily manage and interact with multiple chatbots from a single interface.
+                                Experience intelligent messaging with real-time grammar correction, message rephrasing, and smart auto-completion. Write perfect messages every time with our AI-powered writing assistance.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -678,9 +745,9 @@ export const Hero = () => {
                                         alt="API" class="tw-w-full tw-h-auto tw-object-contain"/>
                                     
                                 </div>
-                                <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">API Access</h2>
+                                <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">AI-Curated Feed</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                    Pixa's LLM API offers advanced summarization, text generation, and question-answering. Easily integrate with support for JSON, HTML, Markdown, and plain text, enhancing your applications with powerful language tools.
+                                Get personalized news and content tailored to your interests. Our AI analyzes your interactions to deliver relevant professional updates, industry news, and networking opportunities.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -698,9 +765,9 @@ export const Hero = () => {
                                     <img src="./assets/images/home/integrations1.png" class="tw-w-full tw-h-auto tw-object-contain" 
                                             alt="Prebuilt integrations"/>
                                 </div>
-                                <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Pre-built Tools</h2>
+                                <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Smart Media Tools</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                    Pixa offers pre-built AI integrations for diverse creative tasks including image, video, music, and PDF generation, simplifying advanced feature integration into your apps.
+                                Enhance your media with AI-generated captions, automatic image descriptions, and smart formatting. Share professional-looking content effortlessly with our intelligent media tools.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -720,9 +787,9 @@ export const Hero = () => {
                              
                             </div>
                             <div class="tw-flex tw-flex-col tw-gap-4">
-                                <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">Multiple AI models</h2>
+                                <h2 class="tw-text-3xl max-md:tw-text-2xl tw-font-medium">AI Communication Assistant</h2>
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
-                                    Pixa supports various AI models, including ChatGPT, Gemini, Claude, Mistral and more, providing a range of advanced capabilities for various language and creative tasks.
+                                Your personal AI assistant helps with message suggestions, meeting summaries, and professional networking recommendations. Get smart replies, schedule assistance, and communication insights all in one place.
                                 </p>
                                 <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
                                     <span>Learn more</span>
@@ -786,10 +853,11 @@ export const Hero = () => {
 
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h3 class="tw-text-2xl max-md:tw-text-xl">
-                                    AI code generator
+                                Real-time Notifications
                                 </h3>
                                 <p class="tw-text-gray-800 dark:tw-text-gray-100 max-md:tw-text-sm">
-                                    AI code generation tools to create code from natural language or patterns, streamlining development and improving efficiency.
+                                Stay connected with instant notifications for messages, mentions, and community updates. Never miss important conversations or networking opportunities.
+
                                 </p>
 
                                 <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
@@ -812,10 +880,11 @@ export const Hero = () => {
 
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h3 class="tw-text-2xl max-md:tw-text-xl">
-                                    PDF generator
+                                HD Video Calls
                                 </h3>
                                 <p class="tw-text-gray-800 dark:tw-text-gray-100 max-md:tw-text-sm">
-                                    Use AI tools to automate PDF creation and content extraction, improving document management and data processing.
+                                Crystal-clear video calls with automatic background blur, noise cancellation, and live captions.
+
                                 </p>
 
                                 <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
@@ -838,10 +907,10 @@ export const Hero = () => {
 
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h3 class="tw-text-2xl max-md:tw-text-xl">
-                                    Image generation
+                                Professional Communities
                                 </h3>
                                 <p class="tw-text-gray-800 dark:tw-text-gray-100 max-md:tw-text-sm">
-                                    Prebuilt AI tools for image generation create visuals from text or patterns, enhancing design and creative projects.
+                                Join industry-specific groups, share knowledge, and network with professionals worldwide.
                                 </p>
 
                                 <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
@@ -864,10 +933,11 @@ export const Hero = () => {
 
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h3 class="tw-text-2xl max-md:tw-text-xl">
-                                    AI Analytics
+                                Smart News Feed
                                 </h3>
                                 <p class="tw-text-gray-800 dark:tw-text-gray-100 max-md:tw-text-sm">
-                                    Our AI analytics tools analyze data patterns and trends, providing actionable insights and enhancing decision-making.
+                                AI-curated content feed delivering relevant industry news, trends, and networking opportunities.
+
                                 </p>
 
                                 <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
@@ -890,11 +960,10 @@ export const Hero = () => {
 
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h3 class="tw-text-2xl max-md:tw-text-xl">
-                                    Music generator
+                                Secure File Sharing
                                 </h3>
                                 <p class="tw-text-gray-800 dark:tw-text-gray-100 max-md:tw-text-sm">
-                                    Access our AI music generation tools create original compositions 
-                                    from input parameters, enabling effortless music creation for various needs.
+                                Share files securely with end-to-end encryption and smart organization features.
                                 </p>
 
                                 <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
@@ -917,10 +986,11 @@ export const Hero = () => {
 
                             <div class="tw-flex tw-flex-col tw-gap-4">
                                 <h3 class="tw-text-2xl max-md:tw-text-xl">
-                                    Video generator
+                                Network Insights
                                 </h3>
                                 <p class="tw-text-gray-800 dark:tw-text-gray-100 max-md:tw-text-sm">
-                                    Use our AI video generation tools create videos from text or templates, streamlining content creation and production.
+                                Track your networking growth, engagement metrics, and community impact with detailed analytics.
+                            
                                 </p>
 
                                 <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
@@ -964,11 +1034,10 @@ export const Hero = () => {
                                     alt="Prompt library" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
-                            Prompt Library
+                        Personalized News Feed
                         </h3>
                         <p class="tw-text-gray-700 dark:tw-text-gray-300 tw-px-4 tw-text-center tw-text-sm">
-                            Forget about writing your own prompt, use the prompt templates and supercharge your
-                            workflow.
+                        Stay updated with trending news, industry updates, and content tailored to your interests and network.
                         </p>
                     </div>
                     
@@ -984,10 +1053,10 @@ export const Hero = () => {
                                     alt="Web search" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
-                            Real-time web search
+                        Smart Networking
                         </h3>
                         <p class="tw-text-gray-700 dark:tw-text-gray-300 tw-px-4 tw-text-center tw-text-sm">
-                            Our Real-time web search AI Bot provides instant, live search results directly within the AI chat playground.
+                        Connect with professionals, join communities, and expand your network with AI-powered recommendations.
                         </p>
                     </div>
 
@@ -1003,10 +1072,10 @@ export const Hero = () => {
                                     alt="Image generation" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
-                            Image Generation
+                        Rich Content Sharing
                         </h3>
                         <p class="tw-text-gray-700 dark:tw-text-gray-300 tw-px-4 tw-text-center tw-text-sm">
-                            Generate Image instantly from multiple models, create visuals from text descriptions or templates.
+                        Share articles, media, and updates with your network. Engage through comments, reactions, and discussions.
                         </p>
                     </div>
 
@@ -1061,10 +1130,10 @@ export const Hero = () => {
                                     alt="Multilingual" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
-                            Multilingual support
+                            Global Reach
                         </h3>
                         <p class="tw-text-gray-700 dark:tw-text-gray-300 tw-px-4 tw-text-center tw-text-sm">
-                            ChatGPT, and Gemini can understand and respond in over 100 languages.
+                        Connect with friends worldwide through real-time translation in over <NumberTicker value={100}/> languages. Break language barriers effortlessly.
                         </p>
                     </div>
 
@@ -1073,47 +1142,7 @@ export const Hero = () => {
             </div>
         </section>
 
-        <section
-            class="tw-relative tw-flex  tw-w-full tw-min-h-[100vh] max-md:tw-min-h-[80vh] tw-flex-col tw-place-content-center tw-place-items-center tw-overflow-hidden"
-        >   
-            <div class="tw-w-full max-lg:tw-max-w-full tw-place-content-center tw-place-items-center 
-                        tw-flex tw-flex-col tw-max-w-[80%] tw-gap-4 tw-p-4">
-               
-                <h3 class="reveal-up tw-text-5xl tw-font-medium max-md:tw-text-3xl tw-text-center tw-leading-normal">
-                    One Subscription for it all
-                </h3>
-                <p class="reveal-up tw-mt-3 tw-max-w-[600px] tw-text-center ">
-                    Why pay for multiple expensive subscriptions when one subscription can do it all?
-                    Access multiple AI models and save 1000's of dollar per year. 
-                </p>
-                
-                <div class="tw-mt-8 tw-relative tw-flex max-lg:tw-flex-col tw-gap-5">
-
-                    <div
-                        class="reveal-up tw-flex tw-w-full tw-max-w-[650px] max-md:tw-max-w-full tw-flex-col tw-place-items-center tw-gap-2 tw-rounded-lg tw-border-[1px]
-                            tw-border-outlineColor tw-bg-white dark:tw-bg-[#080808] dark:tw-border-[#1f2123] tw-p-2 tw-shadow-xl max-lg:tw-w-[320px]"
-                            >
-                        <img src="./assets/images/home/multi-sub.png" 
-                            alt="Multi sub"/>
-                    </div>
-
-                     <div
-                        class="reveal-up tw-flex tw-w-full tw-max-w-[650px] tw-flex-col tw-place-items-center tw-gap-2 tw-rounded-lg tw-border-[1px]
-                            tw-border-outlineColor tw-bg-white dark:tw-bg-[#080808] dark:tw-border-[#1f2123] tw-p-2 tw-shadow-xl max-lg:tw-w-[320px]"
-                            >
-                        <img src="./assets/images/home/single-sub.jpg" 
-                            alt="Single sub"/>
-                    </div>
-
-                </div>
-
-                <a href="#" class="reveal-up tw-group tw-shadow-xl btn tw-flex tw-gap-2 tw-mt-10">
-                    <span>Start Chat</span>
-                    <i class="bi bi-arrow-right tw-duration-300 group-hover:tw-translate-x-1"></i>
-                </a>
-
-            </div>
-        </section>
+      
 
         <section
             class="tw-flex tw-min-h-[100vh] tw-w-full tw-flex-col tw-place-content-center tw-place-items-center tw-p-[2%]"
@@ -1121,7 +1150,7 @@ export const Hero = () => {
             <h3
                 class="reveal-up tw-text-4xl tw-font-medium tw-text-center max-md:tw-text-2xl"
             >
-                Join the professionals using Pixa
+                Join the professionals using FireChat
             </h3>
            
             <div
@@ -1144,14 +1173,13 @@ export const Hero = () => {
                             />
                         </div>
                         <div class="tw-flex tw-flex-col tw-gap-1">
-                            <div class="tw-font-semibold">Mante</div>
-                            <div class="tw-text-gray-700 dark:tw-text-gray-300">Glu, cto</div>
+                            <div class="tw-font-semibold">Akhil R</div>
+                            <div class="tw-text-gray-700 dark:tw-text-gray-300">Tech Lead, Infosys</div>
                         </div>
                     </div>
 
                     <p class="tw-mt-4 tw-text-gray-800 dark:tw-text-gray-200">
-                        Lorem ipsum dolor sit amet consectetur, adipisicing
-                        elit. Beatae, vero. Lorem ipsum dolor sit amet consectetur adipisicing elit. Magnam dolore deleniti iusto Numquam!
+                    FireChat has transformed how our team communicates. The real-time translation feature helps us collaborate seamlessly with global teams. The interface is intuitive and the security features give us peace of mind
                     </p>
                 </div>
 
@@ -1178,8 +1206,7 @@ export const Hero = () => {
                     </div>
 
                     <p class="tw-mt-4 tw-text-gray-800 dark:tw-text-gray-200">
-                        Lorem ipsum dolor sit amet consectetur, adipisicing
-                        elit. Beatae, vero. Lorem ipsum dolor sit amet.
+                    The group chat features are incredible! Creating and managing multiple communities has never been easier. The smart notifications keep me focused on what matters
                     </p>
                 </div>
 
@@ -1200,13 +1227,13 @@ export const Hero = () => {
                             />
                         </div>
                         <div class="tw-flex tw-flex-col tw-gap-1">
-                            <div class="tw-font-semibold">John B</div>
+                            <div class="tw-font-semibold">Hari</div>
                             <div class="tw-text-gray-700 dark:tw-text-gray-300">Benz, ceo</div>
                         </div>
                     </div>
 
                     <p class="tw-mt-4 tw-text-gray-800 dark:tw-text-gray-200">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ea, expedita nihil repellendus accusamus itaque facere labore, suscipit tempore in harum repellat. Doloribus, dolor facere dolorem impedit facilis rerum beatae exercitationem aliquid porro ea architecto similique illo omnis odio consequatur modi.
+                    The video calling quality is exceptional, and the smart notifications keep me updated without being overwhelming. FireChat has become an essential part of our daily communication workflow
                     </p>
                 </div>
 
@@ -1227,14 +1254,13 @@ export const Hero = () => {
                             />
                         </div>
                         <div class="tw-flex tw-flex-col tw-gap-1">
-                            <div class="tw-font-semibold">Ben Alfert B</div>
+                            <div class="tw-font-semibold">Vishwa</div>
                             <div class="tw-text-gray-700 dark:tw-text-gray-300">XZ tech, cto</div>
                         </div>
                     </div>
 
                     <p class="tw-mt-4 tw-text-gray-800 dark:tw-text-gray-200">
-                        Lorem ipsum dolor sit amet consectetur, adipisicing
-                        elit. Beatae, vero.
+                    The community features are fantastic! I've connected with amazing professionals and the file sharing capabilities make collaboration effortless. The end-to-end encryption gives us confidence in sharing sensitive information.
                     </p>
                 </div>
 
@@ -1261,8 +1287,7 @@ export const Hero = () => {
                     </div>
 
                     <p class="tw-mt-4 tw-text-gray-800 dark:tw-text-gray-200">
-                        Lorem ipsum dolor sit amet consectetur, adipisicing
-                        elit. Beatae, vero. Lorem, ipsum dolor.
+                    The real-time translation feature is a game-changer for our global team. We can communicate effortlessly across languages while maintaining perfect clarity!
                     </p>
                 </div>
 
@@ -1289,7 +1314,7 @@ export const Hero = () => {
                     </div>
 
                     <p class="tw-mt-4 tw-text-gray-800 dark:tw-text-gray-200">
-                        Lorem ipsum dolor, sit amet consectetur adipisicing elit. Est, nihil vitae fuga ab reiciendis optio et corporis dolorem alias deserunt, molestias in iusto! Ratione, quisquam incidunt. Reprehenderit ipsam officiis enim.
+                    FireChat's end-to-end encryption gives us complete confidence in our communications. The multimedia sharing is smooth, and the interface is super intuitive!
                     </p>
                 </div>
                
@@ -1319,7 +1344,7 @@ export const Hero = () => {
                         <span class="tw-text-2xl tw-text-gray-600 dark:tw-text-gray-300">/mo</span>
                     </h3>
                     <p class="tw-mt-3 tw-text-center tw-text-gray-800 dark:tw-text-gray-100">
-                       Essential AI tools for everyday use
+                       Starter Plan
                     </p>
                     <hr />
                     <ul
@@ -1327,20 +1352,20 @@ export const Hero = () => {
                     >
                         <li class="tw-flex tw-gap-2">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>1,000 AI powered chat messages</span>    
+                            <span>Up to 5 group chats</span>    
                         </li>
                         <li class="tw-flex tw-gap-2">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>30 premium image generations</span>    
+                            <span>100 members per group</span>    
                         </li>
                         <li class="tw-flex tw-gap-2">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>10 premium  music generation</span>    
+                            <span>HD video calls (up to 10 participants)</span>
                         </li>
 
                         <li class="tw-flex tw-gap-2 ">
                             <i class="bi bi-check-circle-fill tw-text-gray-400 dark:tw-text-gray-500"></i>
-                            <span>Access to all premium AI models</span>    
+                            <span>Basic file sharing (up to 100MB)</span>    
                         </li>
 
                         <li class="tw-flex tw-gap-2 ">
@@ -1368,7 +1393,7 @@ export const Hero = () => {
                         <span class="tw-text-2xl max-md:tw-text-xl  tw-text-gray-600 dark:tw-text-gray-300">/mo</span>
                     </h3>
                     <p class="tw-mt-3 tw-text-center tw-text-gray-800 dark:tw-text-gray-200">
-                        Advanced features for serious AI enthusiasts.
+                    Professional Plan
                     </p>
                     <hr />
                     <ul
@@ -1376,25 +1401,25 @@ export const Hero = () => {
                     >
                         <li class="tw-flex tw-gap-2">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>5,000 AI powered chat messages</span>    
+                            <span>Unlimited group chats</span>    
                         </li>
                         <li class="tw-flex tw-gap-2">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>100 premium image generations</span>    
+                            <span>500 members per group</span>    
                         </li>
                         <li class="tw-flex tw-gap-2">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>40 premium music generation</span>    
+                            <span>4K video calls (up to 50 participants)</span>    
                         </li>
 
                         <li class="tw-flex tw-gap-2 ">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>Access to all premium AI models</span>    
+                            <span>Advanced file sharing (up to 1GB)</span>    
                         </li>
 
                         <li class="tw-flex tw-gap-2 ">
                             <i class="bi bi-check-circle-fill tw-text-gray-400 dark:tw-text-gray-500"></i>
-                            <span>Early access to new features</span>    
+                            <span>Priority support</span>    
                         </li>
                   
                     </ul>
@@ -1415,7 +1440,7 @@ export const Hero = () => {
                         <span class="tw-text-2xl tw-text-gray-600 dark:tw-text-gray-300">/mo</span>
                     </h3>
                     <p class="tw-mt-3 tw-text-center tw-text-gray-800 dark:tw-text-gray-100">
-                        Unlimited potential for power users
+                        Unlimited potential for Enterprise users
                     </p>
                     <hr />
                     <ul
@@ -1424,20 +1449,20 @@ export const Hero = () => {
                     >
                         <li class="tw-flex tw-gap-2">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>10,000 AI powered chat messages</span>    
+                            <span>Unlimited everything</span>    
                         </li>
                         <li class="tw-flex tw-gap-2">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>300 premium image generations</span>    
+                            <span>1000+ members per group</span>    
                         </li>
                         <li class="tw-flex tw-gap-2">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>100 premium music generations</span>    
+                            <span>Enterprise file sharing (up to 5GB)</span>    
                         </li>
 
                         <li class="tw-flex tw-gap-2 ">
                             <i class="bi bi-check-circle-fill"></i>
-                            <span>Access to all premium AI models</span>    
+                            <span>24/7 dedicated support</span>    
                         </li>
 
                         <li class="tw-flex tw-gap-2 ">
@@ -1489,16 +1514,16 @@ export const Hero = () => {
 
                     <div class="tw-text-gray-600 dark:tw-text-gray-300 tw-justify-between tw-flex tw-gap-2">
                         <div class="tw-text-gray-800 dark:tw-text-gray-200">
-                            Machine learning
+                            Tools
                         </div>
                         <div class="tw-text-gray-600 dark:tw-text-gray-400">
-                            Jul, 17, 2024
+                           Dec 2, 2024
                         </div>
                     </div>
                     <h3
                         class="tw-mt-1 tw-font-medium tw-text-xl max-md:tw-text-xl"
                     >
-                        Latest AI tools
+                        How Chat Works?
                     </h3>
                     
                 </a>
@@ -1523,13 +1548,13 @@ export const Hero = () => {
                             Announcement
                         </div>
                         <div class="tw-text-gray-600 dark:tw-text-gray-400">
-                            June, 22, 2024
+                            Nov 25 , 2024
                         </div>
                     </div>
                     <h3
                         class="tw-mt-1 tw-font-medium tw-text-xl max-md:tw-text-xl"
                     >
-                        Pixa Unveils new technology
+                        FireChat Unveils new technology
                     </h3>
                     
                 </a>
@@ -1551,16 +1576,16 @@ export const Hero = () => {
 
                     <div class="tw-text-gray-600 dark:tw-text-gray-300 tw-justify-between tw-flex tw-gap-2">
                         <div class="tw-text-gray-800 dark:tw-text-gray-200">
-                            Announcement
+                           Document
                         </div>
                         <div class="tw-text-gray-600 dark:tw-text-gray-400">
-                            Apr, 27, 2024
+                           Oct, 27, 2024
                         </div>
                     </div>
                     <h3
                         class="tw-mt-1 tw-font-medium tw-text-xl max-md:tw-text-xl"
                     >
-                        Launching Pixa playground
+                        How to Use?
                     </h3>
                     
                 </a>
@@ -1576,7 +1601,7 @@ export const Hero = () => {
             <h3
                 class="tw-text-4xl tw-font-medium max-md:tw-text-2xl"
             >
-                Faq
+                Frequently Asked Questions
             </h3>
             <div
                 class="tw-mt-5 tw-flex tw-min-h-[300px] tw-w-full tw-max-w-[850px] tw-flex-col tw-gap-4"
@@ -1587,13 +1612,13 @@ export const Hero = () => {
                     <h4
                         class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg"
                     >
-                        <span>What's Pixa playground?</span>
+                        <span>What is FireChat?</span>
                         <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform 
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        Pixa's playground is an integrated webapp to seamlessly test different LLM models such as GPT4, Claude,
-                        Gemini, etc.
+                    FireChat is a powerful real-time messaging platform that connects you with friends, communities, and professional networks. It offers secure messaging, HD video calls, and smart group management features.
+
                     </div>
                 </div>
                 <hr/>
@@ -1603,12 +1628,12 @@ export const Hero = () => {
                     <h4
                         class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg"
                     >
-                        <span>What are LLM?</span>
+                        <span>What makes FireChat different?</span>
                         <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform 
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        LLM stands for "Large Language Model." It's a type of artificial intelligence model trained on vast amounts of text data to understand and generate human-like text. These models, like GPT-4, can perform various tasks, such as answering questions, generating content, translating languages, and more, by leveraging patterns learned from the data they were trained on.
+                    FireChat stands out with its real-time translation, end-to-end encryption, and smart community features. Our platform supports unlimited group sizes, HD video calls, and seamless file sharing across devices.
                     </div>
                 </div>
                 <hr/>
@@ -1618,13 +1643,12 @@ export const Hero = () => {
                     <h4
                         class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg"
                     >
-                        <span>Where can I test different AI models?</span>
+                        <span>How many people can join a group?</span>
                         <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform 
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        You can use Pixa's AI Playground to test different models, including
-                        GPT4, Claude, Perplexity and more. 
+                    Free users can create groups with up to 100 members. Professional plans support 500+ members, while Enterprise users enjoy unlimited group sizes with advanced management features.
                     </div>
                 </div>
                 <hr/>
@@ -1635,12 +1659,12 @@ export const Hero = () => {
                     <h4
                         class="faq-accordion tw-flex tw-w-full tw-select-none tw-text-xl max-md:tw-text-lg"
                     >
-                        <span>Is Pixa Free to use?</span>
+                        <span>Is FireChat secure?</span>
                         <i class="bi bi-plus tw-text-xl tw-origin-center tw-duration-300 tw-transition-transform 
                                     tw-ml-auto tw-font-semibold"></i>
                     </h4>
                     <div class="content max-lg:tw-text-sm">
-                        You can start using Pixa for free, and later upgrade your plan to access all its features.
+                    Yes! FireChat uses Advance end-to-end encryption for all messages and calls. Your privacy is our priority, with additional security features available in Professional and Enterprise plans.
                     </div>
                 </div>
                 <hr/>
@@ -1659,13 +1683,13 @@ export const Hero = () => {
                         tw-flex tw-flex-col tw-max-w-[80%] tw-gap-4 tw-p-4">
                
                 <h3 class="reveal-up tw-text-5xl tw-font-medium max-md:tw-text-3xl tw-text-center tw-leading-normal">
-                    Access and compare multiple AI models 
+                Connect and Chat with Your World
                 </h3>
               
-                <div class="tw-mt-8 tw-relative tw-flex max-lg:tw-flex-col tw-gap-5">
+                <div class="tw-mt-8 tw-relative tw-flex max-lg:tw-flex-col tw-gap-5" onClick={signin}>
 
-                    <a href="#" class="btn  reveal-up !tw-rounded-full !tw-p-4 tw-font-medium">
-                        Launch Playground
+                    <a class="btn  reveal-up !tw-rounded-full !tw-p-4 tw-font-medium">
+                        Start Now
                     </a>
                 </div>
 
@@ -1715,32 +1739,32 @@ export const Hero = () => {
                 >   
                     <a href="#" class="tw-w-full tw-place-items-center tw-flex tw-flex-col tw-gap-6">
                         <img
-                            src="./assets/logo/logo.png"
+                            src="/logo3.png"
                             alt="logo"
                             srcset=""
                             class="tw-max-w-[120px] dark:tw-invert"
                         />
                         <div class="tw-max-w-[120px] tw-text-center tw-text-3xl tw-h-fit">
-                            PIXA
+                        FireChat
                         </div>
                     </a>
                    
                     <div class="tw-flex tw-gap-4 tw-text-lg">
                         <a
-                            href="https://github.com/PaulleDemon/"
+                            href="https://github.com/alex7842/" target="_BLANK"
                             aria-label="Github"
                         >
                             <i class="bi bi-github"></i>
                         </a>
                         <a
-                            href="https://twitter.com/pauls_freeman"
+                            href="https://x.com/ALEX_444777" target="_BLANK"
                             aria-label="Twitter"
                         >
                             <i class="bi bi-twitter"></i>
                         </a>
                       
                         <a
-                            href="https://www.linkedin.com/"
+                            href="https://www.linkedin.com/in/alex7842/" target="_BLANK"
                             aria-label="Linkedin"
                         >
                             <i class="bi bi-linkedin"></i>
@@ -1768,8 +1792,8 @@ export const Hero = () => {
                             <a href="#" class="footer-link">Support channels</a>
                             <a href="#" class="footer-link">Systems</a>
                             <a href="#" class="footer-link">Blog</a>
-                            <a href="https://twitter.com/pauls_freeman" class="footer-link">Twitter</a>
-                            <a href="https://github.com/PaulleDemon" class="footer-link">Github</a>
+                            <a href="https://x.com/ALEX_444777" class="footer-link">Twitter</a>
+                            <a href="https://github.com/alex7842/" class="footer-link">Github</a>
                         </div>
                     </div>
 
@@ -1793,7 +1817,7 @@ export const Hero = () => {
 
         </footer>
     </body>
-     */}
+    
 
 
     </>

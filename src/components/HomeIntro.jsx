@@ -23,13 +23,14 @@ import { registerForPushNotifications } from '../utils/fcmUtils';
 import { sendNotification } from '../utils/notificationUtils';
 import { motion } from 'framer-motion';
 import { Skeleton } from 'antd';
-
+import { UserIcon } from 'lucide-react';
 import { Share } from './Share';
 import { PostModal } from './PostModal';
 import { Story } from './Story';
 import { StoryView } from './StoryView';
 import { StoryUpload } from './StoryUpload';
 import { AllStories } from './AllStories';
+import PersonalizedFeed from './PersonalFeed';
 const HomeIntro = () => {
   const [postData,setpostData]=useState([]);
   const[loading,setLoading]=useState(false);
@@ -47,8 +48,7 @@ const HomeIntro = () => {
   const [newsLikes, setNewsLikes] = useState({});
   const [newsComments, setNewsComments] = useState({});
   const [Sharemodel,setSharemodel]=useState(false);
-  
-
+  const[personal,setpersonal]=useState(false);
 useEffect(() => {
   const handleForegroundNotifications = async () => {
     const token = await registerForPushNotifications(user.uid);
@@ -534,7 +534,16 @@ const isValidImageUrl = (url) => {
       >
         <PostModal postData={postData} setpostData={setpostData} />
       </Modal>
-
+      <Modal
+        open={personal}
+        onCancel={() => setpersonal(false)}
+        width={1000}
+        footer={null}
+        className=""
+        style={{ top: 20 }}
+      >
+        <PersonalizedFeed  />
+      </Modal>
       <Modal 
         open={Sharemodel}
         onCancel={() => setSharemodel(false)}
@@ -612,7 +621,7 @@ const isValidImageUrl = (url) => {
           <div className="bg-white p-[2px] rounded-full flex items-center justify-center relative z-10">
             <Avatar
               size={48}
-              src="/newslogo.png"
+              src="/logo2.png"
               alt="FireChat"
               className="story-avatar"
             />
@@ -693,7 +702,7 @@ className="text-6xl text-red-500 animate-like-heart"
                             <div className="flex items-center justify-between p-3 border-b">
                               <div className="flex items-center space-x-3">
                                 <Avatar 
-                                  src={item.isNews ? '/newslogo.png' : item.profile} 
+                                  src={item.isNews ? '/logo3.png' : item.profile} 
                                   size={32}
                                   className="cursor-pointer"
                                   onClick={() => handlenavigate(item.uid, item.isNews)}
@@ -819,7 +828,18 @@ className="text-6xl text-red-500 animate-like-heart"
                 {/* Suggestions Sidebar */}
                 <div className="hidden md:block w-[320px] flex-shrink-0">
                   <div className="sticky top-4">
-                    <Card title={`Suggestions for you ${user.displayName}`} className="rounded-lg">
+                    <Card title={`Suggestions for you ${user.displayName}` }
+                    extra={
+                      <button 
+                      onClick={()=>{
+                        setpersonal(true);
+                      }}
+                      className="px-2 py-1.5 bg-violet-500 text-white rounded-full text-sm font-medium hover:bg-violet-600 transition-all duration-300 flex items-center gap-2">
+                        <UserIcon size={16} />
+                        Personalize
+                      </button>
+                    }
+                     className="rounded-lg">
                       {suggestedUsers.length === 0 ? (
                         <List
                           itemLayout="horizontal"
@@ -841,8 +861,8 @@ className="text-6xl text-red-500 animate-like-heart"
                           itemLayout="horizontal"
                           dataSource={suggestedUsers}
                           renderItem={user => (
-                            <List.Item    onClick={() => handlenavigate(user.uid, false)}>
-                              <List.Item.Meta
+                            <List.Item  >
+                              <List.Item.Meta className='cursor-pointer'  onClick={() => handlenavigate(user.uid, false)}
                                 avatar={<Avatar src={user.photoURL} />}
                                 title={user.displayName}
                               />

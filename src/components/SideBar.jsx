@@ -128,8 +128,9 @@ export const SideBar = ({showChat}) => {
 
     <Menu className="h-full border-r-0">
       <Divider />
-      <div className="ml-4 flex justify-start">
-        <Typography.Title level={2} className="hover:scale-105 transition-transform">FireChat</Typography.Title>
+      <div className="ml-4 flex justify-start items-center gap-3">
+        <img className="w-8  h-8" src="/logo3.png"/>
+        <Typography.Title level={2} className="hover:scale-105 transition-transform mt-2">FireChat</Typography.Title>
       </div>
       <div className="flex flex-col gap-5 mt-8">
         {menuItems.map((item) => (
@@ -168,7 +169,7 @@ export const SideBar = ({showChat}) => {
           onClick={() => handleclick(item.key)}
           className={`p-2 rounded-full transition-all duration-300 active:scale-90 hover:bg-gray-100 ${
             selectedKey === item.key
-              ? 'text-primary scale-110 shadow-md'
+              ? 'text-violet-500 scale-110 shadow-md'
               : 'text-gray-600 hover:scale-105'
           }`}
         >

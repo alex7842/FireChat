@@ -24,8 +24,8 @@ export const VideoPlayer = ({ user1, audioTrack, toggleAudio }) => {
       
       {/* User name overlay */}
       <div className="absolute bottom-4 left-4 flex items-center space-x-2">
-        <div className="bg-primary/80 backdrop-blur-sm px-3 py-1.5 rounded-full">
-          <span className="text-secondary font-medium">
+        <div className="bg-violet-500 backdrop-blur-sm px-3 py-1.5 rounded-full">
+          <span className="text-white font-medium">
             {user1.username || 'Anonymous'}
           </span>
         </div>
@@ -35,12 +35,12 @@ export const VideoPlayer = ({ user1, audioTrack, toggleAudio }) => {
       <div className="absolute bottom-4 right-4 flex items-center space-x-2">
         <button
           onClick={toggleAudio}
-          className="bg-primary/80 hover:bg-primary/80 backdrop-blur-sm p-2.5 rounded-full transition-colors duration-200"
+          className="bg-violet-500 hover:bg-violet-600 text-white backdrop-blur-sm p-2.5 rounded-full transition-colors duration-200"
         >
           {audioTrack && audioTrack.enabled ? (
-            <Mic className="w-5 h-5 text-secondary" />
+            <Mic className="w-5 h-5 text-white" />
           ) : (
-            <MicOff className="w-5 h-5 text-red-500" />
+            <MicOff className="w-5 h-5 text-black" />
           )}
         </button>
       </div>

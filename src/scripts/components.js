@@ -1,6 +1,6 @@
 
 
-class Dropdown {
+export class Dropdown {
     constructor(selector, onChange) {
         this.dropdown = document.querySelector(selector)
         this.toggleButton = this.dropdown.querySelector('.dropdown-toggle')
@@ -66,7 +66,7 @@ class Dropdown {
 }
 
 
-class Prompt{
+export class Prompt{
 
     constructor(target){
         this.playground = document.querySelector(target)

@@ -1,12 +1,16 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useContext} from 'react'
 import { Avatar,Modal } from 'antd'
 import { db} from '@/config/firebase'
-import { collection, getDocs, onSnapshot, query, where,Timestamp } from 'firebase/firestore'
+import { collection, getDocs, onSnapshot, query, where,Timestamp,updateDoc } from 'firebase/firestore'
 import { StoryView } from './StoryView'
+import ChatContext from './context/ChatContext'
+import UserContext from './context/context'
 export const AllStories = () => {
     const [stories,setStories]=useState([])
     const [storyViewModal,setStoryViewModal]=useState(false);
     const [selectedStory,setSelectedStory]=useState(null);
+    const {user}=useContext(UserContext)
+    const {storytrigger,setstorytrigger}=useContext(ChatContext)
     useEffect(() => {
         const fetchstories = async () => {
           const storyref = collection(db, 'stories');
@@ -36,7 +40,7 @@ export const AllStories = () => {
         }
       
         fetchstories();
-      }, [])
+      }, [user])
       
   return (
     <>

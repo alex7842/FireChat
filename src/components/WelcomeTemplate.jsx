@@ -21,7 +21,7 @@ export const WelcomeTemplate = () => {
         className="mb-8"
       >
         <motion.img
-          src="/newslogo.png" 
+          src="/logo3.png" 
           alt="FireChat Logo"
           className="w-32 h-32"
           animate={{

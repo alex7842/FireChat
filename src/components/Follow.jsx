@@ -83,7 +83,7 @@ export const Follow = ({uid1,username1,userurl1}) => {
         timestamp: new Date(),
         message: `${user.displayName} sent you a friend request`
     });
-    settrack("Request Sent")
+    settrack("Requested")
     const recipientDoc = await getDoc(doc(db, "users", uid1));
     const recipientFcmToken = recipientDoc.data().fcmToken;
     console.log(" sharing user recipientFcmToken",recipientFcmToken);

@@ -120,9 +120,20 @@ export const UserList = ({ onUserSelect }) => {
     // User is active if they were active today AND within the last 2 minutes
     return isToday && isWithinTwoMinutes;
   };
+  function formatTimeAgo(date) {
+    const now = new Date();
+    const diffInSeconds = Math.floor((now - date) / 1000);
+    
+    if (diffInSeconds < 60) return 'just now';
+    if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+    if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+    return `${Math.floor(diffInSeconds / 86400)}d ago`;
+  }
+  
   
   return (
-<div className="users-container p-4">
+<div className="users-container p-4 h-full overflow-y-auto touch-pan-y -webkit-overflow-scrolling-touch  md:border-gray-200 ">
+
   {/* Centered Search Container */}
   <div className="max-w-xl mx-auto mb-6">
     <div className="relative group">
@@ -170,14 +181,17 @@ export const UserList = ({ onUserSelect }) => {
       {users.map(user1 => {
         const userIsActive = isActive(user1);
         const hasNewMessage = user?.newMessages?.includes(user1.uid);
+        const lastActive = user1.lastactive?.toDate();
+  const timeAgo = lastActive ? formatTimeAgo(lastActive) : 'Never';
 
         return (
+          <div className=''>
           <li
             key={user1.id}
             className="user-item p-3 rounded-lg 
                      hover:bg-blue-50 hover:border-blue-200
                      transition-all cursor-pointer 
-                     border border-gray-200"
+                     border border-gray-200 "
             onClick={() => handleid(user1.uid, user1.displayName, user1.photoURL, user1.email)}
           >
             <Flex align="center" justify="space-between">
@@ -200,16 +214,19 @@ export const UserList = ({ onUserSelect }) => {
                   <p className="font-medium text-gray-800 text-sm">
                     {user1.displayName.charAt(0).toUpperCase() + user1.displayName.slice(1)}
                   </p>
-                  {userIsActive && (
-                    <span className="text-xs text-green-600">Active now</span>
-                  )}
+                  {userIsActive ? (
+                <span className="text-xs text-green-600">Active now</span>
+              ) : (
+                <span className="text-xs text-gray-500">Last seen {timeAgo}</span>
+              )}
                 </div>
               </Flex>
               {hasNewMessage && (
-                <Badge count={<MessageOutlined style={{ color: '#1890ff' }} />} />
+                <Badge count={<MessageOutlined  className='text-violet-500 text-xl' />} />
               )}
             </Flex>
           </li>
+          </div>
         );
       })}
     </ul>

@@ -128,7 +128,7 @@ export const Story = ({ onclose }) => {
         block 
         onClick={uploadStory}
         loading={uploading}
-        className="bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white"
+        className="bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:violet-600  text-black"
       >
         Share Story
       </Button>

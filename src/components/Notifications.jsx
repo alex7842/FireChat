@@ -50,14 +50,18 @@ export const Notifications = () => {
                 <h2 className="text-2xl font-bold mb-4 bg-gradient-to-r from-violet-500 to-fuchsia-500 text-transparent bg-clip-text">Notifications</h2>
                 {notifications.length === 0 ? (
                     <div className="flex flex-col items-center justify-center h-[60vh]">
-                        <img 
-                            src="/notify.jpeg" 
-                            alt="No notifications" 
-                            className="w-64 h-64 mb-4"
-                        />
-                        <h3 className="text-xl font-semibold text-gray-700">No Notifications Yet</h3>
-                        <p className="text-gray-500 mt-2">You're all caught up! Check back later.</p>
-                    </div>
+                    <svg 
+                      className="w-64 h-64 text-gray-300" 
+                      viewBox="0 0 24 24" 
+                      fill="none" 
+                      stroke="currentColor" 
+                      strokeWidth="1"
+                    >
+                      <path d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2zm-2 1H8v-6c0-2.48 1.51-4.5 4-4.5s4 2.02 4 4.5v6z"/>
+                    </svg>
+                    <h3 className="text-xl font-semibold text-gray-700 mt-6">No Notifications Yet</h3>
+                    <p className="text-gray-500 mt-2">You're all caught up! Check back later.</p>
+                  </div>
                 ) : (
                     <AnimatedList delay={800} className="space-y-4" key="notification-list">
                         {notifications.map((notification) => (

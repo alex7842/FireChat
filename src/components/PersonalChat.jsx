@@ -1,7 +1,7 @@
 import React, { useEffect, useState,useContext,useMemo } from 'react'
 import {Flex, Typography, Space} from 'antd';
 import { AudioOutlined,SendOutlined,UploadOutlined,FileImageOutlined ,SmileOutlined,LoadingOutlined,ArrowLeftOutlined } from '@ant-design/icons';
-import { Button, Popover,Modal,Form,Input,Select,message,Upload,Progress,Image,Empty} from 'antd';
+import { Button, Popover,Modal,Form,Input,Select,message,Upload,Progress,Image,Empty,Tooltip} from 'antd';
 import { MessageCircleReply } from 'lucide-react';
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { ChatOptions } from './ChatOptions';
@@ -52,9 +52,10 @@ const [isThemeDrawerVisible, setIsThemeDrawerVisible] = useState(false);
 const [chatBackground, setChatBackground] = useState('#ffffff');
 const { suggestions, loading, error, fetchSuggestions,setSuggestions } = ai();
 const [messageTheme, setMessageTheme] = useState({
-  msgRight: '#BA38D0', // Default violet
-  msgLeft: '#CECECE'  // Default white
+  msgRight: '#8A4FFF', // Rich purple that's easy on the eyes
+  msgLeft: '#EFEFEF'   // Soft gray that maintains readability
 });
+
  const chats = useMemo(() => {
   if (personalChats) {
     setload(true)
@@ -375,7 +376,7 @@ const suffix = (
     <>
     <Ai text={text} settext={settext} />
     
-    <ImagePlay onClick={showModal2} style={{fontSize: 18, color: '#1677ff',cursor:"pointer"}} />
+    <Tooltip placement='top' title="Send Image"><ImagePlay onClick={showModal2} style={{fontSize: 18,cursor:"pointer"}}  className='text-violet-500'/></Tooltip>
     <Modal
   title="Select and Send Image"
   open={isModalVisible}
@@ -396,16 +397,16 @@ const suffix = (
         <Empty />
       )}
     </div>
-    <div className="w-full flex justify-between items-center">
+    <div className="w-full flex justify-center items-center gap-2">
       <Upload
         accept="image/*"
         showUploadList={false}
         onChange={handleFileChange}
       >
-        <Button icon={<UploadOutlined />} size="large">Select File</Button>
+        <Button className='' icon={<UploadOutlined />} size="large">Select File</Button>
       </Upload>
       {selectedFile && (
-        <Button
+        <Button 
           type="primary"
           icon={<SendOutlined />}
           onClick={handleSend}
@@ -419,19 +420,21 @@ const suffix = (
 </Modal>
 
          <Popover content={ <><a className='side' onClick={()=>setPopoverVisible(false)}>❌</a><Space/>
-          <EmojiPicker  onEmojiClick={handleEmojiClick}searchDisabled  height={300}/></>}
+         <EmojiPicker  onEmojiClick={handleEmojiClick}searchDisabled  height={300}/></>}
       placement="leftTop"
       trigger="click"
       open={popoverVisible}
       onOpenChange={handlePopoverOpen}
     > 
-      <SmilePlus 
+      <Tooltip placement='top' title="emoji"><SmilePlus 
           style={{
             fontSize: 18,
-            color: '#1677ff',
+            
             cursor:"pointer"
           }}
+          className='text-violet-500'
         />
+        </Tooltip>
     </Popover>
     </>  
   );
@@ -603,15 +606,19 @@ return (
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
+                  <Tooltip title="Video Call" placement="top">
                     <Video 
-                      className="w-6 h-6 cursor-pointer text-gray-600 hover:text-blue-500" 
+                      className="w-6 h-6 cursor-pointer text-gray-600 hover:text-violet-500" 
                       onClick={() => navivideo(1)}
                     />
+                    </Tooltip>
+                  
                     <ChatOptions
                       onDelete={handleDeleteChat}
                       onSettings={() => setIsThemeDrawerVisible(true)}
                       onReport={() => message.info('Report submitted')}
                     />
+                  
                     <ChatThemes 
   visible={isThemeDrawerVisible}
   onClose={() => setIsThemeDrawerVisible(false)}
@@ -666,7 +673,7 @@ return (
   load ? (
     <LoadingOutlined 
       style={{ 
-        color: '#00ccff', 
+        color: '#8A4FFF', 
         fontSize: '30px', 
         display: 'flex', 
         justifyContent: 'center', 
@@ -717,7 +724,11 @@ return (
       value={text}
       suffix={suffix}
       onChange={handleChange}
-      onSearch={handleSearch}
+      onSearch={(value) => {
+        if (value.trim()) {
+          handleSearch(value);
+        }
+      }}
       suggestion={suggestions}
       onKeyDown={handleKeyDown}
       className="w-full"

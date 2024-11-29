@@ -15,7 +15,7 @@ export const ChatProvider = ({ children }) => {
   const[fetchgroup,setfetchgroup]=useState(0);
   const [homereload,sethomereload]=useState(0);
   const [targetuserid,settargetuserid]=useState(() => localStorage.getItem('targeteduserid') || '');
-
+  const[storytrigger,setstorytrigger]=useState(0);
   const { user } = useContext(UserContext);
 
   useEffect(() => {
@@ -54,7 +54,7 @@ export const ChatProvider = ({ children }) => {
   };
 
   return (
-    <ChatContext.Provider value={{ personalChats, setPersonalChats, createPersonalChat, cname, cimg, cemail, UserId, page, setpage,fetchgroup,setfetchgroup,targetuserid,settargetuserid ,setcname,setcemail,setcimg,setUserId,homereload,sethomereload}}>
+    <ChatContext.Provider value={{ personalChats, setPersonalChats, createPersonalChat, cname, cimg, cemail, UserId, page, setpage,fetchgroup,setfetchgroup,targetuserid,settargetuserid ,setcname,setcemail,setcimg,setUserId,homereload,sethomereload,storytrigger,setstorytrigger}}>
       {children}
     </ChatContext.Provider>
   );

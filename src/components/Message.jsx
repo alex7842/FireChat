@@ -351,11 +351,12 @@ const formatTime = (time) => {
 ) :(
   <>
 <div className='text-[#8A8A8A] text-center text-sm py-2'>{msg.day}</div>
-      <div className={`flex ${msg.email === user.email ? 'justify-end' : 'justify-start'}`}>
+      <div className={`flex ${msg.email === user.email ? 'justify-end mr-2' : 'justify-start'}`}>
         <Popover placement={msg.email === user.email ? "left" : "right"} title='Options' content={content}>
         <div
   style={{ 
-    backgroundColor: msg.email === user.email ? messageTheme.msgRight : messageTheme.msgLeft 
+    backgroundColor: msg.email === user.email ? messageTheme.msgRight : messageTheme.msgLeft ,
+    color: msg.email === user.email ? "text-white" : "text-black" 
   }}
   className={`max-w-[50%] rounded-[22px] m-4 ${
     msg.email === user.email 
@@ -367,23 +368,23 @@ const formatTime = (time) => {
             <div className="flex flex-col gap-2">
               {msg.post ? ( 
                 // Post Layout
-                <div className="rounded-lg border border-gray-200 overflow-hidden"  onClick={() => fetchPostDetails(msg, msg.isNews)}>
+                <div className="rounded-lg  w-[200px] overflow-hidden"  onClick={() => fetchPostDetails(msg, msg.isNews)}>
                    {msg.forward && (
-      <div className="text-xs text-gray-500 flex items-center mb-1">
+      <div className={`text-xs ${msg.email === user.email?"text-white":"text-black"} flex items-center mb-1`}>
         <span>↩️ Forwarded</span>
       </div>
     )}
                   <img 
                     src={msg.mediaUrl} 
                     alt={msg.title} 
-                    className="w-full h-48 object-cover"
+className="w-full h-32 rounded-xl object-cover"
                   />
                   <div className="p-3">
-                    <h3 className="font-semibold text-sm line-clamp-2">{msg.title}</h3>
-                    <p className="text-gray-600 text-xs line-clamp-2 mt-1">{msg.caption}</p>
+                    <h3 className={`font-semibold text-sm ${msg.email === user.email?"text-white":"text-black"} line-clamp-2`}>{msg.title}</h3>
+                    <p className={`${msg.email === user.email?"text-white":"text-black"} text-xs line-clamp-2 mt-1`}>{msg.caption}</p>
                     <button 
                     
-                      className="text-blue-500 text-xs mt-2"
+                      className={`${msg.email === user.email?"text-white":"text-black"} text-xs mt-2`}
                     >
                       Read more
                     </button>
@@ -392,25 +393,26 @@ const formatTime = (time) => {
                 </div>
               ) : (
                 // Regular Message Layout
-                <div className="flex items-start gap-2">
+                <div className="flex items-center justify-center gap-2">
                   <img 
                     src={msg.email === user.email ? msg.call?msg.logo:user.photoURL : msg.logo} 
                     className="w-8 h-8 rounded-full"
                   />
                   <div>
                   {msg.forward && (
-      <div className="text-xs text-gray-500 flex items-center mb-1">
+      <div className={`text-xs ${msg.email === user.email?"text-white":"text-black"} flex items-center mb-1`}>
         <span>↩️ Forwarded</span>
       </div>
     )}
                   {msg.text.startsWith("https://firebasestorage.googleapis.com") ? (
-                    <Image 
-                      src={msg.text} 
-                      alt="uploaded" 
-                      className="max-w-[300px] rounded-lg"
-                    />
+                   <Image
+                   src={msg.text}
+                   alt="uploaded"
+                   className="max-w-[300px] rounded-xl shadow-md hover:scale-[1.02] transition-transform duration-300 object-cover bg-gradient-to-r from-violet-100 to-gray-100 dark:from-violet-900 dark:to-gray-900 p-1"
+                 />
+                 
                   ) : (
-                    <span className="message-text break-words">{msg.text}</span>
+                    <span className={`message-text break-words ${msg.email === user.email?"text-white":"text-black"}`}>{msg.text}</span>
                   )}
                 </div>
                 </div>
@@ -422,7 +424,7 @@ const formatTime = (time) => {
                   id={`msgr-${id1}`} 
                   onClick={() => handleDemojiClick(id1)}
                 />
-                <span className="text-xs text-gray-500">{formatTime(msg.time)}</span>
+                <span className={`text-xs ${msg.email === user.email?"text-white":"text-black"}`}>{formatTime(msg.time)}</span>
               </div>
             </div>
           </div>

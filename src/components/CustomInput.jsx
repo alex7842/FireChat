@@ -1,4 +1,5 @@
 import { Input } from 'antd';
+import { SendIcon } from 'lucide-react';
 import React, { useRef } from 'react';
 
 const { Search } = Input;
@@ -22,9 +23,11 @@ export const CustomInput = ({ value, onChange, onSearch, suggestion, onKeyDown,s
         onSearch={onSearch}
         onKeyDown={onKeyDown}
         suffix={suffix}
+    
         placeholder=""
-        enterButton="Send"
-        className="w-full border border-black"
+        enterButton={<SendIcon  />}
+      
+        className="w-full border border-grey [&_.ant-btn-primary]:!bg-violet-600 [&_.ant-btn-primary:hover]:!bg-violet-500"
         size="large"
       />
       {suggestion && onChange && (
