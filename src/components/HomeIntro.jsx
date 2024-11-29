@@ -773,32 +773,33 @@ className="text-6xl text-red-500 animate-like-heart"
  )}
                             {/* Post Header */}
                             <div className="flex items-center justify-between p-3 border-b">
-                              <div className="flex items-center space-x-3">
+                              <div className="flex items-center justify-between space-x-3">
                                 <Avatar 
                                   src={item.isNews ? '/logo3.png' : item.profile} 
                                   size={32}
                                   className="cursor-pointer"
                                   onClick={() => handlenavigate(item.uid, item.isNews)}
                                 />
-                                <div className="flex items-center space-x-2">
+                                <div className="flex items-center space-x-2 sm:space-x-4">
                                   <span className="font-semibold text-sm">
                                     {item.isNews ? item.author : item.username}
                                   </span>
-                                  <span className="text-gray-500 text-xs">
+                                  <span className="text-gray-500 text-xs ">
                                     {item.isNews 
                                       ? new Date(item.publishedAt).toLocaleDateString()
                                       : formatRelativeDate(item.timestamp)
                                     }
                                   </span>
                                   {index === 0 && (
-                <Button 
-                    className='md:hidden w-21 p-2 text-violet-500' 
-                    color="default"
-                    onClick={() => setpersonal(true)}
-                > 
-                    <WandSparkles className="text-violet-500" size={16} /> 
-                    Feed
-                </Button>
+               <button
+               className='md:hidden ml-auto flex items-center justify-center gap-2 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 hover:from-violet-500/20 hover:to-fuchsia-500/20 border-violet-500/20 rounded-full px-3 py-2 transition-all duration-300 ease-in-out transform hover:scale-90'
+               onClick={() => setpersonal(true)}
+           >
+               <WandSparkles className="text-violet-500 animate-pulse" size={16} />
+               <span className="font-medium bg-gradient-to-r from-violet-500 to-fuchsia-500 text-transparent bg-clip-text text-center">
+                   Feed
+               </span>
+           </button>
             )}
                                 </div>
                               </div>
@@ -915,15 +916,16 @@ className="text-6xl text-red-500 animate-like-heart"
     title={
         <div className="flex flex-col gap-3">
             <span>{`Suggestions for you ${user.displayName}`}</span>
-            <Button
-    className='flex items-center gap-2 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 hover:from-violet-500/20 hover:to-fuchsia-500/20 border-violet-500/20 rounded-full px-4 py-2 transition-all duration-300 ease-in-out transform hover:scale-105'
+            <button
+    className='flex items-center justify-center gap-2 bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 hover:from-violet-500/20 hover:to-fuchsia-500/20 border-violet-500/20 rounded-full px-4 py-2 transition-all duration-300 ease-in-out transform hover:scale-90'
     onClick={() => setpersonal(true)}
 >
     <WandSparkles className="text-violet-500 animate-pulse" size={16} />
-    <span className="font-medium bg-gradient-to-r from-violet-500 to-fuchsia-500 text-transparent bg-clip-text">
+    <span className="font-medium bg-gradient-to-r from-violet-500 to-fuchsia-500 text-transparent bg-clip-text text-center">
         Feed
     </span>
-</Button>
+</button>
+
           
         </div>
     }
