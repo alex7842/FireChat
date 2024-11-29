@@ -6,13 +6,14 @@ import {
   UserOutlined, SecurityScanOutlined, GlobalOutlined, KeyOutlined,
   PictureOutlined, TeamOutlined, EyeOutlined, SafetyCertificateOutlined
 } from '@ant-design/icons';
-
+import { auth } from '@/config/firebase';
 const { Panel } = Collapse;
 const { Text, Title } = Typography;
 export const ProfileSettings = () => {
   const [visible, setVisible] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
 const [isDarkMode, setIsDarkMode] = useState(false);
+const [open,setOpen]=useState(false);
 const [notifications, setNotifications] = useState(true);
 const handleDeleteAccount = async () => {
     // Add confirmation modal and deletion logic
@@ -27,9 +28,53 @@ const handleDeleteAccount = async () => {
       }
     });
   };
+  const handleOk = () => {
+    setOpen(false);
+    signOut()
+  };
+  const handleCancel = () => {
+    setOpen(false);
+  };
+  const signOut = () => {
+    console.log('logging out')
+  
+    auth.signOut().then(() => {
+   
+      setgroup('message')
+      localStorage.removeItem('user');
+      localStorage.setItem("isloggedin", "false");
+      localStorage.removeItem('cachedPosts')
 
+      setuser(null);
+      navigate('/');
+   //   setupdateuser(prev => prev + 1); // Trigger the useEffect
+      // setTimeout(() => {
+      //   navigate('/');
+      // }, 100);
+      
+
+      
+    }).catch(error => {
+      console.error("Error during sign-out:", error);
+    });
+  };
   return (
     <>
+     <Modal
+        open={open}
+        title="Are you Sure want to Logout ?"
+        onOk={handleOk}
+        onCancel={handleCancel}
+        footer={(_, { OkBtn, CancelBtn }) => (
+          <>
+           
+            <CancelBtn />
+            <OkBtn />
+          </>
+        )}
+      >
+     
+      </Modal>
       <SettingOutlined
         className="absolute right-4 top-4 cursor-pointer hover:scale-110 transition-transform"
         style={{ fontSize: '24px' }}
@@ -114,7 +159,15 @@ const handleDeleteAccount = async () => {
           <Divider className="my-2" />
 
           <Space direction="vertical" className="w-full">
-           
+          <Button
+              
+              className="bg-yellow-300 hover:bg-yellow-400 text-black w-full mb-3"
+              icon={<DeleteOutlined />}
+              
+              onClick={()=>setOpen(true)}
+            >
+              Log Out
+            </Button>
             <Button
               danger
               type="primary"
