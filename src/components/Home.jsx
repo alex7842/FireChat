@@ -10,6 +10,7 @@ import { db } from '../config/firebase';
 import GroupContext from './context/GroupContext';
 import App from '../App';
 import ChatContext from './context/ChatContext';
+import ScrollToTop from './Design/Scroll-to-top';
 
 export const Home = () => {
   const { user,globaltrigger,setglobaltrigger } = useContext(UserContext);
@@ -98,12 +99,13 @@ export const Home = () => {
       }
     }, [user, test, globaltrigger]);
     
-    
+    const isLoggedIn = localStorage.getItem('isloggedin');
   return (
     <>
     {
- (user) ?
+ (user && isLoggedIn==="true") ?
 <>
+<ScrollToTop/>
    <HomeIntro/>
    </>
   

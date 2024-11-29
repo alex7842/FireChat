@@ -1,5 +1,5 @@
 
-import React,{useState} from 'react';
+import React,{useContext, useState} from 'react';
 import { Drawer, Switch, Button, Divider, Typography, Space, Modal, Collapse, Tag } from 'antd';
 import { 
   SettingOutlined, DeleteOutlined, LockOutlined, BellOutlined, BulbOutlined,
@@ -7,14 +7,20 @@ import {
   PictureOutlined, TeamOutlined, EyeOutlined, SafetyCertificateOutlined
 } from '@ant-design/icons';
 import { auth } from '@/config/firebase';
+import GroupContext from './context/GroupContext';
+import UserContext from './context/context';
+import { useNavigate } from 'react-router-dom';
 const { Panel } = Collapse;
 const { Text, Title } = Typography;
 export const ProfileSettings = () => {
   const [visible, setVisible] = useState(false);
   const [isPrivate, setIsPrivate] = useState(false);
+  const {user,setuser}=useContext(UserContext)
 const [isDarkMode, setIsDarkMode] = useState(false);
 const [open,setOpen]=useState(false);
+const {group,setgroup}=useContext(GroupContext)
 const [notifications, setNotifications] = useState(true);
+const navigate=useNavigate();
 const handleDeleteAccount = async () => {
     // Add confirmation modal and deletion logic
     Modal.confirm({
@@ -162,7 +168,7 @@ const handleDeleteAccount = async () => {
           <Button
               
               className="bg-yellow-300 hover:bg-yellow-400 text-black w-full mb-3"
-              icon={<DeleteOutlined />}
+              
               
               onClick={()=>setOpen(true)}
             >

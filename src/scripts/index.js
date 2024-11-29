@@ -126,10 +126,10 @@ function closeNavDropdown(event){
  */
 
 const typed = new Typed('#prompts-sample', {
-    strings: ["How to solve a rubik's cube? Step by step guide", 
-                "What's Pixa playground?", 
-                "How to build an AI SaaS App?", 
-                "How to integrate Pixa API?"],
+    strings: ["Hey! Have you tried FireChat's new AI features?💬", 
+                "Connect with real People and Professionals🚀", 
+                "Share your media quickly and securly 📸", 
+                "Stay connected with Real time Notifications 🌍"],
     typeSpeed: 80,
     smartBackspace: true, 
     loop: true,

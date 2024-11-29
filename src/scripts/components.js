@@ -118,12 +118,14 @@ export class Prompt{
 
     answer(){
 
-        let msg = {
-            "gpt 4o": "Hello from Gpt 4o, add 3 prompts",
-            "gemini": "Hello from Gemini, add 3 prompts",
-            "llama 3": "Hello from Meta Llama 3, add 3 prompts",
-            "claude": "Hello from Claude, add 3 prompts",
-        }[this.chatModel]
+        let responses = [
+             "Hey there! 👋 nice to meet You",
+             "Hi friend! 👋 Let's create some wonderful conversations ",
+             "Hello! 🌟 Excited to help make your chats more fun and engaging!",
+            "Have an nice Day!",
+        ]
+        const messageIndex = (this.promptList.length - 1) % responses.length;
+        const msg = responses[messageIndex];
 
         const text = document.createElement("div")
         text.classList.add("tw-w-fit", "tw-mr-auto", "tw-p-2")
@@ -135,7 +137,9 @@ export class Prompt{
             </div>
         `
         this.promptWindow.innerHTML += promptELement
-
+        setTimeout(() => {
+            this.promptWindow.scrollTop = this.promptWindow.scrollHeight;
+        }, 150);
     }
 
 }

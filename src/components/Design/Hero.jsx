@@ -16,6 +16,7 @@ import '../../../src/index.css';
 // import './../../../index.js'
 import { Helmet } from 'react-helmet';
 import { Button } from 'antd';
+import ScrollToTop from './Scroll-to-top'
 
 
 
@@ -145,6 +146,7 @@ const RESPONSIVE_WIDTH = 1024;
 
   return (
     <>
+    <ScrollToTop/>
     {/* <div>Sign in with firechat</div>
     <Button onClick={signin}>Sign in</Button> */}
      <Helmet>
@@ -550,15 +552,11 @@ const RESPONSIVE_WIDTH = 1024;
                                                     <span class="tw-flex tw-w-fit tw-gap-2 tw-place-items-center">
                                                         <div class="tw-w-[20px] tw-h-[20px]">
                                                         <i class="bi bi-paperclip dropdown-select-icon dark:tw-invert " style={{fontSize:"22px"}}></i>
-                                                            {/* <img src="./assets/images/brand-logos/openai.svg" 
-                                                                alt="Gpt3.5" class="dropdown-select-icon dark:tw-invert"/> */}
+                                                           
                                                         </div>
                                                         <span class="dropdown-select-text">Attach</span>
                                                     </span>
-                                                    <i class="bi bi-chevron-down tw-ml-auto lg:tw-hidden"
-                                                        ></i>
-                                                    <i class="bi bi-chevron-up tw-ml-auto lg:tw-block tw-hidden"
-                                                        ></i>
+                                                 
                                                 </button>
                                                 <ul class="dropdown-menu tw-shadow-md tw-bottom-[50px] max-lg:tw-top-[105%] max-lg:tw-bottom-[unset]">
                                                   

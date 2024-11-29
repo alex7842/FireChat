@@ -27,6 +27,7 @@ import { Ai } from './Ai';
 import { sendNotification } from '../utils/notificationUtils';
 import { Videocall } from './Videocall';
 import { EmptyChat } from './EmptyChat';
+import ScrollToTop from './Design/Scroll-to-top';
 export const PersonalChat= ({onBack}) => {
     const { user } = useContext(UserContext);
     const {targetuserid} =useContext(ChatContext);
@@ -682,6 +683,7 @@ return (
     />
   ) : (
     <div className="msg pb-4" id="msg">
+    
       {messages
         .slice()
         .sort((a, b) => new Date(a.date) - new Date(b.date))
