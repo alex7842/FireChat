@@ -230,9 +230,9 @@ const RESPONSIVE_WIDTH = 1024;
                     class="tw-relative tw-flex tw-h-full max-lg:tw-h-max tw-w-max tw-gap-5 tw-text-base max-lg:tw-mt-[30px] max-lg:tw-flex-col 
                                 max-lg:tw-gap-5 lg:tw-mx-auto tw-place-items-center"
                 >
-                    <a class="header-links" href="#"> Chat</a>
-                    <a class="header-links" href="#"> Blog </a>
-                    <a class="header-links" href="#"> Contact </a>
+                    <a class="header-links" href="#pixa-playground"> Chat</a>
+                    <a class="header-links" href="#blog"> Blog </a>
+                    <a class="header-links" href="#footer"> Contact </a>
                    
                     <div class="tw-relative tw-flex tw-flex-col tw-place-items-center">
                         <div id="nav-dropdown-toggle-0" class="max-lg:tw-max-w-fit tw-flex header-links tw-gap-1  tw-place-items-center">
@@ -464,7 +464,7 @@ const RESPONSIVE_WIDTH = 1024;
                                         Join Alex and 2000+ users using FireChat
                                     </div>
 
-                                    <a href="#" class="btn">
+                                    <a href="#" onClick={signin}class="btn">
                                         Sign up
                                     </a>
 
@@ -482,17 +482,17 @@ const RESPONSIVE_WIDTH = 1024;
                                     </div>
 
                                     <div class="tw-flex tw-mt-2 dark:tw-text-white tw-gap-2 tw-flex-col">
-                                        <a href="#link-to-img-gen" 
+                                        <a href="#Community" 
                                             class="tw-flex tw-rounded-sm tw-gap-2 tw-p-2 dark:hover:tw-bg-[#2d2d2ddb] hover:tw-bg-gray-200">
                                             <i class="bi bi-people-fill"></i>
                                             <span class="dark:tw-text-white">Communities</span>
                                         </a>
-                                        <a href="#link-to-pdf-gen" 
+                                        <a href="#Group" 
                                             class="tw-flex tw-rounded-sm tw-gap-2 tw-p-2 dark:hover:tw-bg-[#2d2d2ddb] hover:tw-bg-gray-200">
                                             <i class="bi bi-chat"></i>
                                             <span>Groups</span>
                                         </a>
-                                        <a href="#link-to-code-gen" 
+                                        <a href="#Profile" 
                                             class="tw-flex tw-rounded-sm tw-gap-2 tw-p-2 dark:hover:tw-bg-[#2d2d2ddb] hover:tw-bg-gray-200">
                                             <i class="bi bi-person-circle"></i>
                                             <span>Profile</span>
@@ -504,9 +504,9 @@ const RESPONSIVE_WIDTH = 1024;
                                         </a>
                                     </div>
 
-                                    <div class="tw-mt-auto tw-w-full tw-flex tw-px-6 tw-place-content-center">
+                                    <div class="tw-mt-auto tw-w-full tw-flex tw-px-6 tw-place-content-center" onClick={signin}>
                                         <a href="#sign-up" class="btn !tw-w-full !tw-bg-transparent tw-duration-[0.3s] 
-                                                                hover:!tw-bg-black hover:!tw-text-white
+                                                                hover:!bg-violet-600 hover:!tw-text-white
                                                                 dark:hover:!tw-bg-white dark:hover:!tw-text-black
                                                                 !tw-border-[1px] !tw-border-black !tw-text-black
                                                                 dark:!tw-border-white dark:!tw-text-white
@@ -610,54 +610,62 @@ const RESPONSIVE_WIDTH = 1024;
                     class="carousel lg:w-place-content-center tw-mt-10 tw-flex tw-w-full tw-gap-5 max-md:tw-gap-2"
                 >
                     
+                 
                     <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="/assets/images/brand-logos/google.svg"
-                            alt="Google"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
-                    </div>
-                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="/assets/images/brand-logos/microsoft.svg"
-                            alt="Microsoft"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
-                    </div>
-                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="./assets/images/brand-logos/adobe.svg"
-                            alt="Adobe"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
-                    </div>
-                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
+                        <img 
                             src="/assets/images/brand-logos/airbnb.svg"
-                            alt="Airbnb"
+                            alt="AirBnb"
                             class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
                             srcset=""
                         />
                     </div>
                     <div class="carousel-img tw-h-[30px] tw-w-[150px]">
                         <img
-                            src="/assets/images/brand-logos/stripe.svg"
-                            alt="Stripe"
+                            src="/multi.png"
+                            alt="Multigen"
                             class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
                             srcset=""
                         />
                     </div>
+                    
+                    <div class="carousel-img tw-flex tw-items-center tw-gap-2">
+    <div className='cursor-pointer mt-2 tw-grayscale hover:tw-grayscale-0 group' onClick={() => window.open('https://www.chatpulse.dev', '_blank')}>
+        <img
+            src="/chatpulsebg4.png"
+            alt="ChatPulse Icon"
+            class="tw-h-[30px] ml-7 tw-w-[30px] tw-object-contain tw-transition-colors"
+        />
+        <p class="tw-font-extrabold tw-text-xl tw-font-montserrat tw-tracking-wider tw-transition-all group-hover:text-emerald-400 group-hover:tw-scale-110 hover:tw-font-black tw-duration-300">
+            ChatPulse
+        </p>
+    </div>
+</div>
+
+
+
+
+
+
+
                     <div class="carousel-img tw-h-[30px] tw-w-[150px]">
-                        <img
-                            src="/assets/images/brand-logos/reddit.svg"
-                            alt="Reddit"
-                            class="tw-h-full tw-w-full tw-object-contain tw-grayscale tw-transition-colors hover:tw-grayscale-0"
-                            srcset=""
-                        />
+                    <div class="carousel-img tw-h-[30px] tw-w-[150px]">
+                    <div class="tw-flex tw-gap-1 cursor-pointer tw-flex  hover:text-red-500"     onClick={() => window.open('https://www.youtube.com/@notsatisfy-777', '_blank')}>
+  <span class="tw-font-dancing-script tw-text-4xl tw-transition-all hover:tw-scale-125">N</span>
+  <span class="tw-font-playfair tw-text-4xl  tw-transition-all hover:tw-scale-125">T</span>
+  <span class="tw-font-lobster tw-text-4xl  tw-transition-all hover:tw-scale-125">S</span>
+  <span class="tw-font-pacifico tw-text-4xl  tw-transition-all hover:tw-scale-125">5</span>
+</div>
+
+</div>
                     </div>
+                    <div class="carousel-img tw-h-[50px] tw-w-[200px] cursor-pointer">
+    <img
+        src="/fx2.png"
+        alt="fx"
+        class="tw-h-full mt-2 tw-w-full tw-object-contain tw-grayscale tw-transition-all tw-duration-300 hover:grayscale-0 hover:sepia hover:tw-brightness-150 tw-hover:tw-saturate-[2] hover:tw-hue-rotate-[40deg]"
+        srcset=""
+    />
+</div>
                 </div>
             </div>
         </section>
@@ -679,9 +687,9 @@ const RESPONSIVE_WIDTH = 1024;
                 <p class="reveal-up tw-mt-8 tw-max-w-[650px] tw-text-gray-900 dark:tw-text-gray-200 tw-text-center max-md:tw-text-sm">   
                 Experience real-time communication with end-to-end encryption. Join thriving professional communities, make video calls, and stay updated with personalized news feeds - all in one secure platform.
                 </p>
-                <div class="reveal-up tw-flex tw-mt-8">
-                    <a href="#" 
-                        target="_blank"
+                <div class="reveal-up tw-flex tw-mt-8 cursor-pointer " onClick={signin}>
+                    <a  
+
                         rel="noopener"
                         class="tw-shadow-md hover:tw-shadow-xl dark:tw-shadow-gray-800 tw-transition-all tw-duration-300 
                                         tw-border-[1px] tw-p-3 tw-px-4 tw-border-black dark:tw-border-white tw-rounded-md">
@@ -709,16 +717,16 @@ const RESPONSIVE_WIDTH = 1024;
                     </h2>
                 </div>
                 <div class="mt-6 flex flex-col max-w-[1150px] max-lg:max-w-full h-full p-4 max-lg:place-content-center gap-8">
-    <div class="flex flex-col lg:flex-row gap-8 place-items-center place-content-center">
+                    <div class="flex flex-col lg:flex-row gap-8 place-items-center place-content-center">
 
 
 
                         <div class="reveal-up tw-w-[350px] tw-h-[540px] tw-flex max-md:tw-w-full">
-                            <a href="#" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
+                            <a href="#"   onClick={(e) => e.preventDefault()} class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
                                 tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                                 hover:tw-scale-[1.02]">
                                 <div class="tw-overflow-hidden tw-w-full tw-min-h-[180px] tw-h-[180px]">
-                                    <img src="/assets/images/home/api.png" class="tw-w-full tw-object-contain tw-h-auto" 
+                                    <img src="/u1bg.png" class="tw-w-full tw-object-contain tw-h-auto" 
                                         alt="unified interface"/>
                                    
                                 </div>
@@ -726,20 +734,17 @@ const RESPONSIVE_WIDTH = 1024;
                                 <p class="tw-text-base tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
                                 Experience intelligent messaging with real-time grammar correction, message rephrasing, and smart auto-completion. Write perfect messages every time with our AI-powered writing assistance.
                                 </p>
-                                <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-right tw-transform tw-transition-transform tw-duration-300 group-hover/card:tw-translate-x-2"></i>
-                                </div>
+                                
                             </a>
                         </div>
 
                         
-                        <div class="reveal-up tw-w-[350px] tw-h-[540px] tw-flex max-md:tw-w-full">
-                            <a href="#" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
+                        <div class="reveal-up tw-w-[350px] tw-h-[540px] tw-flex max-md:tw-w-full" >
+                            <a href="#"   onClick={(e) => e.preventDefault()} class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
                                 tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                                 hover:tw-scale-[1.02]">
                                 <div class="tw-w-full tw-min-h-[180px] tw-h-[180px] tw-overflow-hidden">
-                                    <img src="/assets/images/home/api.png" 
+                                    <img src="/u2bg.png" 
                                         alt="API" class="tw-w-full tw-h-auto tw-object-contain"/>
                                     
                                 </div>
@@ -747,16 +752,13 @@ const RESPONSIVE_WIDTH = 1024;
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
                                 Get personalized news and content tailored to your interests. Our AI analyzes your interactions to deliver relevant professional updates, industry news, and networking opportunities.
                                 </p>
-                                <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-right tw-transform tw-transition-transform tw-duration-300 group-hover/card:tw-translate-x-2"></i>
-                                </div>
+                              
                             </a>
                         </div>
 
                         
                         <div class="reveal-up tw-w-[350px] tw-h-[540px] tw-flex max-md:tw-w-full">
-                            <a href="#" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
+                            <a href="#"  onClick={(e) => e.preventDefault()} class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
                                 tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                                 hover:tw-scale-[1.02]">
                                 <div class="tw-w-full tw-flex tw-place-contet-center tw-min-h-[180px] tw-h-[180px] tw-rounded-xl tw-overflow-hidden">
@@ -767,20 +769,17 @@ const RESPONSIVE_WIDTH = 1024;
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
                                 Enhance your media with AI-generated captions, automatic image descriptions, and smart formatting. Share professional-looking content effortlessly with our intelligent media tools.
                                 </p>
-                                <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-right tw-transform tw-transition-transform tw-duration-300 group-hover/card:tw-translate-x-2"></i>
-                                </div>
+                                
                             </a>
                         </div>
                     </div>
                     
                     <div class="reveal-up tw-w-full md:tw-h-[350px] max-md:tw-min-h-[350px] tw-flex">
-                        <a href="#" class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
+                        <a href="#"  onClick={(e) => e.preventDefault()} class=" tw-relative tw-p-10 tw-transition-all tw-duration-300 tw-group/card  tw-gap-5 tw-flex 
                             max-md:tw-flex-col tw-w-full tw-h-full  tw-bg-[#f6f7fb] dark:tw-bg-[#171717] tw-rounded-3xl 
                             hover:tw-scale-[1.02]">
                             <div class="tw-text-6xl tw-overflow-hidden tw-rounded-xl tw-w-full tw-h-full max-md:tw-h-[180px]">
-                                <img src="/assets/images/home/ai-models.png" class="tw-w-full tw-object-contain tw-h-full" 
+                                <img src="/u3.png" class="tw-w-full tw-object-contain tw-h-full" 
                                     alt="AI models"/>
                              
                             </div>
@@ -789,10 +788,7 @@ const RESPONSIVE_WIDTH = 1024;
                                 <p class="tw-leading-normal tw-text-gray-800 dark:tw-text-gray-200">
                                 Your personal AI assistant helps with message suggestions, meeting summaries, and professional networking recommendations. Get smart replies, schedule assistance, and communication insights all in one place.
                                 </p>
-                                <div class="tw-flex tw-items-center tw-gap-2 tw-mt-auto">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-right tw-transform tw-transition-transform tw-duration-300 group-hover/card:tw-translate-x-2"></i>
-                                </div>
+                                
                             </div>
                         </a>
                     </div>
@@ -823,7 +819,7 @@ const RESPONSIVE_WIDTH = 1024;
                             Pre-built AI Tools
                         </h2>
                         
-                        <a href="http://" class="btn !tw-mt-8 !tw-bg-transparent !tw-text-black 
+                        <a href="" onClick={signin} class="btn !tw-mt-8 !tw-bg-transparent !tw-text-black 
                                                 !tw-border-[1px] !tw-border-black 
                                                 dark:!tw-border-white dark:!tw-text-white">
                             Start Chat
@@ -840,7 +836,7 @@ const RESPONSIVE_WIDTH = 1024;
                              "
                 >   
                     <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
-                        <a href="#"
+                        <a href="#"  onClick={(e) => e.preventDefault()}
                             class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl 
                                     hover:tw-shadow-lg dark:tw-shadow-[#171717] tw-duration-300 tw-transition-all
                                   tw-p-8 tw-group/card"
@@ -858,17 +854,13 @@ const RESPONSIVE_WIDTH = 1024;
 
                                 </p>
 
-                                <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                                </div>
+                               
                             </div>
                         </a>
                     </div>
 
                     <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
-                        <a href="#"
+                        <a href="#"  onClick={(e) => e.preventDefault()}
                             class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl
                                  hover:tw-shadow-lg dark:tw-shadow-[#171717] tw-duration-300 tw-transition-all tw-p-8 tw-group/card"
                         >
@@ -885,17 +877,13 @@ const RESPONSIVE_WIDTH = 1024;
 
                                 </p>
 
-                                <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                                </div>
+                               
                             </div>
                         </a>
                     </div>
 
                     <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
-                        <a href="#"
+                        <a href="#"  onClick={(e) => e.preventDefault()}
                             class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl hover:tw-shadow-lg tw-duration-300 
                                 tw-transition-all dark:tw-shadow-[#171717] tw-p-8 tw-group/card"
                         >
@@ -911,17 +899,13 @@ const RESPONSIVE_WIDTH = 1024;
                                 Join industry-specific groups, share knowledge, and network with professionals worldwide.
                                 </p>
 
-                                <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                                </div>
+                               
                             </div>
                         </a>
                     </div>
 
                     <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
-                        <a href="#"
+                        <a href="#"   onClick={(e) => e.preventDefault()}
                             class="tw-flex tw-w-full dark:tw-shadow-[#171717] tw-h-full tw-gap-8 tw-rounded-xl  hover:tw-shadow-lg tw-duration-300 
                             tw-transition-all tw-p-8 tw-group/card"
                         >
@@ -938,17 +922,12 @@ const RESPONSIVE_WIDTH = 1024;
 
                                 </p>
 
-                                <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                                </div>
                             </div>
                         </a>
                     </div>
                     
                     <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
-                        <a href="#"
+                        <a href="#"  onClick={(e) => e.preventDefault()}
                             class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl dark:tw-shadow-[#171717] hover:tw-shadow-lg tw-duration-300 
                                 tw-transition-all tw-p-8 tw-group/card"
                         >
@@ -964,17 +943,13 @@ const RESPONSIVE_WIDTH = 1024;
                                 Share files securely with end-to-end encryption and smart organization features.
                                 </p>
 
-                                <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                                </div>
+                             
                             </div>
                         </a>
                     </div>
 
                     <div class="reveal-up tw-h-[240px] tw-w-[450px] max-md:tw-w-full">
-                        <a href="#"
+                        <a href="#"  onClick={(e) => e.preventDefault()}
                             class="tw-flex tw-w-full tw-h-full tw-gap-8 tw-rounded-xl 
                                     hover:tw-shadow-lg dark:tw-shadow-[#171717] tw-duration-300 tw-transition-all tw-p-8 tw-group/card"
                         >
@@ -991,11 +966,7 @@ const RESPONSIVE_WIDTH = 1024;
                             
                                 </p>
 
-                                <div class="tw-mt-auto tw-flex tw-gap-2 tw-underline tw-underline-offset-4">
-                                    <span>Learn more</span>
-                                    <i class="bi bi-arrow-up-right group-hover/card:tw--translate-y-1
-                                                group-hover/card:tw-translate-x-1 tw-duration-300 tw-transition-transform"></i>
-                                </div>
+                               
                             </div>
                         </a>
                     </div>
@@ -1028,7 +999,7 @@ const RESPONSIVE_WIDTH = 1024;
                                     tw-rounded-xl 
                                      tw-backdrop-blur-2xl
                                      tw-overflow-hidden tw-flex tw-place-content-center">
-                            <img src="/assets/images/home/prompts2.png" 
+                            <img src="/assets/images/home/undraw.png" 
                                     alt="Prompt library" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
@@ -1109,10 +1080,10 @@ const RESPONSIVE_WIDTH = 1024;
                                     alt="Import content" class="tw-w-auto tw-h-full tw-object-contain"/>
                         </div>
                         <h3 class="tw-text-2xl">
-                            Import content
+                            Export content
                         </h3>
                         <p class="tw-text-gray-700 dark:tw-text-gray-300 tw-px-4 tw-text-center tw-text-sm">
-                            Effortlessly import PDFs, images, and documents. Use AI to ask questions, extract information, and summarize documents.
+                            Effortlessly Export PDFs, images, and documents. Use AI to ask questions, extract information, and summarize documents.
                         </p>
                     </div>
 
@@ -1165,7 +1136,7 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="/assets/images/people/man2.jpg"
+                                src="/akhil.jpeg"
                                 class="tw-h-full tw-w-full tw-object-cover"
                                 alt="man"
                             />
@@ -1192,7 +1163,7 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="/assets/images/people/women.jpg"
+                                src="/assets/images/people/man2.jpg"
                                 class="tw-h-full tw-w-full tw-object-cover"
                                 alt="women"
                             />
@@ -1219,8 +1190,8 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="/assets/images/people/man.jpg"
-                                class="tw-h-full tw-w-full tw-object-cover"
+                                src="/hari.jpg"
+                                class="tw-h-full tw-w-full tw-object-contain"
                                 alt="man"
                             />
                         </div>
@@ -1246,7 +1217,7 @@ const RESPONSIVE_WIDTH = 1024;
                             class="tw-h-[50px] tw-w-[50px] tw-overflow-hidden tw-rounded-full"
                         >
                             <img
-                                src="/assets/images/people/man2.jpg"
+                                src="/viswa.jpeg"
                                 class="tw-h-full tw-w-full tw-object-cover"
                                 alt="man"
                             />
@@ -1320,170 +1291,9 @@ const RESPONSIVE_WIDTH = 1024;
         </section>
 
 
+       
         <section
-            class="tw-mt-5 tw-flex tw-w-full tw-flex-col tw-gap-6 tw-place-items-center tw-p-[2%]"
-            id="pricing"
-        >
-            <h3
-                class="reveal-up tw-text-5xl tw-font-medium max-md:tw-text-2xl"
-            >
-                Choose the right plan for you
-            </h3>
-           
-            <div
-                class="tw-mt-10 tw-flex tw-flex-wrap tw-place-content-center tw-gap-8 max-lg:tw-flex-col"
-            >
-                <div
-                    class="reveal-up tw-flex tw-w-[350px] tw-flex-col tw-place-items-center tw-gap-2 tw-rounded-lg tw-border-[1px]
-                            tw-border-outlineColor tw-bg-white dark:tw-bg-[#080808] dark:tw-border-[#1f2123] tw-p-8 tw-shadow-xl max-lg:tw-w-[320px]"
-                >
-                    <h3 class="">
-                        <span class="tw-text-5xl max-md:tw-text-3xl tw-font-semibold">$9</span>
-                        <span class="tw-text-2xl tw-text-gray-600 dark:tw-text-gray-300">/mo</span>
-                    </h3>
-                    <p class="tw-mt-3 tw-text-center tw-text-gray-800 dark:tw-text-gray-100">
-                       Starter Plan
-                    </p>
-                    <hr />
-                    <ul
-                        class="tw-mt-4 tw-flex tw-flex-col tw-gap-4 tw-text-base tw-text-gray-800 dark:tw-text-gray-200"
-                    >
-                        <li class="tw-flex tw-gap-2">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Up to 5 group chats</span>    
-                        </li>
-                        <li class="tw-flex tw-gap-2">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>100 members per group</span>    
-                        </li>
-                        <li class="tw-flex tw-gap-2">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>HD video calls (up to 10 participants)</span>
-                        </li>
-
-                        <li class="tw-flex tw-gap-2 ">
-                            <i class="bi bi-check-circle-fill tw-text-gray-400 dark:tw-text-gray-500"></i>
-                            <span>Basic file sharing (up to 100MB)</span>    
-                        </li>
-
-                        <li class="tw-flex tw-gap-2 ">
-                            <i class="bi bi-check-circle-fill tw-text-gray-400 dark:tw-text-gray-500"></i>
-                            <span>Early access to new features</span>    
-                        </li>
-                  
-                    </ul>
-                    <a
-                        href="#"
-                        class="btn tw-mt-auto !tw-w-full tw-transition-transform tw-duration-[0.3s] 
-                                hover:tw-scale-x-[1.02] !tw-text-black !tw-bg-transparent !tw-border-[1px]
-                                 tw-border-black dark:tw-border-white dark:!tw-text-white"
-                    >
-                        Choose plan
-                    </a>
-                </div>
-                
-                <div
-                    class="reveal-up tw-flex tw-w-[350px] tw-flex-col tw-place-items-center tw-gap-2 tw-rounded-lg tw-border-2
-                            tw-border-outlineColor tw-bg-white dark:tw-bg-[#080808] dark:tw-border-[#595858] tw-p-8 tw-shadow-xl max-lg:tw-w-[320px]"
-                >
-                    <h3 class="">
-                        <span class="tw-text-5xl max-md:tw-text-3xl  tw-font-semibold">$17</span>
-                        <span class="tw-text-2xl max-md:tw-text-xl  tw-text-gray-600 dark:tw-text-gray-300">/mo</span>
-                    </h3>
-                    <p class="tw-mt-3 tw-text-center tw-text-gray-800 dark:tw-text-gray-200">
-                    Professional Plan
-                    </p>
-                    <hr />
-                    <ul
-                        class="tw-mt-4 tw-flex tw-flex-col tw-gap-4  tw-text-base tw-text-gray-800 dark:tw-text-gray-100"
-                    >
-                        <li class="tw-flex tw-gap-2">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Unlimited group chats</span>    
-                        </li>
-                        <li class="tw-flex tw-gap-2">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>500 members per group</span>    
-                        </li>
-                        <li class="tw-flex tw-gap-2">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>4K video calls (up to 50 participants)</span>    
-                        </li>
-
-                        <li class="tw-flex tw-gap-2 ">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Advanced file sharing (up to 1GB)</span>    
-                        </li>
-
-                        <li class="tw-flex tw-gap-2 ">
-                            <i class="bi bi-check-circle-fill tw-text-gray-400 dark:tw-text-gray-500"></i>
-                            <span>Priority support</span>    
-                        </li>
-                  
-                    </ul>
-                    <a
-                        href="#"
-                        class="btn tw-mt-auto !tw-w-full tw-transition-transform tw-duration-[0.3s] hover:tw-scale-x-[1.02]"
-                    >
-                        Choose plan
-                    </a>
-                </div>
-
-                <div
-                    class="reveal-up tw-flex tw-w-[350px] tw-flex-col tw-place-items-center tw-gap-2 tw-rounded-lg tw-border-[1px]
-                            tw-border-outlineColor dark:tw-bg-[#080808] dark:tw-border-[#1f2123] tw-bg-white tw-p-8 tw-shadow-xl max-lg:tw-w-[320px]"
-                >
-                    <h3 class="">
-                        <span class="tw-text-5xl max-md:tw-text-3xl tw-font-semibold">$29</span>
-                        <span class="tw-text-2xl tw-text-gray-600 dark:tw-text-gray-300">/mo</span>
-                    </h3>
-                    <p class="tw-mt-3 tw-text-center tw-text-gray-800 dark:tw-text-gray-100">
-                        Unlimited potential for Enterprise users
-                    </p>
-                    <hr />
-                    <ul
-                        class="tw-mt-4 tw-flex tw-flex-col tw-gap-4 tw-text-base 
-                                tw-text-gray-800 dark:tw-text-gray-200"
-                    >
-                        <li class="tw-flex tw-gap-2">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Unlimited everything</span>    
-                        </li>
-                        <li class="tw-flex tw-gap-2">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>1000+ members per group</span>    
-                        </li>
-                        <li class="tw-flex tw-gap-2">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>Enterprise file sharing (up to 5GB)</span>    
-                        </li>
-
-                        <li class="tw-flex tw-gap-2 ">
-                            <i class="bi bi-check-circle-fill"></i>
-                            <span>24/7 dedicated support</span>    
-                        </li>
-
-                        <li class="tw-flex tw-gap-2 ">
-                            <i class="bi bi-check-circle-fill "></i>
-                            <span>Early access to new features</span>    
-                        </li>
-                  
-                    </ul>
-                    <a
-                        href="#"
-                        class="btn tw-mt-8 !tw-w-full tw-transition-transform tw-duration-[0.3s] 
-                                hover:tw-scale-x-[1.02] !tw-text-black !tw-bg-transparent 
-                                !tw-border-[1px] tw-border-black dark:tw-border-white dark:!tw-text-white"
-                    >
-                        Choose plan
-                    </a>
-                </div>
-
-            </div>
-        </section>
-
-        <section
-            class="tw-mt-5 tw-flex tw-min-h-[80vh] tw-w-full tw-flex-col tw-place-content-center tw-place-items-center tw-p-[2%] max-lg:tw-p-3"
+            class="tw-mt-5 tw-flex tw-min-h-[80vh] tw-w-full tw-flex-col tw-place-content-center tw-place-items-center tw-p-[2%] max-lg:tw-p-3" id="blog"
         >
             <h3
                 class="reveal-up tw-text-4xl tw-font-medium max-md:tw-text-2xl"
@@ -1496,7 +1306,7 @@ const RESPONSIVE_WIDTH = 1024;
                 class="reveal-up tw-mt-10 tw-flex tw-flex-wrap tw-place-content-center tw-gap-10 max-lg:tw-flex-col"
             >
                 <a
-                    href="#"
+                    href="https://dev.to/alex7842/working-of-real-time-chat-application-using-firebase-ahh" target="_blank"
                     class="tw-flex tw-h-[500px] tw-w-[400px] tw-flex-col tw-gap-2 tw-overflow-clip tw-rounded-lg tw-p-4 max-lg:tw-w-[350px]"
                 >
                     <div
@@ -1527,7 +1337,7 @@ const RESPONSIVE_WIDTH = 1024;
                 </a>
                 
                 <a
-                    href="#"
+                    href="https://dev.to/alex7842/firechat-user-guide-2914" target="_blank"
                     class="tw-flex tw-h-[500px] tw-w-[400px] tw-flex-col tw-gap-2 tw-overflow-clip tw-rounded-lg tw-p-4 max-lg:tw-w-[350px]"
                 >
                     <div
@@ -1558,7 +1368,7 @@ const RESPONSIVE_WIDTH = 1024;
                 </a>
 
                 <a
-                    href="#"
+                    href="https://dev.to/alex7842/firechat-technical-documentation-5811" target="_blank"
                     class="tw-flex tw-h-[500px] tw-w-[400px] tw-flex-col tw-gap-2 tw-overflow-clip tw-rounded-lg tw-p-4 max-lg:tw-w-[350px]"
                 >
                     <div
@@ -1574,7 +1384,7 @@ const RESPONSIVE_WIDTH = 1024;
 
                     <div class="tw-text-gray-600 dark:tw-text-gray-300 tw-justify-between tw-flex tw-gap-2">
                         <div class="tw-text-gray-800 dark:tw-text-gray-200">
-                           Document
+                          Technical Document
                         </div>
                         <div class="tw-text-gray-600 dark:tw-text-gray-400">
                            Oct, 27, 2024
@@ -1729,7 +1539,7 @@ const RESPONSIVE_WIDTH = 1024;
 
         <footer
             class="tw-mt-auto tw-flex tw-flex-col tw-w-full tw-gap-4 tw-text-sm tw-pt-[5%] tw-pb-10 tw-px-[10%] 
-                    tw-text-black dark:tw-text-white max-md:tw-flex-col"
+                    tw-text-black dark:tw-text-white max-md:tw-flex-col" id="footer"
         >
             <div class="tw-flex max-md:tw-flex-col max-md:tw-gap-6 tw-gap-3 tw-w-full tw-place-content-around">
                 <div
@@ -1773,34 +1583,41 @@ const RESPONSIVE_WIDTH = 1024;
 
                 <div class="tw-flex max-md:tw-flex-col tw-flex-wrap tw-gap-6 tw-h-full tw-w-full tw-justify-around">
                     <div class="tw-flex tw-h-full tw-w-[200px] tw-flex-col tw-gap-4">
-                        <h2 class="tw-text-xl">Resources</h2>
+                        <h2 class="tw-text-xl">Links</h2>
                         <div class="tw-flex tw-flex-col tw-gap-3">
-                            <a href="#" class="footer-link">Getting started</a>
-                            <a href="#" class="footer-link">API Docs</a>
-                            <a href="#" class="footer-link">API Endpoints</a>
-                            <a href="#" class="footer-link">Health status</a>
-                            <a href="#" class="footer-link">Pricing</a>
+                            <a href="https://dev.to/alex7842/firechat-user-guide-2914" target="_blank" class="footer-link">Getting started</a>
+                            <a href="https://dev.to/alex7842/firechat-technical-documentation-5811" target="_blank" class="footer-link">Docs</a>
+                            <a href="https://dev.to/alex7842/working-of-real-time-chat-application-using-firebase-ahh" target="_blank" class="footer-link">Blog</a>
+                            <a href="#" class="footer-link" target="_blank">Terms and Policy</a>
+                           
                         </div>
                     </div>
 
 
                     <div class="tw-flex tw-h-full tw-w-[200px] tw-flex-col tw-gap-4">
-                        <h2 class="tw-text-xl">Company</h2>
+                        <h2 class="tw-text-xl">Our Products</h2>
                         <div class="tw-flex tw-flex-col tw-gap-3">
-                            <a href="#" class="footer-link">Support channels</a>
-                            <a href="#" class="footer-link">Systems</a>
-                            <a href="#" class="footer-link">Blog</a>
-                            <a href="https://x.com/ALEX_444777" class="footer-link">Twitter</a>
-                            <a href="https://github.com/alex7842/" class="footer-link">Github</a>
+                            <a href="https://www.chatpulse.dev" target='_Blank' class="footer-link">ChatPulse</a>
+                            <a href="https://multi-gen-ai.vercel.app" target="_Blank" class="footer-link">MultiGen</a>
+                            <a href="https://www.linkedin.com/posts/alex7842_forextrading-flutterapp-firebaseintegration-activity-7186990344738111489-Z7bN?utm_source=share&utm_medium=member_desktop" target='_Blank' class="footer-link">Fx Journal</a>
+                            <a href="https://react-image-gallery21.netlify.app/" target="_blank" class="footer-link">Image Gallery</a>
+                           
                         </div>
                     </div>
 
                     <div class="tw-flex tw-h-full tw-w-[200px] tw-flex-col tw-gap-4">
-                        <h2 class="tw-text-xl">Legal</h2>
+                        <h2 class="tw-text-xl">Contact</h2>
                         <div class="tw-flex tw-flex-col tw-gap-3">
-                            <a href="#" class="footer-link">Terms of service</a>
-                            <a href="#" class="footer-link">Privacy Policy</a>
-                            <a href="#" class="footer-link">DCMA - Content Takedown</a>
+                            <a href="#" class="footer-link">Address</a>
+                            <a 
+    href="mailto:alex1958229@gmail.com" 
+    class="footer-link"
+>
+    Gmail
+</a>
+
+                            <a href="https://www.linkedin.com/in/alex7842/" class="footer-link">LinkedIn
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -1809,8 +1626,8 @@ const RESPONSIVE_WIDTH = 1024;
             <hr class="tw-mt-8"/>
             <div class="tw-mt-2 tw-flex tw-gap-2 tw-flex-col tw-text-gray-700 dark:tw-text-gray-300 tw-place-items-center 
                     tw-text-[12px] tw-w-full tw-text-center tw-place-content-around">
-                <span>Copyright &#169; 2023-2025</span>
-                <span>All trademarks and copyrights belong to their respective owners.</span>
+                <span>Copyright &#169; 2024-2025</span>
+                <span>All trademarks and copyrights belongs to FireChat</span>
             </div>
 
         </footer>
