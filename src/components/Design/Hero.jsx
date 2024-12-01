@@ -92,31 +92,34 @@ useEffect(() => {
   
 const videoBg = document.querySelector("#video-container-bg")
 const videoContainer = document.querySelector("#video-container")
-
+const iframe=document.getElementById("iframe");
 
 
  function openVideo(){
     videoBg.classList.remove("tw-scale-0", "tw-opacity-0")
+    iframe.src = "https://www.youtube.com/embed/Occ9OlnVq8g?si=llcTrXPRM-MRXDZB&amp;controls=1&rel=0&showinfo=0&autoplay=1&loop=1&mute=0&vq=hd1080";
     videoBg.classList.add("tw-scale-100", "tw-opacity-100")
     videoContainer.classList.remove("tw-scale-0")
     videoContainer.classList.add("tw-scale-100")
-
+   
     document.body.classList.add("modal-open")
 }
+function closeVideo() {
+    // Stop video playback by targeting the iframe
+    //const videoIframe = document.querySelector('#video-container iframe');
+     iframe.src="";
 
- function closeVideo(){
-    videoContainer.classList.add("tw-scale-0")
-    videoContainer.classList.remove("tw-scale-100")
+    videoContainer.classList.add("tw-scale-0");
+    videoContainer.classList.remove("tw-scale-100");
 
     setTimeout(() => {
-        videoBg.classList.remove("tw-scale-100", "tw-opacity-100")
-        videoBg.classList.add("tw-scale-0", "tw-opacity-0")
-    }, 400)
-   
+        videoBg.classList.remove("tw-scale-100", "tw-opacity-100");
+        videoBg.classList.add("tw-scale-0", "tw-opacity-0");
+    }, 400);
 
-    document.body.classList.remove("modal-open")
-
+    document.body.classList.remove("modal-open");
 }
+
 const RESPONSIVE_WIDTH = 1024;
   const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(window.innerWidth < RESPONSIVE_WIDTH);
 
@@ -143,6 +146,7 @@ const RESPONSIVE_WIDTH = 1024;
     }
   };
 
+  
 
   return (
     <>
@@ -160,6 +164,16 @@ const RESPONSIVE_WIDTH = 1024;
   rel="stylesheet" 
   href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
 />
+
+
+<script type="text/javascript">
+    {`
+      window.chtlConfig = { 
+        chatbotId: "2448985569" 
+      };
+    `}
+  </script>
+<script async data-id="2448985569" id="chatling-embed-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
 
 
         <meta property="og:title" content="FireChat - Connect, Collaborate & Chat with Professionals Worldwide" />
@@ -362,8 +376,16 @@ const RESPONSIVE_WIDTH = 1024;
 
                         <div class="tw-relative tw-bg-black tw-min-w-full tw-min-h-full tw-overflow-clip tw-rounded-md">
                           
-                            <iframe class="tw-absolute tw-top-[50%] tw--translate-y-[50%] tw-left-[50%] tw--translate-x-[50%] tw-w-full tw-h-full" 
-                                src="https://www.youtube.com/embed/6j4fPVkA3EA?si=llcTrXPRM-MRXDZB&amp;controls=0&rel=0&showinfo=0&autoplay=1&loop=1&mute=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+                        <iframe  id="iframe"
+    class="tw-absolute tw-top-[50%] tw--translate-y-[50%] tw-left-[50%] tw--translate-x-[50%] tw-w-full tw-h-full"
+    src=""
+    title="YouTube video player"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen>
+</iframe>
+
                         </div>
         
                     </div>
