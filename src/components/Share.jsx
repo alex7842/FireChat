@@ -2,6 +2,7 @@ import React, { useContext, useState } from 'react';
 import { Form, Input, Button, Select, message } from 'antd';
 import GroupContext from './context/GroupContext';
 import UserContext from './context/context';
+import {WhatsAppOutlined} from "@ant-design/icons";
 import { Share2,Linkedin,Instagram,Twitter} from 'lucide-react';
 import { motion } from 'framer-motion';
 import { collection,setDoc,addDoc,doc,getDoc } from 'firebase/firestore';
@@ -111,6 +112,18 @@ export const Share = ({  Sharemodel,SharePost,curuser,source}) => {
             console.error("Error sharing post:", error);
         }
     };
+    const shareToWhatsApp = () => {
+        window.open(`https://wa.me/?text=Check out this post: ${SharePost.caption} ${SharePost.mediaUrl}`, '_blank');
+      };
+    
+      const shareToLinkedIn = () => {
+        window.open(`https://www.linkedin.com/sharing`);
+      };
+    
+      const shareToInstagram = () => {
+        // Open Instagram app or website
+        window.open('https://instagram.com');
+      };
     
 
     return (
@@ -177,7 +190,7 @@ export const Share = ({  Sharemodel,SharePost,curuser,source}) => {
                 <div className="flex gap-4 justify-center">
                     <motion.button
                         whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileTap={{ scale: 0.9 }} onClick={shareToInstagram}
                         className="p-3 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white"
                     >
                         <Instagram className="w-5 h-5" />
@@ -185,7 +198,7 @@ export const Share = ({  Sharemodel,SharePost,curuser,source}) => {
                     
                     <motion.button
                         whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileTap={{ scale: 0.9 }}  onClick={shareToLinkedIn}
                         className="p-3 rounded-full bg-[#25D366] text-white"
                     >
                         <Linkedin className="w-5 h-5" />
@@ -193,10 +206,10 @@ export const Share = ({  Sharemodel,SharePost,curuser,source}) => {
                     
                     <motion.button
                         whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        whileTap={{ scale: 0.9 }}  onClick={shareToWhatsApp}
                         className="p-3 rounded-full bg-[#1DA1F2] text-white"
                     >
-                        <Twitter className="w-5 h-5" />
+                        <WhatsAppOutlined className="w-5 h-5" />
                     </motion.button>
                 </div>
             </div>

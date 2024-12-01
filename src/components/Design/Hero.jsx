@@ -146,7 +146,53 @@ const RESPONSIVE_WIDTH = 1024;
     }
   };
 
-  
+  // Add this in your component
+  useEffect(() => {
+    // Remove any existing instances first
+    const existingScript = document.getElementById('chatling-embed-script');
+    if (existingScript) {
+        existingScript.remove();
+    }
+    
+    // Remove any existing widgets and icons
+    const chatElements = document.querySelectorAll('[id*="chatling"], [class*="chatling"]');
+    chatElements.forEach(element => element.remove());
+    
+    // Create and add new script
+    const script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.async = true;
+    script.dataset.id = '2448985569';
+    script.id = 'chatling-embed-script';
+    script.src = 'https://chatling.ai/js/embed.js';
+    document.body.appendChild(script);
+
+    window.chtlConfig = {
+        chatbotId: "2448985569"
+    };
+
+    return () => {
+        // Complete cleanup on unmount
+        const scriptToRemove = document.getElementById('chatling-embed-script');
+        if (scriptToRemove) {
+            scriptToRemove.remove();
+        }
+        
+        // Remove all chatbot related elements
+        const allChatElements = document.querySelectorAll('[id*="chatling"], [class*="chatling"]');
+        allChatElements.forEach(element => element.remove());
+        
+        // Clear the config
+        window.chtlConfig = null;
+        
+        // Remove any leftover chat icons
+        const chatIcons = document.querySelectorAll('.chatling-widget-icon');
+        chatIcons.forEach(icon => icon.remove());
+    };
+}, []);
+
+
+
 
   return (
     <>
@@ -165,7 +211,7 @@ const RESPONSIVE_WIDTH = 1024;
   href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
 />
 
-
+{/* 
 <script type="text/javascript">
     {`
       window.chtlConfig = { 
@@ -173,7 +219,7 @@ const RESPONSIVE_WIDTH = 1024;
       };
     `}
   </script>
-<script async data-id="2448985569" id="chatling-embed-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script>
+<script async data-id="2448985569" id="chatling-embed-script" type="text/javascript" src="https://chatling.ai/js/embed.js"></script> */}
 
 
         <meta property="og:title" content="FireChat - Connect, Collaborate & Chat with Professionals Worldwide" />
@@ -527,7 +573,7 @@ const RESPONSIVE_WIDTH = 1024;
                                     </div>
 
                                     <div class="tw-mt-auto tw-w-full tw-flex tw-px-6 tw-place-content-center" onClick={signin}>
-                                        <a href="#sign-up" class="btn !tw-w-full !tw-bg-transparent tw-duration-[0.3s] 
+                                        <a href="" class="btn !tw-w-full !tw-bg-transparent tw-duration-[0.3s] 
                                                                 hover:!bg-violet-600 hover:!tw-text-white
                                                                 dark:hover:!tw-bg-white dark:hover:!tw-text-black
                                                                 !tw-border-[1px] !tw-border-black !tw-text-black

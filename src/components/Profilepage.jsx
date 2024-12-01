@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { Layout, Avatar, Tooltip, Button, Typography, Row, Col, Card, Space, 
   Divider, Empty, Input,Mentions,Flex,Modal} from 'antd';
   import Resizer from 'react-image-file-resizer';
-import { EditOutlined, UserOutlined, PlusOutlined,ReloadOutlined,LoadingOutlined, SettingOutlined,SaveOutlined,MessageOutlined,FileImageOutlined,TeamOutlined,StarOutlined } from '@ant-design/icons';
+import { EditOutlined, UserOutlined, PlusOutlined,ReloadOutlined,LoadingOutlined, SettingOutlined,SaveOutlined,MessageOutlined,FileImageOutlined,TeamOutlined,StarOutlined,ShareAltOutlined } from '@ant-design/icons';
 import { SideBar } from './SideBar';
 import { useParams,useNavigate } from 'react-router-dom';
 
@@ -18,6 +18,8 @@ import { ShowPost } from './ShowPost';
 import { ProfileSettings } from './ProfileSettings';
 import Loader from './Design/Loader';
 import { motion } from 'framer-motion';
+import { ShareProile } from './ShareProile';
+import { WandSparkles } from 'lucide-react';
 const { Content } = Layout;
 const { Title, Text } = Typography;
 
@@ -34,6 +36,8 @@ const ProfilePage = () => {
   const { suggestions, loading, error, fetchSuggestions } = ai();
   const[load,setload]=useState(false);
   const[load1,setload1]=useState(false);
+  const [isShareModalVisible, setIsShareModalVisible] = useState(false);
+
   const [active, setActive] = useState(false);
  const navigate=useNavigate();
  const [highlights, setHighlights] = useState([]);
@@ -58,6 +62,14 @@ const ProfilePage = () => {
     ],
   };
   console.log("uid from params",uid);
+  useEffect(() => {
+    if (!user) {
+      navigate("/");
+      return;
+    }
+  }, [uid]);
+
+  if (!user) return null;
   
   useEffect(() => {
     const fetchUserData = async () => {
@@ -77,11 +89,11 @@ const ProfilePage = () => {
           // Move fetchSuggestions here, after we have the userstate data
           if (userData.displayName && uid==user.uid ) {
             fetchSuggestions(
-              `Generate 15 unique and creative username suggestions for the display name ${userData.displayName}. The usernames should follow Instagram-style formats, using underscores, numbers, or slight modifications of the display name. Return each username on a new line without any additional information apart from usernames strictly`,
+              `Generate 16 unique, stylish, and trendy Instagram-style usernames. The usernames should be creative, include variations with underscores, dots and reflect an aesthetic vibe. Return each username on a new line without numbering or additional information.`,
               0.1,
               16384,
               "llama-v3p1-405b-instruct",
-              "completion"
+              "chat"
             );
           }
         }
@@ -145,7 +157,7 @@ const ProfilePage = () => {
 
  
   
- // console.log(suggestions)
+  console.log(suggestions)
 
   const handleSave = async () => {
     
@@ -259,10 +271,17 @@ navigate('/ChatDm')
       <Loader/>
     );
   }
- 
+
   return (
     <Layout className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50 md:ml-[220px]">
       <SideBar />
+      <ShareProile 
+  isVisible={isShareModalVisible}
+  onClose={() => setIsShareModalVisible(false)}
+  userImage={user.photoURL}
+  userName={user.displayName}
+  profileUrl={window.location.href}
+/>
       <Modal
         title={<Text className="text-xl font-bold text-violet-800">Edit Profile</Text>}
         open={isModalVisible}
@@ -327,7 +346,7 @@ navigate('/ChatDm')
             onChange={handleInputChange}
             className="rounded-lg border-2 border-violet-200 hover:border-violet-400 focus:border-violet-600 px-4 py-2 mt-4"
             suffix={
-              <ReloadOutlined
+              <WandSparkles
                 onClick={cycleNextSuggestion}
                 className="text-violet-600 hover:text-violet-800 cursor-pointer"
               />
@@ -361,22 +380,40 @@ navigate('/ChatDm')
             />
           )}
         </Flex>
-        <Flex gap={8} className="mt-2">
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2 bg-violet-50 px-3 py-1 rounded-full"
-          >
-            <FileImageOutlined className="text-violet-600" />
-            <Text className="text-violet-800 font-medium">{Posttotal} posts</Text>
-          </motion.div>
-          <motion.div
-            whileHover={{ scale: 1.05 }}
-            className="flex items-center gap-2 bg-violet-50 px-3 py-1 rounded-full"
-          >
-            <TeamOutlined className="text-violet-600" />
-            <Text className="text-violet-800 font-medium">{FriendsCount} friends</Text>
-          </motion.div>
-        </Flex>
+        <Flex gap={8} className="mt-2 relative">
+  {/* Share Button */}
+  <motion.div
+  whileHover={{ scale: 1.05 }}
+  onClick={() => setIsShareModalVisible(true)}
+  className="absolute top-[-180px] right-[-25px] sm:right-[-65px] flex items-center gap-2 bg-violet-50 px-3 py-1 rounded-full cursor-pointer"
+>
+
+
+
+
+    <ShareAltOutlined className="text-violet-600" />
+    <Text className="text-violet-800 font-medium">Share</Text>
+  </motion.div>
+
+  {/* Existing Post Count */}
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    className="flex items-center gap-2 bg-violet-50 px-3 py-1 rounded-full"
+  >
+    <FileImageOutlined className="text-violet-600" />
+    <Text className="text-violet-800 font-medium">{Posttotal} posts</Text>
+  </motion.div>
+
+  {/* Existing Friends Count */}
+  <motion.div
+    whileHover={{ scale: 1.05 }}
+    className="flex items-center gap-2 bg-violet-50 px-3 py-1 rounded-full"
+  >
+    <TeamOutlined className="text-violet-600" />
+    <Text className="text-violet-800 font-medium">{FriendsCount} friends</Text>
+  </motion.div>
+</Flex>
+
       </Space>
     </motion.div>
 

@@ -267,7 +267,10 @@ if (chats) {
       time,
       date
     });
-  
+    const sound = new Audio("/msg.mp3");
+    sound.volume = 0.2; // Sets volume to 20%
+    sound.play();
+    
     await updateDoc(hasnewmsgref, {
       newMessages: arrayUnion(user.uid), // Add sender's ID to array
       hasnewmessage: true

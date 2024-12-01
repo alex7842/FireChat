@@ -82,7 +82,7 @@ export const StoryView = ({ onclose, selectedStory,owner }) => {
           />
         ) : (
           <img
-            src={owner=="firechat"? "/logo3.png" :selectedStory?.mediaUrl}
+            src={owner=="firechat"? "/Storypost1.jpg" :selectedStory?.mediaUrl}
             alt={selectedStory?.displayName}
             className="w-full h-full object-contain"
           />

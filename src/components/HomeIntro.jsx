@@ -52,7 +52,10 @@ const HomeIntro = () => {
   const [newsComments, setNewsComments] = useState({});
   const [Sharemodel,setSharemodel]=useState(false);
   const[personal,setpersonal]=useState(false);
+  const [owner,setowner]=useState(false);
+
 useEffect(() => {
+
   const handleForegroundNotifications = async () => {
     const token = await registerForPushNotifications(user.uid);
     console.log('FCM Token registered:', token);
@@ -122,12 +125,16 @@ const interest = () => {
 
 //console.log("interseti",interest())
 useEffect(() => {
+ 
+ 
+
   const fetchData = async () => {
     setLoading(true);
     const storedPosts = localStorage.getItem('cachedPosts');
     const notInterestedPosts = JSON.parse(localStorage.getItem('notInterestedPosts') || '[]');
     
     if (storedPosts && homereload === 0) {
+     
       const filteredPosts = JSON.parse(storedPosts).filter(
         post => !notInterestedPosts.includes(post.id)
       );
@@ -539,17 +546,7 @@ const isValidImageUrl = (url) => {
       <div className="max-w-screen-xl mx-auto">
         <div className="flex flex-col md:flex-row md:justify-center">
           <SideBar />
-         
-<Modal
-  open={storyViewModal}
-  onCancel={() => setStoryViewModal(false)}
-  footer={null}
-  width={400}
-  centered
- // className="story-view-modal"
->
-  <StoryView owner="firechat"/>
-</Modal>
+   
           <Modal
         open={modalVisible}
         onCancel={() => setModalVisible(false)}
@@ -607,7 +604,7 @@ const isValidImageUrl = (url) => {
   className="story-view-modal"
 >
     
-  <StoryView selectedStory={selectedStory} onclose={setStoryViewModal} />
+  <StoryView selectedStory={selectedStory}  onclose={setStoryViewModal}  owner={owner?"firechat":"none"}/>
 </Modal>
   <div className="w-full bg-gradient-to-r from-violet-500 to-fuchsia-500 px-4 py-4">
     <Carousel
@@ -658,7 +655,7 @@ const isValidImageUrl = (url) => {
   <div className="px-2">
     <div className="flex flex-col items-center justify-center">
       <div className="block cursor-pointer"  onClick={() => {
-            //setSelectedStory(story);
+           setowner(true);
             setStoryViewModal(true);
           }}
         >

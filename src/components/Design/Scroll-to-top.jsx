@@ -1,11 +1,13 @@
-import { useEffect, useState } from "react";
+import react,{ useEffect, useState,useContext } from "react";
 import { ArrowUp } from "lucide-react";
+import UserContext from "../context/context";
 
-const DEFAULT_BTN_CLS =
-  "fixed bottom-21 right-5 z-50  text-white flex items-center rounded-full bg-gradient-to-r from-violet-500 to-violet-600 p-2 hover:text-xl transition-all duration-300 ease-out";
 const SCROLL_THRESHOLD = 50;
 
 const ScrollToTop = () => {
+  const {user}=useContext(UserContext);
+const DEFAULT_BTN_CLS = `fixed ${user ? "bottom-5" : "bottom-21"} ${user ? "right-6" : "right-5"} z-50 text-white flex items-center rounded-full bg-gradient-to-r from-violet-500 to-violet-600 p-2 hover:text-xl transition-all duration-300 ease-out`;
+
   const [btnCls, setBtnCls] = useState(DEFAULT_BTN_CLS);
 
   useEffect(() => {
