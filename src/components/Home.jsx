@@ -42,7 +42,7 @@ export const Home = () => {
         const querySnapshot = await getDocs(messageref);
         const usersList = querySnapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter(user1 => user1.uid !== user.uid);
+          .filter(user1 => user1.uid !== user.uid && user1.valid!==false);
           const shuffledUsers = usersList.sort(() => 0.5 - Math.random());
           const randomThreeUsers = shuffledUsers.slice(0, 3);
           

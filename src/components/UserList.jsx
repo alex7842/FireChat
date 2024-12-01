@@ -48,7 +48,7 @@ export const UserList = ({ onUserSelect }) => {
         const querySnapshot = await getDocs(messageref);
         const usersList = querySnapshot.docs
           .map(doc => ({ id: doc.id, ...doc.data() }))
-          .filter(user1 => user1.uid !== user.uid)
+          .filter(user1 => user1.uid !== user.uid && user1.valid !== false)
           .sort((a, b) => {
             // Handle cases where lastactive might be undefined
             if (!a.lastactive) return 1;

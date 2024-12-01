@@ -80,6 +80,11 @@ const ProfilePage = () => {
         
         if (docSnap.exists()) {
           const userData = docSnap.data();
+          if (userData.valid === false) {
+            navigate('/');
+            message.error('User account no longer exists');
+            return;
+          }
           setdata(userData);
           setAvatarUrl(userData.photoURL);
           setInputValue(userData.displayName);

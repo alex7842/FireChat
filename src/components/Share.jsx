@@ -15,7 +15,7 @@ export const Share = ({  Sharemodel,SharePost,curuser,source}) => {
     const [form] = Form.useForm();
     const [selectedItems, setSelectedItems] = useState([]);
 
-    const filteredOptions = users.filter((o) => o.uid !== curuser && !selectedItems.includes(o));
+    const filteredOptions = users.filter((o) => o.uid !== curuser && !selectedItems.includes(o) && o.valid!==false);
     const userMapping = {};
     filteredOptions.forEach(user1 => {
         userMapping[user1.displayName] = user1.uid;

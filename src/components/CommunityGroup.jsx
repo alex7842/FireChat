@@ -20,7 +20,7 @@ export const CommunityGroup = ({ onGroupSelect}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const [selectedItems, setSelectedItems] = useState([]);
-  const filteredOptions = users.filter((o) => o.uid!==user.uid && !selectedItems.includes(o));
+  const filteredOptions = users.filter((o) => o.uid!==user.uid && !selectedItems.includes(o) && o.valid!==false);
   const date = new Date();
 // console.log(date); // Output the current date and time
 

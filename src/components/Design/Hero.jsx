@@ -5,7 +5,7 @@ import { signInWithPopup } from 'firebase/auth'
 //import { openVideo } from '../../scripts/index.js';
 import NumberTicker from '../ui/number-ticker'
 import { Timestamp } from 'firebase/firestore';
-import { addDoc, collection,query, where, getDocs, setDoc,doc} from 'firebase/firestore';
+import { addDoc, collection,query, where, getDocs, setDoc,doc,updateDoc} from 'firebase/firestore';
 import { Link,useNavigate } from "react-router-dom";
 import { db,auth,provider } from '../../config/firebase'
 import UserContext from '../context/context';
@@ -59,7 +59,11 @@ export const Hero = () => {
         await setDoc(userDocRef, userData);
         console.log("New user document written with UID:", result.user.uid);
       } else {
+        const userDocRef = doc(db, 'users', userData.uid);
         console.log("User already exists with UID:", result.user.uid);
+        await updateDoc(userDocRef, {
+            valid: true,
+          });
       }
 
     

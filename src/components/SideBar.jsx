@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { Layout, Menu, Divider, Typography, Modal } from 'antd';
+import { Layout, Menu, Divider, Typography, Modal,Button } from 'antd';
 import { useLocation } from 'react-router-dom';
 
 import { useNavigate } from 'react-router-dom';
@@ -109,20 +109,34 @@ export const SideBar = ({showChat}) => {
   return (
     <>
       <Modal
-        open={open}
-        title="Are you Sure want to Logout ?"
-        onOk={handleOk}
-        onCancel={handleCancel}
-        footer={(_, { OkBtn, CancelBtn }) => (
-          <>
-           
-            <CancelBtn />
-            <OkBtn />
-          </>
-        )}
-      >
-     
-      </Modal>
+  open={open}
+  title={<span className="text-xl font-semibold text-violet-800">Are you Sure want to Logout?</span>}
+  onOk={handleOk}
+  onCancel={handleCancel}
+  centered
+  className="custom-modal"
+  footer={(_, { OkBtn, CancelBtn }) => (
+    <div className="flex gap-3 justify-end">
+    <button 
+      onClick={handleCancel}
+      className="px-6 py-2 rounded-md border border-gray-300 hover:border-violet-400 hover:text-violet-500 transition-colors duration-300"
+    >
+      Cancel
+    </button>
+    <button 
+      onClick={handleOk}
+      className="px-6 py-2 rounded-md bg-violet-600 hover:bg-violet-700 text-white border-none transition-colors duration-300"
+    >
+      Logout
+    </button>
+  </div>
+  )}
+>
+  <div className="py-4">
+    <p className="text-gray-600">You will be logged out from your account.</p>
+  </div>
+</Modal>
+
       <div className="hidden md:block">
       <Sider width={220} className="site-layout-background fixed left-0 top-0 h-screen">
 
