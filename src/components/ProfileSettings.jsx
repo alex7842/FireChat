@@ -1,5 +1,5 @@
 
-import React,{useContext, useState} from 'react';
+import React,{useContext, useState,useEffect} from 'react';
 import { Drawer, Switch, Button, Divider, Typography, Space, Modal, Collapse, Tag } from 'antd';
 import { 
   SettingOutlined, DeleteOutlined, LockOutlined, BellOutlined, BulbOutlined,
@@ -27,7 +27,24 @@ const [open,setOpen]=useState(false);
 const {group,setgroup}=useContext(GroupContext)
 const [notifications, setNotifications] = useState(true);
 const navigate=useNavigate();
+
+
+
+useEffect(() => {
+  // Load privacy setting from localStorage on component mount
+  const storedPrivacy = localStorage.getItem("isPrivate");
+  if (storedPrivacy !== null) {
+    setIsPrivate(storedPrivacy === "true");
+  }
+}, []);
 const handleDeleteAccount = async () => {
+  useEffect(() => {
+    // Load privacy setting from localStorage on component mount
+    const storedPrivacy = localStorage.getItem("isPrivate");
+    if (storedPrivacy !== null) {
+      setIsPrivate(storedPrivacy === "true");
+    }
+  }, []);
   Modal.confirm({
     title: 'Delete Account',
     content: 'Are you sure you want to delete your account? This action cannot be undone.',
@@ -91,6 +108,72 @@ const handleDeleteAccount = async () => {
       console.error("Error during sign-out:", error);
     });
   };
+  const handlePrivacyToggle = () => {
+    if (!isPrivate) {
+      // Enabling private mode
+      Modal.confirm({
+        title: "Enable Private Account",
+        content: (
+          <div className="space-y-2">
+            <h3 className="font-medium">Private Account Features:</h3>
+            <ul className="list-disc pl-5">
+              <li>Restricted profile visibility</li>
+              <li>Protected content downloads</li>
+              <li>Profile visible only to approved followers</li>
+              <li>Enhanced privacy controls</li>
+              <li>Secure sharing options</li>
+            </ul>
+          </div>
+        ),
+        onOk: async () => {
+          try {
+            await updateDoc(doc(db, "users", user.uid), {
+              isPrivate: true,
+            });
+            setIsPrivate(true);
+            localStorage.setItem("isPrivate", "true");
+            message.success("Privacy settings updated successfully");
+          } catch (error) {
+            message.error("Failed to update privacy settings");
+          } finally {
+            // Explicitly close the modal if necessary (usually not needed for Modal.confirm)
+            Modal.destroyAll();
+          }
+        },
+        okText: "Confirm",
+        cancelText: "Cancel",
+        okButtonProps: {
+          className: "bg-violet-500 hover:bg-violet-600",
+        },
+      });
+    } else {
+      // Disabling private mode
+      Modal.confirm({
+        title: "Disable Private Account",
+        content: "Are you sure you want to make your account public?",
+        onOk: async () => {
+          try {
+            await updateDoc(doc(db, "users", user.uid), {
+              isPrivate: false,
+            });
+            setIsPrivate(false);
+            localStorage.setItem("isPrivate", "false");
+            message.success("Privacy settings updated successfully");
+          } catch (error) {
+            message.error("Failed to update privacy settings");
+          }
+          finally{
+            Modal.destroyAll();
+          }
+        },
+        okText: "Confirm",
+        cancelText: "Cancel",
+        okButtonProps: {
+          className: "bg-violet-500 hover:bg-violet-600",
+        },
+      });
+    }
+  };
   return (
     <>
      <Modal
@@ -143,7 +226,7 @@ const handleDeleteAccount = async () => {
               <Space direction="vertical" className="w-full">
                 <div className="flex justify-between items-center p-2">
                   <Text>Private Account</Text>
-                  <Switch onChange={setIsPrivate} checked={isPrivate} />
+                  <Switch onChange={handlePrivacyToggle} checked={isPrivate} />
                 </div>
                 <div className="flex justify-between items-center p-2">
                   <Text>Show Activity Status</Text>

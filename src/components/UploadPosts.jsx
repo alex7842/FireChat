@@ -1,15 +1,17 @@
 import { Modal, Upload, Button, Input, message } from 'antd';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { UploadOutlined } from '@ant-design/icons';
 import {db } from '../config/firebase';
 import { ref, uploadBytes, getDownloadURL,getStorage} from 'firebase/storage';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc,getDoc,doc } from 'firebase/firestore';
 import { useContext } from 'react';
 import UserContext from './context/context';
 import ChatContext from './context/ChatContext';
 import { SendOutlined } from '@ant-design/icons';
 import { WandSparkles } from 'lucide-react';
 import ai from '@/hooks/ai';
+import GroupContext from './context/GroupContext';
+import { sendNotification } from '@/utils/notificationUtils';
 export const UploadPosts = ({uid,settrigger}) => {
   // Move all state declarations to the top level of the component
   const [modalVisible, setModalVisible] = useState(false);
@@ -17,8 +19,14 @@ export const UploadPosts = ({uid,settrigger}) => {
   const [caption, setCaption] = useState("");
   const [uploading, setUploading] = useState(false);
   const {user} = useContext(UserContext);
+  const {users} =useContext(GroupContext);
   const {sethomereload} =useContext(ChatContext);
   const { suggestions, loading, error, fetchSuggestions,setSuggestions } = ai();
+  useEffect(() => {
+    if (suggestions) {
+      setCaption(suggestions);
+    }
+  }, [suggestions]);
   const handleIconClick = () => {
     console.log("Icon clicked! Caption:", caption);
     fetchSuggestions(
@@ -35,7 +43,7 @@ Format exactly like this:
       "chat"
     );
     console.log("for caption",suggestions);
-    setCaption(suggestions);
+  
     setSuggestions([]);
   
     // Add your logic here (e.g., sending the caption)
@@ -70,6 +78,15 @@ Format exactly like this:
       setModalVisible(false);
       setFileList([]);
       setCaption('');
+      for (const user1 of users) {
+        const recipientDoc = await getDoc(doc(db, "users", user1.uid));
+        const recipientFcmToken = recipientDoc.data().fcmToken;
+        console.log(" sharing user recipientFcmToken",recipientFcmToken);
+        // Send notification
+        if (recipientFcmToken) {
+          await sendNotification(recipientFcmToken, `${user.displayName}: has Uploaded a new Post`,user.uid,user.displayName,user.photoURL);
+        }
+     }
     } catch (error) {
       message.error('Upload failed');
     }

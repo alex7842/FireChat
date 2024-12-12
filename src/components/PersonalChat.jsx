@@ -224,7 +224,7 @@ const handlesubmit = async (s) => {
   const hasnewmsgref = doc(db, "users", targetuserid);
 
  
- // sendEmail()
+  sendEmail()
   
   
     if (group==='allowchat'){

@@ -6,7 +6,7 @@ export const registerForPushNotifications = async (userId) => {
   try {
     const permission = await Notification.requestPermission();
     
-    if (permission === 'granted') {
+    if (permission) {
       // Clear any existing token
       await deleteToken(messaging);
       

@@ -1,19 +1,22 @@
-import React, { useState } from 'react'
+import React, { useState,useEffect } from 'react'
 import { Upload, Button, Input, message } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 import { db } from '@/config/firebase'
 import { ref, uploadBytes, getDownloadURL,getStorage } from 'firebase/storage'
-import { doc, setDoc, Timestamp } from 'firebase/firestore'
+import { doc, setDoc, Timestamp ,getDoc} from 'firebase/firestore'
 import { useContext } from 'react'
 import UserContext from './context/context'
 import { WandSparkles } from 'lucide-react'
 import ai from '@/hooks/ai'
+import GroupContext from './context/GroupContext'
+import { sendNotification } from '@/utils/notificationUtils'
 export const Story = ({ onclose }) => {
   const [fileList, setFileList] = useState([])
   const [previewUrl, setPreviewUrl] = useState('')
   const [caption, setCaption] = useState("")
   const [uploading, setUploading] = useState(false)
   const { user } = useContext(UserContext)
+  const {users}=useContext(GroupContext);
   const { suggestions, loading, error, fetchSuggestions,setSuggestions } = ai();
   const handlePreview = async (file) => {
     if (!file.url && !file.preview) {
@@ -21,7 +24,11 @@ export const Story = ({ onclose }) => {
     }
     setPreviewUrl(file.url || file.preview)
   }
-
+  useEffect(() => {
+    if (suggestions) {
+      setCaption(suggestions);
+    }
+  }, [suggestions]);
   const handleChange = ({ fileList: newFileList }) => {
     setFileList(newFileList)
     if (newFileList.length > 0) {
@@ -47,9 +54,9 @@ Format exactly like this:
       "llama-v3p1-405b-instruct",
       "chat"
     );
-    setCaption("");
+   
     console.log("for caption",suggestions);
-    setCaption(suggestions);
+  
     setSuggestions([]);
   
     // Add your logic here (e.g., sending the caption)
@@ -95,6 +102,15 @@ Format exactly like this:
 
       message.success('Story uploaded successfully!')
       onclose()
+      for (const user1 of users) {
+        const recipientDoc = await getDoc(doc(db, "users", user1.uid));
+        const recipientFcmToken = recipientDoc.data().fcmToken;
+        console.log(" sharing user recipientFcmToken",recipientFcmToken);
+        // Send notification
+        if (recipientFcmToken) {
+          await sendNotification(recipientFcmToken, `${user.displayName}: has posted a new story`,user.uid,user.displayName,user.photoURL);
+        }
+     }
     } catch (error) {
       console.error('Error uploading story:', error)
       message.error('Failed to upload story')
