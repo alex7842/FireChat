@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState,useContext, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css'
-import { signInWithPopup } from 'firebase/auth'
+import { sendEmailVerification, signInWithPopup } from 'firebase/auth'
 //import { openVideo } from '../../scripts/index.js';
 import NumberTicker from '../ui/number-ticker'
 import { Timestamp } from 'firebase/firestore';
@@ -12,28 +12,35 @@ import UserContext from '../context/context';
 import ChatContext from '../context/ChatContext';
 import '../../../src/tailwind-build.css';
 import '../../../src/index.css';
+import emailjs from '@emailjs/browser';
 
 // import './../../../index.js'
 import { Helmet } from 'react-helmet';
 import { Button } from 'antd';
 import ScrollToTop from './Scroll-to-top'
+import { use } from 'react'
 
 
 
 export const Hero = () => {
     const { user, setuser } = useContext(UserContext);
   const {homereload,sethomereload}=useContext(ChatContext);
- 
-
+   const [email1, setemail1] = useState('');  
+ const [name ,setname]=useState("");
   const date = new Date();
   const messageref=collection(db,"users")
   const navigate = useNavigate();
   provider.setCustomParameters({
     prompt: 'select_account'
   });
+  
   const signin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
+      const displayName = result.user.displayName ? result.user.displayName.toUpperCase() : "User";
+      const email = result.user.email || "";
+      setname(displayName);
+      setemail1(email);
       const userData = {
         uid: result.user.uid,
         email: result.user.email,
@@ -43,11 +50,13 @@ export const Hero = () => {
         date
       };
       setuser(userData);
+     
       localStorage.setItem("isloggedin", "true");
       localStorage.removeItem('cachedPosts');
   // Reset counter to 0 instead of incrementing
   sethomereload(0);
-      console.log(userData); // Set the correct user object
+      console.log(userData);
+     
       // await registerForPushNotifications(userData.uid);
      
       navigate('/Home');
@@ -57,6 +66,7 @@ export const Hero = () => {
       if (querySnapshot.empty) {
         const userDocRef = doc(db, 'users', userData.uid);
         await setDoc(userDocRef, userData);
+        email();
         console.log("New user document written with UID:", result.user.uid);
       } else {
         const userDocRef = doc(db, 'users', userData.uid);
@@ -71,7 +81,28 @@ export const Hero = () => {
       console.error("Error during sign-in:", error);
     }
   };
-
+  const email=()=>{
+    console.log("email is called",email1,name);
+    const emailData = {
+    
+      to_name: name,        
+      to_email:email1,    
+        
+    };
+  
+    emailjs
+      .send("service_s26swyq","template_dol35ss", emailData, {
+        publicKey: '_MO9lAlueYkYKkFHG',
+      })
+      .then(
+        () => {
+          console.log('SUCCESS!');
+        },
+        (error) => {
+          console.log('FAILED...', error.text);
+        },
+      );
+  }
 useEffect(() => {
     const loadExternalScripts = async () => {
       // Load GSAP
