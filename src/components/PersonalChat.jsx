@@ -173,13 +173,13 @@ const handleKeyDown = (e) => {
   }
 };
 
-const sendEmail = (e) => {
+const sendEmail = (prop) => {
   console.log(cemail)
   const emailData = {
     from_name: user.displayName, 
     to_name: cname,        
     to_email: cemail,    
-    message:`${user.displayName} messaged you ${text}`,     
+    message:`${user.displayName} ${prop}`,     
   };
 
   emailjs
@@ -224,7 +224,7 @@ const handlesubmit = async (s) => {
   const hasnewmsgref = doc(db, "users", targetuserid);
 
  
-  sendEmail()
+  sendEmail("messaged you "+ur);
   
   
     if (group==='allowchat'){
@@ -504,7 +504,7 @@ const suffix = (
       time,
       date
     });
-   
+    sendEmail("requested you a video call on FireChat"); 
     const recipientDoc = await getDoc(doc(db, "users",targetuserid));
     const recipientFcmToken = recipientDoc.data().fcmToken;
     console.log(" sharing user recipientFcmToken",recipientFcmToken);
