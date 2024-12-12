@@ -280,11 +280,12 @@ navigate('/ChatDm')
   return (
     <Layout className="min-h-screen bg-gradient-to-br from-violet-50 to-purple-50 md:ml-[220px]">
       <SideBar />
+    
       <ShareProile 
   isVisible={isShareModalVisible}
   onClose={() => setIsShareModalVisible(false)}
-  userImage={user.photoURL}
-  userName={user.displayName}
+  userImage={userstate.photoURL}
+  userName={userstate.displayName}
   profileUrl={window.location.href}
 />
       <Modal
@@ -431,7 +432,7 @@ navigate('/ChatDm')
       <Card.Meta
         description={
           <>
-            <ProfileSettings/>
+            {isowner &&<ProfileSettings/>}
             <Title level={4} style={inputStyle}>{userstate.displayName.toUpperCase()}</Title>
             <Input
               ref={descriptionInputRef}

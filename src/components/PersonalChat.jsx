@@ -507,7 +507,7 @@ const suffix = (
     sendEmail("requested you a video call on FireChat"); 
     const recipientDoc = await getDoc(doc(db, "users",targetuserid));
     const recipientFcmToken = recipientDoc.data().fcmToken;
-    console.log(" sharing user recipientFcmToken",recipientFcmToken);
+    console.log("sharing user recipientFcmToken",recipientFcmToken);
     // Send notification
     if (recipientFcmToken) {
       await sendNotification(recipientFcmToken, `${user.displayName}: has requested you a Video Call`,user.uid,user.displayName,user.photoURL);
