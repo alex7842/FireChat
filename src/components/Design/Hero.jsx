@@ -34,13 +34,53 @@ export const Hero = () => {
     prompt: 'select_account'
   });
   
+//   const sendWelcomeEmail = (useremail,username) => {
+//     console.log("Sending welcome email to:", useremail, username);
+//     const emailData = {
+//         to_name: username,        
+//         to_email: useremail,    
+//     };
+
+//     emailjs
+//         .send("service_s26swyq", "template_dol35ss", emailData, {
+//             publicKey: '_MO9lAlueYkYKkFHG',
+//         })
+//         .then(
+//             () => {
+//                 console.log('Email sent successfully!');
+//             },
+//             (error) => {
+//                 console.log('Email failed:', error.text);
+//             },
+//         );
+// }
+const sendWelcomeEmail = (userEmail, userName) => {
+    if (!userEmail || !userName) {
+        console.log("Email or username missing:", { userEmail, userName });
+        return;
+    }
+    const emailData = {
+        to_name: userName,        
+        to_email: userEmail,
+        subject: 'Welcome to FireChat!',
+        message: `Welcome ${userName}! Thanks for joining FireChat.`
+    };
+
+    return emailjs.send(
+        "service_s26swyq",
+        "template_dol35ss", 
+        emailData, 
+        {publicKey: '_MO9lAlueYkYKkFHG'}
+    );
+};
+
+
+  
   const signin = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const displayName = result.user.displayName ? result.user.displayName.toUpperCase() : "User";
-      const email = result.user.email || "";
-      setname(displayName);
-      setemail1(email);
+    //  const isFirstLogin = !localStorage.getItem('hasLoggedInBefore');
+     
       const userData = {
         uid: result.user.uid,
         email: result.user.email,
@@ -66,10 +106,15 @@ export const Hero = () => {
       if (querySnapshot.empty) {
         const userDocRef = doc(db, 'users', userData.uid);
         await setDoc(userDocRef, userData);
-        email();
+       
         console.log("New user document written with UID:", result.user.uid);
-      } else {
+    }
+    else {
         const userDocRef = doc(db, 'users', userData.uid);
+        // if (isFirstLogin) {
+        //     await sendWelcomeEmail(user.email, user.displayName);
+        //     localStorage.setItem('hasLoggedInBefore', 'true');
+        // }
         console.log("User already exists with UID:", result.user.uid);
         await updateDoc(userDocRef, {
             valid: true,
@@ -81,28 +126,7 @@ export const Hero = () => {
       console.error("Error during sign-in:", error);
     }
   };
-  const email=()=>{
-    console.log("email is called",email1,name);
-    const emailData = {
-    
-      to_name: name,        
-      to_email:email1,    
-        
-    };
-  
-    emailjs
-      .send("service_s26swyq","template_dol35ss", emailData, {
-        publicKey: '_MO9lAlueYkYKkFHG',
-      })
-      .then(
-        () => {
-          console.log('SUCCESS!');
-        },
-        (error) => {
-          console.log('FAILED...', error.text);
-        },
-      );
-  }
+ 
 useEffect(() => {
     const loadExternalScripts = async () => {
       // Load GSAP
