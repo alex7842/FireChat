@@ -5,7 +5,7 @@ import UserContext from './context/context';
 
 import { Signin } from './Signin';
 import HomeIntro from './HomeIntro';
-
+import emailjs from '@emailjs/browser';
 import { db } from '../config/firebase';
 import GroupContext from './context/GroupContext';
 import App from '../App';
@@ -58,6 +58,30 @@ export const Home = () => {
 
     useEffect(()=>{
       localStorage.removeItem('cachedPosts');
+      const sendWelcomeEmail = (userEmail, userName) => {
+          if (!userEmail || !userName) {
+              console.log("Email or username missing:", { userEmail, userName });
+              return;
+          }
+          const emailData = {
+              to_name: userName,        
+              to_email: userEmail,
+              subject: 'Welcome to FireChat!',
+              message: `Welcome ${userName}! Thanks for joining FireChat.`
+          };
+      
+          return emailjs.send(
+              "service_s26swyq",
+              "template_dol35ss", 
+              emailData, 
+              {publicKey: '_MO9lAlueYkYKkFHG'}
+          );
+      };
+      const hasLoggedInBefore = localStorage.getItem('hasLoggedInBefore');
+  if (!hasLoggedInBefore && user?.email && user?.displayName) {
+    sendWelcomeEmail(user.email, user.displayName);
+    localStorage.setItem('hasLoggedInBefore', 'true');
+  }
       // Reset counter to 0 instead of incrementing
       sethomereload(0);
       fetchUsers();

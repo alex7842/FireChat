@@ -10,8 +10,9 @@ import { collection,getDocs,query,doc,getDoc,setDoc,deleteDoc,Timestamp,updateDo
 import { db,messaging } from '../config/firebase';
 import { Report } from './Report';
 import { ShowPost } from './ShowPost';
-import {WandSparkles} from "lucide-react";
+import {WandSparkles,ChevronDown} from "lucide-react";
 const { Header, Content, Sider } = Layout;
+
 import UserContext from './context/context';
 import ChatContext from './context/ChatContext';
 import { Follow } from './Follow';
@@ -31,17 +32,21 @@ import { StoryView } from './StoryView';
 import { StoryUpload } from './StoryUpload';
 import { AllStories } from './AllStories';
 import PersonalizedFeed from './PersonalFeed';
-import ShinyButton from './ui/shiny-button';
-import ShimmerButton from './ui/shimmer-button';
+
+import ai from '@/hooks/ai';
 import internal from 'stream';
+import SparklesText from './ui/sparkles-text';
 const HomeIntro = () => {
   const [postData,setpostData]=useState([]);
-  const[loading,setLoading]=useState(false);
+  const [openSummaries, setOpenSummaries] = useState([]);
+
+  const[loading1,setLoading]=useState(false);
   const [modalVisible, setModalVisible] = useState(false);
   const [storyUploadModal,setStoryUploadModal]=useState(false);
   const [storyViewModal,setStoryViewModal]=useState(false);
   const [ selectedStory,setSelectedStory] = useState(null);
   const [likedPosts, setLikedPosts] = useState({});
+  const { suggestions,setSuggestions, loading, error, fetchSuggestions } = ai();
   const [isHeartAnimating, setIsHeartAnimating] = useState(false);
   const [newComment, setNewComment] = useState('');
   const { user } = useContext(UserContext);
@@ -51,6 +56,9 @@ const HomeIntro = () => {
   const [newsLikes, setNewsLikes] = useState({});
   const [newsComments, setNewsComments] = useState({});
   const [Sharemodel,setSharemodel]=useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+const [isLoading, setIsLoading] = useState(false);
+
   const[personal,setpersonal]=useState(false);
   const [owner,setowner]=useState(false);
 
@@ -173,7 +181,7 @@ useEffect(() => {
     setLoading(false);
     // Fetch news in parallel
     const inter=interest();
-    fetch(`https://api.mediastack.com/v1/news?access_key=129a7a5765ffe261abc9093f895d9b51&countries=us,in&categories=${interest()}&languages=en&limit=95&date=${getLastThreeDays()}&sort=published_desc`)
+    fetch(`https://api.mediastack.com/v1/news?access_key=4af5790a65dc4f27e4d63fcc99e335c3&countries=us,in&categories=${interest()}&languages=en&limit=95&date=${getLastThreeDays()}&sort=published_desc`)
 
       .then(response => response.json())
       .then(newsData => {
@@ -743,7 +751,7 @@ const isValidImageUrl = (url) => {
                           if (!item.mediaUrl || !item.author) return false;
                           return isValidImageUrl(item.mediaUrl);
                         })}
-                        loading={loading}
+                        loading={loading1}
                         className="space-y-2"
                         renderItem={(item,index) => (
                           <motion.div
@@ -846,6 +854,7 @@ className="text-6xl text-red-500 animate-like-heart"
 
                             {/* Post Actions */}
                             <div className="p-3">
+                              <div class="flex items-center justify-between w-full">
                               <div className="flex items-center space-x-4">
                                 <Button 
                                   type="text" 
@@ -870,6 +879,33 @@ className="text-6xl text-red-500 animate-like-heart"
                                     dataadd(item);
                                   }}
                                 />
+                                </div>
+                                <Button
+    type="text"
+    className="flex items-center gap-2 px-3 py-1 text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-full transition-colors duration-200 shadow-[0_0_15px_rgba(124,58,237,0.3)] hover:shadow-[0_0_20px_rgba(124,58,237,0.4)]"
+    icon={<WandSparkles className='text-violet-500 animate-pulse' size={14} />}
+    onClick={() => {
+      fetchSuggestions(
+          `Explain the meaning of the following post briefly and clearly:\n\n${item.caption}`,
+          0.6,
+          6000,
+          "mixtral-8x22b-instruct",
+          "chat"
+      )
+      
+      setIsOpen(true);
+
+      setOpenSummaries(prev => [...prev, item.id]);
+  }}
+>
+   
+        <SparklesText  sparklesCount={1} className="text-xs" text={"Summarize"}/>
+ 
+</Button>
+
+
+
+
                               </div>
 
                               <div className="mt-2">
@@ -883,6 +919,41 @@ className="text-6xl text-red-500 animate-like-heart"
                                 <span className="font-semibold mr-2">{item.username}</span>
                                 <span className="text-sm">{item.caption}</span>
                               </div>
+
+
+                              {(suggestions || loading) && openSummaries.includes(item.id) && (
+    <div className="mt-2 bg-violet-50 rounded-lg p-3">
+        <div 
+            className="flex items-center justify-between cursor-pointer"
+            onClick={() => setIsOpen(!isOpen)}
+        >
+            <div className="flex items-center gap-2">
+                <WandSparkles className="text-violet-500" size={14} />
+                <span className="text-sm font-medium text-violet-700">AI Summary</span>
+            </div>
+            <ChevronDown 
+                className={`text-violet-500 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} 
+                size={16} 
+            />
+        </div>
+
+        {loading && (
+            <div className="flex items-center justify-center py-4">
+                <div className="w-6 h-6 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
+            </div>
+        )}
+
+        { openSummaries.includes(item.id) && isOpen && suggestions && (
+            <div className="mt-2 text-sm text-gray-700 border-t border-violet-100 pt-2" id="ai"
+           
+            >
+                {suggestions}
+            </div>
+          
+        )}
+        
+    </div>
+)}
 
                               {/* Comments */}
                               {!item.isNews && item.comments?.length > 0 && (

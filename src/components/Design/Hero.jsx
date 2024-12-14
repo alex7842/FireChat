@@ -54,25 +54,7 @@ export const Hero = () => {
 //             },
 //         );
 // }
-const sendWelcomeEmail = (userEmail, userName) => {
-    if (!userEmail || !userName) {
-        console.log("Email or username missing:", { userEmail, userName });
-        return;
-    }
-    const emailData = {
-        to_name: userName,        
-        to_email: userEmail,
-        subject: 'Welcome to FireChat!',
-        message: `Welcome ${userName}! Thanks for joining FireChat.`
-    };
 
-    return emailjs.send(
-        "service_s26swyq",
-        "template_dol35ss", 
-        emailData, 
-        {publicKey: '_MO9lAlueYkYKkFHG'}
-    );
-};
 
 
   
