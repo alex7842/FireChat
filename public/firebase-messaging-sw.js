@@ -30,6 +30,7 @@ self.addEventListener('notificationclick', (event) => {
   );
 });
 
+
 messaging.onBackgroundMessage(function(payload) {
   const notificationTitle = payload.notification.title;
   const notificationOptions = {
@@ -40,6 +41,6 @@ messaging.onBackgroundMessage(function(payload) {
     click_action: '/' // Specifies the URL to open on click
   };
 
-  console.log('[firebase-messaging-sw.js] Received background message ', payload);
+  //console.log('[firebase-messaging-sw.js] Received background message ', payload);
   return self.registration.showNotification(notificationTitle, notificationOptions);
 });

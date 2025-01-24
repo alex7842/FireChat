@@ -77,7 +77,7 @@ export const Hero = () => {
       localStorage.removeItem('cachedPosts');
   // Reset counter to 0 instead of incrementing
   sethomereload(0);
-      console.log(userData);
+  //    console.log(userData);
      
       // await registerForPushNotifications(userData.uid);
      
@@ -89,7 +89,7 @@ export const Hero = () => {
         const userDocRef = doc(db, 'users', userData.uid);
         await setDoc(userDocRef, userData);
        
-        console.log("New user document written with UID:", result.user.uid);
+     //   console.log("New user document written with UID:", result.user.uid);
     }
     else {
         const userDocRef = doc(db, 'users', userData.uid);

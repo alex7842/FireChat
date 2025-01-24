@@ -28,7 +28,7 @@ export const UploadPosts = ({uid,settrigger}) => {
     }
   }, [suggestions]);
   const handleIconClick = () => {
-    console.log("Icon clicked! Caption:", caption);
+  //  console.log("Icon clicked! Caption:", caption);
     fetchSuggestions(
       `Transform this text into a two-line Instagram caption with emojis:
 ${caption}
@@ -42,7 +42,7 @@ Format exactly like this:
       "llama-v3p1-405b-instruct",
       "chat"
     );
-    console.log("for caption",suggestions);
+   // console.log("for caption",suggestions);
   
     setSuggestions([]);
   
@@ -81,7 +81,7 @@ Format exactly like this:
       for (const user1 of users) {
         const recipientDoc = await getDoc(doc(db, "users", user1.uid));
         const recipientFcmToken = recipientDoc.data().fcmToken;
-        console.log(" sharing user recipientFcmToken",recipientFcmToken);
+      //  console.log(" sharing user recipientFcmToken",recipientFcmToken);
         // Send notification
         if (recipientFcmToken) {
           await sendNotification(recipientFcmToken, `${user.displayName}: has Uploaded a new Post`,user.uid,user.displayName,user.photoURL);

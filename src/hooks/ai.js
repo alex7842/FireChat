@@ -15,7 +15,7 @@ const ai = () => {
         headers: {
           "Accept": "application/json",
           "Content-Type": "application/json",
-          "Authorization": "Bearer fw_3ZNgLwn23zWeusGQPhfenWMm"
+          "Authorization": "Bearer fw_3ZRWsq8RvFVJFvreDNnzGw7K"
         },
         body: JSON.stringify({
           model: `accounts/fireworks/models/${model}`,

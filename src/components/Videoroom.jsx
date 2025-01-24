@@ -4,7 +4,7 @@ import { VideoPlayer } from './VideoPlayer';
 import UserContext from './context/context';
 
 const APP_ID = '0446deea5d93437eae96def92c58c87e';
-const TOKEN = '007eJxTYHiZYXFnhp3olb6mCcc3hU/brxB9cN00g9fRN34lrVgpecBLgcHAxMQsJTU10TTF0tjE2Dw1MdUSyE+zNEo2tUi2ME8VEY5ObwhkZNCu1mJhZIBAEJ+FITEntYKBAQDOJiAW';
+const TOKEN = '007eJxTYGDb9Uf6ySN5T7+8wu3p31bXO6xuEDnLXWCc82rDWeEdmzIVGAxMTMxSUlMTTVMsjU2MzVMTUy2B/DRLo2RTi2QL81TlO5PTGwIZGT5lzWFhZIBAEJ+FITEntYKBAQCViSDq';
 const CHANNEL = 'alex';
 
 AgoraRTC.setLogLevel(4);

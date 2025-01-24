@@ -32,7 +32,7 @@ export const UserList = ({ onUserSelect }) => {
       settargetuserid(id);
     createPersonalChat(id+user.uid,name,img,email)
     const currentUserRef = doc(db, "users", user.uid);
-    console.log("oppositr user id",id);
+  //  console.log("oppositr user id",id);
     // Remove clicked user's ID from newMessages array using arrayRemove
     await updateDoc(currentUserRef, {
         newMessages: arrayRemove(id)
@@ -79,7 +79,7 @@ export const UserList = ({ onUserSelect }) => {
 
  const handlevalue = async (v) => {
 
-  console.log(v)
+  //console.log(v)
     if (v) {
       const startLetter = v.toUpperCase();
       const endLetter = startLetter + '\uf8ff'; 
@@ -90,7 +90,7 @@ export const UserList = ({ onUserSelect }) => {
       );
       const querySnapshot = await getDocs(q);
       const data = querySnapshot.docs.map(doc => doc.data());
-      console.log(data)
+   //   console.log(data)
       setUsers(data);
     } else {
       const querySnapshot = await getDocs(collection(db, "users"));

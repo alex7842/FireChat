@@ -75,7 +75,7 @@ const ChatDm = () => {
   // };
   const showModal = () => {
     setOpen(true);
-    console.log("modal")
+  //  console.log("modal")
   };
   const handleOk = () => {
     setOpen(false);

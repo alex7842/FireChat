@@ -13,7 +13,7 @@ export const Profilecard = () => {
     const {user}=useContext(UserContext)
 const [userdata,setuserdata]=useState({});
    const navigate=useNavigate();
-   console.log(targetuserid);
+   //console.log(targetuserid);
    useEffect(()=>{
     const fetchdetails= async ()=>{
      
@@ -23,7 +23,7 @@ const [userdata,setuserdata]=useState({});
     if (docSnap.exists()) {
       setuserdata(docSnap.data());
     }
-      console.log(docSnap.data());
+ //     console.log(docSnap.data());
     }
     fetchdetails();
    },[])

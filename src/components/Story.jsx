@@ -39,7 +39,7 @@ export const Story = ({ onclose }) => {
   }
 
   const handleIconClick = async() => {
-    console.log("Icon clicked! Caption:", caption);
+   // console.log("Icon clicked! Caption:", caption);
    
    fetchSuggestions(
       `Transform this text into a two-line Instagram story caption with emojis:
@@ -55,7 +55,7 @@ Format exactly like this:
       "chat"
     );
    
-    console.log("for caption",suggestions);
+   // console.log("for caption",suggestions);
   
     setSuggestions([]);
   
@@ -105,7 +105,7 @@ Format exactly like this:
       for (const user1 of users) {
         const recipientDoc = await getDoc(doc(db, "users", user1.uid));
         const recipientFcmToken = recipientDoc.data().fcmToken;
-        console.log(" sharing user recipientFcmToken",recipientFcmToken);
+       // console.log(" sharing user recipientFcmToken",recipientFcmToken);
         // Send notification
         if (recipientFcmToken) {
           await sendNotification(recipientFcmToken, `${user.displayName}: has posted a new story`,user.uid,user.displayName,user.photoURL);

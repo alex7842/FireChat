@@ -86,7 +86,7 @@ export const Follow = ({uid1,username1,userurl1}) => {
     settrack("Request Sent")
     const recipientDoc = await getDoc(doc(db, "users", uid1));
     const recipientFcmToken = recipientDoc.data().fcmToken;
-    console.log(" sharing user recipientFcmToken",recipientFcmToken);
+    //console.log(" sharing user recipientFcmToken",recipientFcmToken);
     // Send notification
     if (recipientFcmToken) {
       await sendNotification(recipientFcmToken, `${user.displayName}: has sent you a friend request`,user.uid,user.displayName,user.photoURL);

@@ -66,7 +66,7 @@ useEffect(() => {
 
   const handleForegroundNotifications = async () => {
     const token = await registerForPushNotifications(user.uid);
-    console.log('FCM Token registered:', token);
+   // console.log('FCM Token registered:', token);
 
     const unsubscribe = onMessage(messaging, (payload) => {
       // Play notification sound
@@ -175,17 +175,17 @@ useEffect(() => {
       const timestampB = b.timestamp?.toDate?.() || new Date(b.timestamp);
       return timestampB - timestampA;
     });
-  console.log("db post",allPosts)
+ // console.log("db post",allPosts)
     // Set database posts immediately
     setpostData(allPosts);
     setLoading(false);
     // Fetch news in parallel
     const inter=interest();
-    fetch(`https://api.mediastack.com/v1/news?access_key=4af5790a65dc4f27e4d63fcc99e335c3&countries=us,in&categories=${interest()}&languages=en&limit=95&date=${getLastThreeDays()}&sort=published_desc`)
+    fetch(`https://api.mediastack.com/v1/news?access_key=ce6d9637a35daaf715eb9c00c5720a8c&countries=us,in&categories=${interest()}&languages=en&limit=95&date=${getLastThreeDays()}&sort=published_desc`)
 
       .then(response => response.json())
       .then(newsData => {
-        console.log(newsData,"news data");  
+     //   console.log(newsData,"news data");  
         const newsAsPosts = newsData.data.map((article) => ({
           id: `news-${encodeURIComponent(article.published_at)}-${encodeURIComponent(article.title)}`,
           author: article.author || article.source,
@@ -218,7 +218,7 @@ useEffect(() => {
     //     }));
     
         
-  console.log(newsAsPosts,"news posts");
+  //console.log(newsAsPosts,"news posts");
         const combinedPosts = [...allPosts, ...newsAsPosts].filter(
           post => !notInterestedPosts.includes(post.id)
         );
@@ -542,7 +542,7 @@ const isValidImageUrl = (url) => {
             });
       
           setStories(stories);
-          console.log(stories);
+       //   console.log(stories);
         }
       
         fetchstories();

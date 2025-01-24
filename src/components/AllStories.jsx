@@ -36,7 +36,7 @@ export const AllStories = () => {
             });
       
           setStories(stories);
-          console.log(stories);
+       //   console.log(stories);
         }
       
         fetchstories();

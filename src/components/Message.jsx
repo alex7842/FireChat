@@ -134,8 +134,8 @@ const formatTime = (time) => {
                 setSharemodel(true);
                 setSharePost(msg)
                  setBol(msg.isNews?"post":"message")
-                console.log("bol value",bol)
-                console.log(msg)
+            //    console.log("bol value",bol)
+             //   console.log(msg)
             }}className="flex items-center gap-2 px-3 py-2 hover:bg-violet-50 cursor-pointer transition-colors">
                 <ShareAltOutlined className="text-violet-600" /> 
                 <span>Forward</span>
@@ -164,7 +164,7 @@ const formatTime = (time) => {
   const handleComment = async () => {
     if (!newComment.trim()) return;
     const post = selectedPost;
-     console.log("from comment",post);
+ //    console.log("from comment",post);
     const comment = {
       text: newComment,
       userId: user.uid,
@@ -220,21 +220,21 @@ const formatTime = (time) => {
   };
   
   const fetchPostDetails = async (post, isNews) => {
-    console.log(post)
+   // console.log(post)
    setuserid(post.id);
     try {
       if (isNews) {
         const globalPostRef = doc(db, "globalPosts", post.id);
         const postSnap = await getDoc(globalPostRef);
-         console.log("postsnap",postSnap.data())
+     //    console.log("postsnap",postSnap.data())
         if (postSnap.exists()) {
-          console.log(postSnap.data())
+      //    console.log(postSnap.data())
           setSelectedPost({ ...postSnap.data(), isNews: true });
         }
       } else {
         const postRef = doc(db, "users", post.uid, "posts", post.id);
         const postSnap = await getDoc(postRef);
-        console.log("users ",postSnap.data());
+      //  console.log("users ",postSnap.data());
         if (postSnap.exists()) {
           setSelectedPost({ ...postSnap.data(), isNews: false });
         }

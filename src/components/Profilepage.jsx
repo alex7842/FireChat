@@ -61,7 +61,7 @@ const ProfilePage = () => {
       'sustainability', 'minimalism', 'digitalnomad', 'beachlife', 'urbanexplorer'
     ],
   };
-  console.log("uid from params",uid);
+ // console.log("uid from params",uid);
   useEffect(() => {
     if (!user) {
       navigate("/");
@@ -113,7 +113,7 @@ const ProfilePage = () => {
       const q = query(postsRef);
       const querySnapshot = await getDocs(q);
       const totalPosts = querySnapshot.size;
-      console.log(totalPosts,"totapost");
+    //  console.log(totalPosts,"totapost");
     setPosttotal(totalPosts);
     }
    
@@ -147,7 +147,7 @@ const ProfilePage = () => {
     }
   }, [uid,trigger]);
  
-  console.log(userstate?.photoURL|| "","userphotp");
+  //console.log(userstate?.photoURL|| "","userphotp");
  
   const [prefix, setPrefix] = useState('@');
   const onSearch = (_, newPrefix) => {
@@ -162,7 +162,7 @@ const ProfilePage = () => {
 
  
   
-  console.log(suggestions)
+ // console.log(suggestions)
 
   const handleSave = async () => {
     
@@ -225,7 +225,7 @@ const ProfilePage = () => {
     const downloadURL = await getDownloadURL(storageRef);
     setAvatarUrl(downloadURL);
     setload(false);
-    console.log("Image uploaded, URL:", downloadURL);
+   // console.log("Image uploaded, URL:", downloadURL);
   };
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
@@ -245,7 +245,7 @@ const ProfilePage = () => {
   const Navigatedm=()=>{
    
       const userId = (user.uid+uid).split("").sort().join("");
-      console.log("sorted user",userId);
+   //   console.log("sorted user",userId);
       setUserId(userId);
       setPersonalChats(userId);
       setcname(userstate.displayName);

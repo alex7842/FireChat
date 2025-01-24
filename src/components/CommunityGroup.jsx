@@ -53,7 +53,7 @@ const time = timeString; // 'HH:MM AM/PM'
         .map(doc => ({ id: doc.id, ...doc.data() }))
       setgroupdetails(usersList);
     setgrpmessage(usersList);
-    console.log("grpeasge",grpmessage)
+   // console.log("grpeasge",grpmessage)
     } catch (error) {
       console.error("Error fetching users: ", error);
     }
@@ -106,7 +106,7 @@ console.log("Error",e)
 }
 
 
-  console.log('Received values of form:',[...values['Members'], user.displayName]);
+//  console.log('Received values of form:',[...values['Members'], user.displayName]);
   
   form.resetFields();
 };

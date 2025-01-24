@@ -46,7 +46,7 @@ export const Notifications = () => {
         ));
         const recipientDoc = await getDoc(doc(db, "users", senderId));
         const recipientFcmToken = recipientDoc.data().fcmToken;
-        console.log(" sharing user recipientFcmToken",recipientFcmToken);
+        //console.log(" sharing user recipientFcmToken",recipientFcmToken);
         // Send notification
         if (recipientFcmToken) {
           await sendNotification(recipientFcmToken, `${user.displayName}: has ${status}  your friend request`,user.uid,user.displayName,user.photoURL);

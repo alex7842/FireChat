@@ -30,7 +30,7 @@ export const ChatProvider = ({ children }) => {
 
   const createPersonalChat = async (joinedid, name, img, email) => {
     const userId = joinedid.split("").sort().join("");
-    console.log("from context ", userId, name, img, email);
+   // console.log("from context ", userId, name, img, email);
 
     setcname(name);
     setUserId(userId);
@@ -49,7 +49,7 @@ export const ChatProvider = ({ children }) => {
       const docRef = doc(db, "chatusers", userId);
       await setDoc(docRef, { uid: user.uid, name: user.displayName });
       setPersonalChats(userId);
-      console.log('rommid from chatcontext:', userId);
+ //     console.log('rommid from chatcontext:', userId);
     }
   };
 

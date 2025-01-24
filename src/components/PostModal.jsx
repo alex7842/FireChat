@@ -310,7 +310,7 @@ export const PostModal = ({ setpostData, postData }) => {
       message.success("Comment added successfully");
       const recipientDoc = await getDoc(doc(db, "users", selectedPost.uid));
       const recipientFcmToken = recipientDoc.data().fcmToken;
-      console.log("sharing user recipientFcmToken", recipientFcmToken);
+    //  console.log("sharing user recipientFcmToken", recipientFcmToken);
       // Send notification
       if (recipientFcmToken) {
         await sendNotification(

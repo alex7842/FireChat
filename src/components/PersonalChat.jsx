@@ -123,6 +123,11 @@ useEffect(() => {
 }, [chats,group,groupid]);
 useEffect(() => {
   const auto=()=>{
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+  
+    if (isMobile) {
+      return () => {}; // Early return for mobile
+    }
     const timer = setTimeout(() => {
       if (text) {
       fetchSuggestions(`Complete the following text with 4-5 additional words:
@@ -174,7 +179,7 @@ const handleKeyDown = (e) => {
 };
 
 const sendEmail = (prop) => {
-  console.log(cemail)
+ // console.log(cemail)
   const emailData = {
     from_name: user.displayName, 
     to_name: cname,        
@@ -220,7 +225,7 @@ const time = timeString; // 'HH:MM AM/PM'
 // console.log("Time:", time);
 const handlesubmit = async (s) => {
   const ur=s?s:text;
-  console.log("passed valuer",ur);
+ // console.log("passed valuer",ur);
   const hasnewmsgref = doc(db, "users", targetuserid);
 
  
@@ -283,10 +288,10 @@ if (chats) {
   settext('');
 };
 const sendnotify= async(ur)=>{
-  console.log("called");
+ // console.log("called");
   const recipientDoc = await getDoc(doc(db, "users", targetuserid));
   const recipientFcmToken = recipientDoc.data().fcmToken;
-  console.log("recipientFcmToken",recipientFcmToken);
+  //console.log("recipientFcmToken",recipientFcmToken);
   // Send notification
   if (recipientFcmToken) {
     await sendNotification(recipientFcmToken, `New message from ${user.displayName}: ${ur}`,user.uid,user.displayName,user.photoURL);
@@ -321,7 +326,7 @@ const handleEmojiClick = (emojiData, event) => {
   const selectedEmoji = emojiData.emoji;
 
 
-  console.log("Selected Emoji:", selectedEmoji);
+  //console.log("Selected Emoji:", selectedEmoji);
 
 
   settext(i=>i+selectedEmoji)
@@ -353,7 +358,7 @@ const handleEmojiClick = (emojiData, event) => {
         // Set the URL in state
         setFileUrl(url);
         
-        console.log(`File uploaded and link generated: ${url}`);
+    //    console.log(`File uploaded and link generated: ${url}`);
         
         handlesubmit(url);
         setload1(false);
@@ -423,23 +428,30 @@ const suffix = (
   </div>
 </Modal>
 
-         <Popover content={ <><a className='side' onClick={()=>setPopoverVisible(false)}>❌</a><Space/>
-         <EmojiPicker  onEmojiClick={handleEmojiClick}searchDisabled  height={300}/></>}
-      placement="leftTop"
-      trigger="click"
-      open={popoverVisible}
-      onOpenChange={handlePopoverOpen}
-    > 
-      <Tooltip placement='top' title="emoji"><SmilePlus 
-          style={{
-            fontSize: 18,
-            
-            cursor:"pointer"
-          }}
-          className='text-violet-500'
-        />
-        </Tooltip>
-    </Popover>
+<Popover 
+  content={(
+    <>
+      <a className='side' onClick={() => setPopoverVisible(false)}>❌</a>
+      <Space />
+      <EmojiPicker onEmojiClick={handleEmojiClick} searchDisabled height={260} />
+    </>
+  )}
+  placement={window.matchMedia('(max-width: 768px)').matches ? "leftTop" : "leftTop"}
+  trigger="click"
+  open={popoverVisible}
+  onOpenChange={handlePopoverOpen}
+>
+  <Tooltip placement='top' title="emoji">
+    <SmilePlus
+      style={{
+        fontSize: window.matchMedia('(max-width: 768px)').matches ? 14 : 18,
+        cursor: "pointer"
+      }}
+      className='text-violet-500'
+    />
+  </Tooltip>
+</Popover>
+
     </>  
   );
   useEffect(() => {
@@ -472,7 +484,7 @@ const suffix = (
       showModal1();
     }
     const calldrawer=()=>{
-      console.log('drawer')
+    //  console.log('drawer')
       setdraw(true)
      
     }
@@ -507,7 +519,7 @@ const suffix = (
     sendEmail("requested you a video call on FireChat"); 
     const recipientDoc = await getDoc(doc(db, "users",targetuserid));
     const recipientFcmToken = recipientDoc.data().fcmToken;
-    console.log("sharing user recipientFcmToken",recipientFcmToken);
+  //  console.log("sharing user recipientFcmToken",recipientFcmToken);
     // Send notification
     if (recipientFcmToken) {
       await sendNotification(recipientFcmToken, `${user.displayName}: has requested you a Video Call`,user.uid,user.displayName,user.photoURL);
@@ -525,7 +537,7 @@ const suffix = (
       const chatRoomDocs = await getDocs(chats);
       const deletePromises = chatRoomDocs.docs.map((doc) => deleteDoc(doc.ref));
       await Promise.all(deletePromises);
-      console.log("Subcollection 'chatroom' deleted successfully.");
+    //  console.log("Subcollection 'chatroom' deleted successfully.");
       message.success('Chat deleted');
     }
   });

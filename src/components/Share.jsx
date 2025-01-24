@@ -9,7 +9,7 @@ import { collection,setDoc,addDoc,doc,getDoc } from 'firebase/firestore';
 import { db } from '../config/firebase';
 import { sendNotification } from '../utils/notificationUtils';
 export const Share = ({  Sharemodel,SharePost,curuser,source}) => {
-   console.log("Source",source);
+ //  console.log("Source",source);
     const { users } = useContext(GroupContext);
     const { user } = useContext(UserContext);
     const [form] = Form.useForm();
@@ -89,7 +89,7 @@ export const Share = ({  Sharemodel,SharePost,curuser,source}) => {
                     title: SharePost.isNews ? SharePost.title : SharePost.caption
                   };
                 }
-                  console.log("Message Data:", messageData);    
+              //    console.log("Message Data:", messageData);    
                   await addDoc(chatRoomSubColRef, messageData);
 
                  
@@ -101,7 +101,7 @@ export const Share = ({  Sharemodel,SharePost,curuser,source}) => {
      for (const uid of selectedUIDs) {
         const recipientDoc = await getDoc(doc(db, "users", uid));
         const recipientFcmToken = recipientDoc.data().fcmToken;
-        console.log(" sharing user recipientFcmToken",recipientFcmToken);
+     //   console.log(" sharing user recipientFcmToken",recipientFcmToken);
         // Send notification
         if (recipientFcmToken) {
           await sendNotification(recipientFcmToken, `${user.displayName}: has shared you a Post `,user.uid,user.displayName,user.photoURL);

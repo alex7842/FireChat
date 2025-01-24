@@ -30,7 +30,7 @@ export const Home = () => {
             lastactive: Timestamp.fromDate(date),
            
           });
-          console.log('Last active status updated successfully');
+     //     console.log('Last active status updated successfully');
         } catch (error) {
           console.error('Error updating last active status:', error);
         }
@@ -116,7 +116,7 @@ export const Home = () => {
         const THREE_MINUTES = 1 * 60 * 1000;
       
         if (currentTime - lastUpdate >= THREE_MINUTES) {
-          console.log("lastupdate",lastUpdate,currentTime)
+      //    console.log("lastupdate",lastUpdate,currentTime)
           updateLastActive();
           localStorage.setItem('lastActiveUpdate', currentTime);
         }
